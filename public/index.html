@@ -15,7 +15,7 @@
 
     <script>
         async function fetchData() {
-            const response = await fetch('/api/index.js');
+            const response = await fetch('/api/crypto');
             const data = await response.json();
             document.getElementById('crypto-container').innerHTML = `
                 <p>Bitcoin: $${data.bitcoin.usd} (24h: ${data.bitcoin.usd_24h_change.toFixed(2)}%)</p>
