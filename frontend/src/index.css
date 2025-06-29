@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-crypto-darker text-white;
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-crypto-dark rounded-xl p-6 shadow-lg border border-gray-700/50 backdrop-blur-sm;
+  }
+  
+  .btn-primary {
+    @apply bg-crypto-blue hover:bg-crypto-blue/80 text-white font-medium py-2 px-4 rounded-lg transition-all duration-200 transform hover:scale-105;
+  }
+  
+  .crypto-card {
+    @apply card hover:shadow-xl transition-all duration-300 hover:scale-105;
+  }
+}
