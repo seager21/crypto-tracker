@@ -96,7 +96,7 @@ const InteractivePriceChart = ({ data, cryptoConfig }) => {
     <div className="w-full">
       {/* Chart Controls Header */}
       <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-2">
           <div className="flex items-center space-x-2">
             <BarChart3 className="w-5 h-5 text-crypto-blue" />
             <span className="text-lg font-semibold">Interactive Price Chart</span>

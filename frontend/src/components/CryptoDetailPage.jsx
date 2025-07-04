@@ -215,14 +215,14 @@ const CryptoDetailPage = ({ cryptoId, onBack }) => {
                       <Area 
                         type="monotone" 
                         dataKey="price" 
-                        stroke="#4ECDC4" 
+                        stroke="#F59E0B" 
                         fill="url(#colorPrice)"
                         strokeWidth={3}
                       />
                       <defs>
                         <linearGradient id="colorPrice" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="#4ECDC4" stopOpacity={0.3}/>
-                          <stop offset="95%" stopColor="#4ECDC4" stopOpacity={0}/>
+                          <stop offset="5%" stopColor="#F59E0B" stopOpacity={0.3}/>
+                          <stop offset="95%" stopColor="#F59E0B" stopOpacity={0}/>
                         </linearGradient>
                       </defs>
                     </AreaChart>
