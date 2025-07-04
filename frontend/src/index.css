@@ -40,12 +40,12 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #4ecdc4;
+  background: #F59E0B;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #00d4aa;
+  background: #D97706;
 }
 
 /* Smooth transitions for all interactive elements */
@@ -55,5 +55,5 @@
 
 /* Custom glow effect */
 .glow-effect {
-  box-shadow: 0 0 20px rgba(78, 205, 196, 0.3);
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.3);
 }

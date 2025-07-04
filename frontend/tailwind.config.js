@@ -20,7 +20,7 @@ export default {
         crypto: {
           green: '#00D4AA',
           red: '#FF6B6B',
-          blue: '#4ECDC4',
+          blue: '#F59E0B',
           dark: '#1A1B23',
           darker: '#13141A',
         }
