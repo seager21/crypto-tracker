@@ -18,6 +18,42 @@
   }
   
   .crypto-card {
-    @apply card hover:shadow-xl transition-all duration-300 hover:scale-105;
+    @apply card hover:shadow-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl;
   }
+  
+  .crypto-card:hover {
+    @apply shadow-crypto-blue/10;
+  }
+  
+  .loading-spinner {
+    @apply w-8 h-8 border-4 border-crypto-blue border-t-transparent rounded-full animate-spin;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1a1b23;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #4ecdc4;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #00d4aa;
+}
+
+/* Smooth transitions for all interactive elements */
+* {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Custom glow effect */
+.glow-effect {
+  box-shadow: 0 0 20px rgba(78, 205, 196, 0.3);
 }
