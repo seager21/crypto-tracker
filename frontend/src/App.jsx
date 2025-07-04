@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { io } from 'socket.io-client';
 import CryptoCard from './components/CryptoCard';
-import PriceChart from './components/PriceChart';
+import InteractivePriceChart from './components/InteractivePriceChart';
+import CryptoDetailPage from './components/CryptoDetailPage';
+import CryptoPortfolioOverview from './components/CryptoPortfolioOverview';
 import Header from './components/Header';
-import { TrendingUp, TrendingDown, Activity, RefreshCw } from 'lucide-react';
+import { TrendingUp, TrendingDown, Activity, RefreshCw, BarChart, Grid, List } from 'lucide-react';
 
 function App() {
   const [cryptoData, setCryptoData] = useState(null);
@@ -11,6 +13,35 @@ function App() {
   const [isConnected, setIsConnected] = useState(false);
   const [lastUpdate, setLastUpdate] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [selectedCrypto, setSelectedCrypto] = useState(null);
+  const [activeView, setActiveView] = useState('overview'); // 'overview', 'chart', 'portfolio'
+
+  // Configuration for all cryptocurrencies (22 total)
+  const cryptoConfig = {
+    bitcoin: { name: 'Bitcoin', symbol: 'BTC', icon: '₿', color: '#F59E0B', cardColor: 'orange' },
+    ethereum: { name: 'Ethereum', symbol: 'ETH', icon: '♦', color: '#3B82F6', cardColor: 'blue' },
+    cardano: { name: 'Cardano', symbol: 'ADA', icon: '♠', color: '#10B981', cardColor: 'green' },
+    polkadot: { name: 'Polkadot', symbol: 'DOT', icon: '●', color: '#8B5CF6', cardColor: 'purple' },
+    chainlink: { name: 'Chainlink', symbol: 'LINK', icon: '🔗', color: '#EF4444', cardColor: 'red' },
+    litecoin: { name: 'Litecoin', symbol: 'LTC', icon: 'Ł', color: '#A7A9AC', cardColor: 'slate' },
+    binancecoin: { name: 'Binance Coin', symbol: 'BNB', icon: '🅑', color: '#F3BA2F', cardColor: 'amber' },
+    solana: { name: 'Solana', symbol: 'SOL', icon: '◎', color: '#9945FF', cardColor: 'violet' },
+    dogecoin: { name: 'Dogecoin', symbol: 'DOGE', icon: '🐕', color: '#C2A633', cardColor: 'yellow' },
+    ripple: { name: 'XRP', symbol: 'XRP', icon: '✕', color: '#23292F', cardColor: 'gray' },
+    'avalanche-2': { name: 'Avalanche', symbol: 'AVAX', icon: '🏔', color: '#E84142', cardColor: 'red' },
+    polygon: { name: 'Polygon', symbol: 'MATIC', icon: '🔷', color: '#8247E5', cardColor: 'purple' },
+    // Adding 10 more popular cryptocurrencies
+    'uniswap': { name: 'Uniswap', symbol: 'UNI', icon: '🦄', color: '#FF007A', cardColor: 'pink' },
+    'cosmos': { name: 'Cosmos', symbol: 'ATOM', icon: '⚛️', color: '#2E3148', cardColor: 'slate' },
+    'stellar': { name: 'Stellar', symbol: 'XLM', icon: '⭐', color: '#7D00FF', cardColor: 'indigo' },
+    'filecoin': { name: 'Filecoin', symbol: 'FIL', icon: '📁', color: '#0090FF', cardColor: 'blue' },
+    'aave': { name: 'Aave', symbol: 'AAVE', icon: '👻', color: '#B6509E', cardColor: 'pink' },
+    'algorand': { name: 'Algorand', symbol: 'ALGO', icon: '🔺', color: '#000000', cardColor: 'gray' },
+    'vechain': { name: 'VeChain', symbol: 'VET', icon: '⚡', color: '#15BDFF', cardColor: 'sky' },
+    'hedera-hashgraph': { name: 'Hedera', symbol: 'HBAR', icon: '🔷', color: '#000000', cardColor: 'gray' },
+    'theta-token': { name: 'Theta Network', symbol: 'THETA', icon: '🎥', color: '#2AB8E6', cardColor: 'cyan' },
+    'the-sandbox': { name: 'The Sandbox', symbol: 'SAND', icon: '🏖️', color: '#00D4FF', cardColor: 'sky' }
+  };
 
   useEffect(() => {
     // Initialize socket connection
@@ -36,8 +67,11 @@ function App() {
       setPriceHistory(prev => {
         const newHistory = [...prev, {
           time: timestamp,
-          bitcoin: data.bitcoin?.usd || 0,
-          ethereum: data.ethereum?.usd || 0,
+          ...Object.keys(cryptoConfig).reduce((acc, key) => {
+            const apiKey = key === 'avalanche-2' ? 'avalanche-2' : key;
+            acc[key] = data[apiKey]?.usd || 0;
+            return acc;
+          }, {})
         }];
         // Keep only last 20 data points
         return newHistory.slice(-20);
@@ -68,10 +102,56 @@ function App() {
 
   const getTotalMarketValue = () => {
     if (!cryptoData) return 0;
-    const btcValue = (cryptoData.bitcoin?.usd || 0) * (cryptoData.bitcoin?.usd_market_cap || 0) / 1000000000;
-    const ethValue = (cryptoData.ethereum?.usd || 0) * (cryptoData.ethereum?.usd_market_cap || 0) / 1000000000;
-    return btcValue + ethValue;
+    return Object.keys(cryptoConfig).reduce((total, key) => {
+      const apiKey = key === 'avalanche-2' ? 'avalanche-2' : key;
+      const marketCap = cryptoData[apiKey]?.usd_market_cap || 0;
+      return total + marketCap / 1000000000; // Convert to billions
+    }, 0);
   };
+
+  const getActiveCryptos = () => {
+    if (!cryptoData) return 0;
+    return Object.keys(cryptoConfig).filter(key => {
+      const apiKey = key === 'avalanche-2' ? 'avalanche-2' : key;
+      return cryptoData[apiKey]?.usd > 0;
+    }).length;
+  };
+
+  const getTopPerformer = () => {
+    if (!cryptoData) return 'N/A';
+    
+    let topPerformer = null;
+    let maxChange = -Infinity;
+    
+    Object.keys(cryptoConfig).forEach(key => {
+      const apiKey = key === 'avalanche-2' ? 'avalanche-2' : key;
+      const change = cryptoData[apiKey]?.usd_24h_change;
+      if (change && change > maxChange) {
+        maxChange = change;
+        topPerformer = cryptoConfig[key].symbol;
+      }
+    });
+    
+    return topPerformer ? `${topPerformer} +${maxChange.toFixed(2)}%` : 'N/A';
+  };
+
+  const handleCryptoClick = (cryptoId) => {
+    setSelectedCrypto(cryptoId);
+  };
+
+  const handleBackToDashboard = () => {
+    setSelectedCrypto(null);
+  };
+
+  // Show detail page if crypto is selected
+  if (selectedCrypto) {
+    return (
+      <CryptoDetailPage 
+        cryptoId={selectedCrypto} 
+        onBack={handleBackToDashboard}
+      />
+    );
+  }
 
   if (loading) {
     return (
@@ -94,7 +174,7 @@ function App() {
       
       <div className="container mx-auto px-4 py-8">
         {/* Market Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <div className="card">
             <div className="flex items-center justify-between">
               <div>
@@ -110,10 +190,11 @@ function App() {
           <div className="card">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-400 text-sm">24h Volume</p>
+                <p className="text-gray-400 text-sm">Portfolio Size</p>
                 <p className="text-2xl font-bold text-crypto-green">
-                  $1.2T
+                  {Object.keys(cryptoConfig).length}
                 </p>
+                <p className="text-xs text-gray-500">Cryptocurrencies</p>
               </div>
               <Activity className="w-8 h-8 text-crypto-blue" />
             </div>
@@ -123,45 +204,106 @@ function App() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-400 text-sm">Active Cryptos</p>
-                <p className="text-2xl font-bold text-white">2</p>
+                <p className="text-2xl font-bold text-white">{getActiveCryptos()}</p>
+                <p className="text-xs text-gray-500">Currently Trading</p>
               </div>
               <div className="w-3 h-3 bg-crypto-green rounded-full animate-pulse"></div>
             </div>
           </div>
-        </div>
-
-        {/* Crypto Cards */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-          {cryptoData?.bitcoin && (
-            <CryptoCard
-              name="Bitcoin"
-              symbol="BTC"
-              price={cryptoData.bitcoin.usd}
-              change24h={cryptoData.bitcoin.usd_24h_change}
-              marketCap={cryptoData.bitcoin.usd_market_cap}
-              icon="₿"
-              color="orange"
-            />
-          )}
           
-          {cryptoData?.ethereum && (
-            <CryptoCard
-              name="Ethereum"
-              symbol="ETH"
-              price={cryptoData.ethereum.usd}
-              change24h={cryptoData.ethereum.usd_24h_change}
-              marketCap={cryptoData.ethereum.usd_market_cap}
-              icon="♦"
-              color="blue"
-            />
-          )}
+          <div className="card">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-gray-400 text-sm">Top Performer</p>
+                <p className="text-lg font-bold text-crypto-green">
+                  {getTopPerformer()}
+                </p>
+                <p className="text-xs text-gray-500">24h Change</p>
+              </div>
+              <TrendingUp className="w-8 h-8 text-crypto-green" />
+            </div>
+          </div>
         </div>
 
-        {/* Price Chart */}
-        {priceHistory.length > 1 && (
+        {/* View Toggle */}
+        <div className="flex items-center justify-center mb-8">
+          <div className="flex bg-crypto-dark border border-gray-700 rounded-lg p-1">
+            <button
+              onClick={() => setActiveView('overview')}
+              className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors ${
+                activeView === 'overview' 
+                  ? 'bg-crypto-blue text-white' 
+                  : 'text-gray-400 hover:text-white'
+              }`}
+            >
+              <Grid className="w-4 h-4" />
+              <span>Overview</span>
+            </button>
+            <button
+              onClick={() => setActiveView('chart')}
+              className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors ${
+                activeView === 'chart' 
+                  ? 'bg-crypto-blue text-white' 
+                  : 'text-gray-400 hover:text-white'
+              }`}
+            >
+              <BarChart className="w-4 h-4" />
+              <span>Interactive Chart</span>
+            </button>
+            <button
+              onClick={() => setActiveView('portfolio')}
+              className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors ${
+                activeView === 'portfolio' 
+                  ? 'bg-crypto-blue text-white' 
+                  : 'text-gray-400 hover:text-white'
+              }`}
+            >
+              <List className="w-4 h-4" />
+              <span>Portfolio</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Content Based on Active View */}
+        {activeView === 'overview' && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
+            {Object.entries(cryptoConfig).map(([key, config]) => {
+              const apiKey = key === 'avalanche-2' ? 'avalanche-2' : key;
+              const data = cryptoData?.[apiKey];
+              
+              if (!data) return null;
+
+              return (
+                <CryptoCard
+                  key={key}
+                  name={config.name}
+                  symbol={config.symbol}
+                  price={data.usd}
+                  change24h={data.usd_24h_change}
+                  marketCap={data.usd_market_cap}
+                  icon={config.icon}
+                  color={config.cardColor}
+                  onClick={handleCryptoClick}
+                  cryptoId={key}
+                />
+              );
+            })}
+          </div>
+        )}
+
+        {activeView === 'chart' && priceHistory.length > 1 && (
           <div className="card">
-            <h3 className="text-xl font-bold mb-6 text-center">Price History</h3>
-            <PriceChart data={priceHistory} />
+            <InteractivePriceChart data={priceHistory} cryptoConfig={cryptoConfig} />
+          </div>
+        )}
+
+        {activeView === 'portfolio' && (
+          <div className="card">
+            <CryptoPortfolioOverview 
+              cryptoData={cryptoData}
+              cryptoConfig={cryptoConfig}
+              onCryptoClick={handleCryptoClick}
+            />
           </div>
         )}
       </div>
