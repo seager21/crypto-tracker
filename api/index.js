@@ -26,7 +26,7 @@ const fetchCryptoData = async () => {
     try {
         const response = await axios.get("https://api.coingecko.com/api/v3/simple/price", {
             params: {
-                ids: "bitcoin,ethereum,cardano,polkadot,chainlink,litecoin",
+                ids: "bitcoin,ethereum,cardano,polkadot,chainlink,litecoin,binancecoin,solana,dogecoin,ripple,avalanche-2,polygon,uniswap,cosmos,stellar,filecoin,aave,algorand,vechain,hedera-hashgraph,theta-token,the-sandbox",
                 vs_currencies: "usd",
                 include_market_cap: true,
                 include_24hr_change: true,
@@ -88,6 +88,46 @@ app.get("/crypto/:id", async (req, res) => {
         res.json(response.data);
     } catch (error) {
         res.status(500).json({ error: "Failed to fetch crypto data" });
+    }
+});
+
+// API route to fetch detailed crypto information
+app.get("/crypto/:id/details", async (req, res) => {
+    const { id } = req.params;
+    try {
+        const response = await axios.get(`https://api.coingecko.com/api/v3/coins/${id}`, {
+            params: {
+                localization: false,
+                tickers: false,
+                market_data: true,
+                community_data: true,
+                developer_data: false,
+                sparkline: false
+            }
+        });
+        res.json(response.data);
+    } catch (error) {
+        console.error("Failed to fetch detailed crypto data", error);
+        res.status(500).json({ error: "Failed to fetch detailed crypto data" });
+    }
+});
+
+// API route to fetch historical crypto data
+app.get("/crypto/:id/history", async (req, res) => {
+    const { id } = req.params;
+    const { days = 7 } = req.query;
+    try {
+        const response = await axios.get(`https://api.coingecko.com/api/v3/coins/${id}/market_chart`, {
+            params: {
+                vs_currency: "usd",
+                days: days,
+                interval: days <= 1 ? "hourly" : "daily"
+            }
+        });
+        res.json(response.data);
+    } catch (error) {
+        console.error("Failed to fetch historical crypto data", error);
+        res.status(500).json({ error: "Failed to fetch historical crypto data" });
     }
 });
 
