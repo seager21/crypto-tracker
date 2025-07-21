@@ -136,14 +136,23 @@ io.on("connection", (socket) => {
     console.log("Client connected");
     
     const sendCryptoData = async () => {
-        const data = await fetchCryptoData();
-        if (data) {
-            socket.emit("cryptoData", data);
+        try {
+            const data = await fetchCryptoData();
+            if (data) {
+                socket.emit("cryptoData", data);
+            }
+        } catch (error) {
+            console.log("Error sending crypto data:", error.message);
+            // Send cached data or empty array if no data available
+            socket.emit("cryptoData", []);
         }
     };
 
-    // Send data every 10 seconds
-    const interval = setInterval(sendCryptoData, 10000);
+    // Send data immediately on connection
+    sendCryptoData();
+    
+    // Send data every 60 seconds to avoid rate limiting
+    const interval = setInterval(sendCryptoData, 60000);
     
     socket.on("disconnect", () => {
         console.log("Client disconnected");

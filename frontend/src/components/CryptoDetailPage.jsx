@@ -16,10 +16,14 @@ const CryptoDetailPage = ({ cryptoId, onBack }) => {
   const fetchDetailData = async () => {
     try {
       const response = await fetch(`/api/crypto/${cryptoId}/details`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
       const data = await response.json();
       setDetailData(data);
     } catch (error) {
       console.error('Failed to fetch detail data:', error);
+      // You could set an error state here if needed
     }
   };
 
@@ -27,6 +31,9 @@ const CryptoDetailPage = ({ cryptoId, onBack }) => {
     try {
       setLoading(true);
       const response = await fetch(`/api/crypto/${cryptoId}/history?days=${timeRange}`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
       const data = await response.json();
       
       // Transform the data for the chart
