@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, TrendingUp, TrendingDown, Globe, Calendar, DollarSign, BarChart3, Activity, Users } from 'lucide-react';
+import { ArrowLeft, TrendingUp, TrendingDown, Globe, Calendar, DollarSign, BarChart3, Activity, Users, AlertCircle, RefreshCw } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
 
 const CryptoDetailPage = ({ cryptoId, onBack }) => {
@@ -7,6 +7,8 @@ const CryptoDetailPage = ({ cryptoId, onBack }) => {
   const [historicalData, setHistoricalData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [timeRange, setTimeRange] = useState('7');
+  const [error, setError] = useState(null);
+  const [retryCount, setRetryCount] = useState(0);
 
   useEffect(() => {
     fetchDetailData();
@@ -15,30 +17,47 @@ const CryptoDetailPage = ({ cryptoId, onBack }) => {
 
   const fetchDetailData = async () => {
     try {
+      setError(null);
+      console.log(`Fetching details for: ${cryptoId}`);
+      
       const response = await fetch(`/api/crypto/${cryptoId}/details`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data = await response.json();
+      console.log('Detail data received:', data);
       setDetailData(data);
     } catch (error) {
       console.error('Failed to fetch detail data:', error);
-      // You could set an error state here if needed
+      setError(`Failed to load cryptocurrency details: ${error.message}`);
+      
+      // Retry mechanism for rate limiting
+      if (error.message.includes('429') && retryCount < 3) {
+        setTimeout(() => {
+          setRetryCount(prev => prev + 1);
+          fetchDetailData();
+        }, 2000 * (retryCount + 1)); // Exponential backoff
+      }
     }
   };
 
   const fetchHistoricalData = async () => {
     try {
       setLoading(true);
+      console.log(`Fetching history for: ${cryptoId}, days: ${timeRange}`);
+      
       const response = await fetch(`/api/crypto/${cryptoId}/history?days=${timeRange}`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data = await response.json();
+      console.log('Historical data received:', data);
       
       // Transform the data for the chart
       const chartData = data.prices?.map((price, index) => ({
-        time: new Date(price[0]).toLocaleDateString(),
+        time: timeRange === '1' 
+          ? new Date(price[0]).toLocaleTimeString() 
+          : new Date(price[0]).toLocaleDateString(),
         price: price[1],
         volume: data.total_volumes?.[index]?.[1] || 0
       })) || [];
@@ -48,7 +67,15 @@ const CryptoDetailPage = ({ cryptoId, onBack }) => {
     } catch (error) {
       console.error('Failed to fetch historical data:', error);
       setLoading(false);
+      // Don't set error for historical data, just show empty chart
     }
+  };
+
+  const retryFetch = () => {
+    setRetryCount(0);
+    setError(null);
+    fetchDetailData();
+    fetchHistoricalData();
   };
 
   const formatNumber = (num) => {
@@ -60,6 +87,7 @@ const CryptoDetailPage = ({ cryptoId, onBack }) => {
   };
 
   const formatPercentage = (num) => {
+    if (num === null || num === undefined) return <span className="text-gray-400">N/A</span>;
     const isPositive = num >= 0;
     return (
       <span className={`flex items-center space-x-1 ${isPositive ? 'text-crypto-green' : 'text-crypto-red'}`}>
@@ -69,12 +97,44 @@ const CryptoDetailPage = ({ cryptoId, onBack }) => {
     );
   };
 
-  if (loading && !detailData) {
+  // Get crypto name from config as fallback
+  const getCryptoInfo = () => {
+    const cryptoMapping = {
+      bitcoin: { name: 'Bitcoin', symbol: 'BTC', icon: '₿' },
+      ethereum: { name: 'Ethereum', symbol: 'ETH', icon: '♦' },
+      cardano: { name: 'Cardano', symbol: 'ADA', icon: '♠' },
+      polkadot: { name: 'Polkadot', symbol: 'DOT', icon: '●' },
+      chainlink: { name: 'Chainlink', symbol: 'LINK', icon: '🔗' },
+      litecoin: { name: 'Litecoin', symbol: 'LTC', icon: 'Ł' },
+      binancecoin: { name: 'Binance Coin', symbol: 'BNB', icon: '🅑' },
+      solana: { name: 'Solana', symbol: 'SOL', icon: '◎' },
+      dogecoin: { name: 'Dogecoin', symbol: 'DOGE', icon: '🐕' },
+      ripple: { name: 'XRP', symbol: 'XRP', icon: '✕' },
+      'avalanche-2': { name: 'Avalanche', symbol: 'AVAX', icon: '🏔' },
+      polygon: { name: 'Polygon', symbol: 'MATIC', icon: '🔷' },
+      uniswap: { name: 'Uniswap', symbol: 'UNI', icon: '🦄' },
+      cosmos: { name: 'Cosmos', symbol: 'ATOM', icon: '⚛️' },
+      stellar: { name: 'Stellar', symbol: 'XLM', icon: '⭐' },
+      filecoin: { name: 'Filecoin', symbol: 'FIL', icon: '📁' },
+      aave: { name: 'Aave', symbol: 'AAVE', icon: '👻' },
+      algorand: { name: 'Algorand', symbol: 'ALGO', icon: '🔺' },
+      vechain: { name: 'VeChain', symbol: 'VET', icon: '⚡' },
+      'hedera-hashgraph': { name: 'Hedera', symbol: 'HBAR', icon: '🔷' },
+      'theta-token': { name: 'Theta Network', symbol: 'THETA', icon: '🎥' },
+      'the-sandbox': { name: 'The Sandbox', symbol: 'SAND', icon: '🏖️' }
+    };
+    
+    return cryptoMapping[cryptoId] || { name: cryptoId, symbol: cryptoId.toUpperCase(), icon: '🪙' };
+  };
+
+  const cryptoInfo = getCryptoInfo();
+
+  if (loading && !detailData && !error) {
     return (
       <div className="min-h-screen bg-crypto-darker flex items-center justify-center">
         <div className="text-center">
           <div className="w-8 h-8 border-4 border-crypto-blue border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-400">Loading crypto details...</p>
+          <p className="text-gray-400">Loading {cryptoInfo.name} details...</p>
         </div>
       </div>
     );
@@ -93,24 +153,50 @@ const CryptoDetailPage = ({ cryptoId, onBack }) => {
             <span>Back to Dashboard</span>
           </button>
           
-          {detailData && (
-            <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-4">
+            {detailData?.image?.large ? (
               <img 
-                src={detailData.image?.large} 
+                src={detailData.image.large} 
                 alt={detailData.name} 
                 className="w-12 h-12 rounded-full"
+                onError={(e) => e.target.style.display = 'none'}
               />
-              <div>
-                <h1 className="text-3xl font-bold">{detailData.name}</h1>
-                <p className="text-gray-400 text-lg">{detailData.symbol?.toUpperCase()}</p>
+            ) : (
+              <div className="w-12 h-12 bg-crypto-dark rounded-full flex items-center justify-center text-2xl">
+                {cryptoInfo.icon}
               </div>
+            )}
+            <div>
+              <h1 className="text-3xl font-bold">
+                {detailData?.name || cryptoInfo.name}
+              </h1>
+              <p className="text-gray-400 text-lg">
+                {detailData?.symbol?.toUpperCase() || cryptoInfo.symbol}
+              </p>
             </div>
-          )}
+          </div>
         </div>
       </div>
 
       <div className="container mx-auto px-4 py-8">
-        {detailData && (
+        {error && (
+          <div className="card mb-8 border-crypto-red/30 bg-crypto-red/10">
+            <div className="flex items-center space-x-3 mb-4">
+              <AlertCircle className="w-6 h-6 text-crypto-red" />
+              <h3 className="text-lg font-semibold text-crypto-red">Error Loading Data</h3>
+            </div>
+            <p className="text-gray-300 mb-4">{error}</p>
+            <button
+              onClick={retryFetch}
+              className="flex items-center space-x-2 bg-crypto-blue hover:bg-crypto-blue/80 text-white px-4 py-2 rounded-lg transition-colors"
+            >
+              <RefreshCw className="w-4 h-4" />
+              <span>Retry</span>
+            </button>
+          </div>
+        )}
+
+        {detailData ? (
           <>
             {/* Price Overview */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -136,7 +222,7 @@ const CryptoDetailPage = ({ cryptoId, onBack }) => {
                   {formatNumber(detailData.market_data?.market_cap?.usd)}
                 </p>
                 <p className="text-sm text-gray-400 mt-1">
-                  Rank #{detailData.market_cap_rank}
+                  Rank #{detailData.market_cap_rank || 'N/A'}
                 </p>
               </div>
 
@@ -159,10 +245,10 @@ const CryptoDetailPage = ({ cryptoId, onBack }) => {
                   <h3 className="text-lg font-semibold">Circulating Supply</h3>
                 </div>
                 <p className="text-xl font-bold">
-                  {detailData.market_data?.circulating_supply?.toLocaleString()}
+                  {detailData.market_data?.circulating_supply?.toLocaleString() || 'N/A'}
                 </p>
                 <p className="text-sm text-gray-400 mt-1">
-                  {detailData.symbol?.toUpperCase()}
+                  {detailData.symbol?.toUpperCase() || cryptoInfo.symbol}
                 </p>
               </div>
             </div>
@@ -192,7 +278,7 @@ const CryptoDetailPage = ({ cryptoId, onBack }) => {
                 <div className="h-80 flex items-center justify-center">
                   <div className="w-8 h-8 border-4 border-crypto-blue border-t-transparent rounded-full animate-spin"></div>
                 </div>
-              ) : (
+              ) : historicalData.length > 0 ? (
                 <div className="h-80">
                   <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={historicalData}>
@@ -235,6 +321,14 @@ const CryptoDetailPage = ({ cryptoId, onBack }) => {
                     </AreaChart>
                   </ResponsiveContainer>
                 </div>
+              ) : (
+                <div className="h-80 flex items-center justify-center">
+                  <div className="text-center">
+                    <BarChart3 className="w-12 h-12 text-gray-500 mx-auto mb-4" />
+                    <p className="text-gray-400">No historical data available</p>
+                    <p className="text-gray-500 text-sm">Try selecting a different time range</p>
+                  </div>
+                </div>
               )}
             </div>
 
@@ -247,22 +341,26 @@ const CryptoDetailPage = ({ cryptoId, onBack }) => {
                     <span className="text-gray-400">All-Time High</span>
                     <div className="text-right">
                       <span className="font-semibold">
-                        ${detailData.market_data?.ath?.usd?.toLocaleString()}
+                        ${detailData.market_data?.ath?.usd?.toLocaleString() || 'N/A'}
                       </span>
-                      <p className="text-sm text-gray-400">
-                        {new Date(detailData.market_data?.ath_date?.usd).toLocaleDateString()}
-                      </p>
+                      {detailData.market_data?.ath_date?.usd && (
+                        <p className="text-sm text-gray-400">
+                          {new Date(detailData.market_data.ath_date.usd).toLocaleDateString()}
+                        </p>
+                      )}
                     </div>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-400">All-Time Low</span>
                     <div className="text-right">
                       <span className="font-semibold">
-                        ${detailData.market_data?.atl?.usd?.toLocaleString()}
+                        ${detailData.market_data?.atl?.usd?.toLocaleString() || 'N/A'}
                       </span>
-                      <p className="text-sm text-gray-400">
-                        {new Date(detailData.market_data?.atl_date?.usd).toLocaleDateString()}
-                      </p>
+                      {detailData.market_data?.atl_date?.usd && (
+                        <p className="text-sm text-gray-400">
+                          {new Date(detailData.market_data.atl_date.usd).toLocaleDateString()}
+                        </p>
+                      )}
                     </div>
                   </div>
                   <div className="flex justify-between">
@@ -307,6 +405,23 @@ const CryptoDetailPage = ({ cryptoId, onBack }) => {
               </div>
             </div>
           </>
+        ) : !error && (
+          <div className="card text-center">
+            <div className="py-12">
+              <AlertCircle className="w-16 h-16 text-gray-500 mx-auto mb-4" />
+              <h3 className="text-xl font-bold mb-2">Data Not Available</h3>
+              <p className="text-gray-400 mb-4">
+                Unable to load detailed information for {cryptoInfo.name}
+              </p>
+              <button
+                onClick={retryFetch}
+                className="flex items-center space-x-2 bg-crypto-blue hover:bg-crypto-blue/80 text-white px-4 py-2 rounded-lg transition-colors mx-auto"
+              >
+                <RefreshCw className="w-4 h-4" />
+                <span>Try Again</span>
+              </button>
+            </div>
+          </div>
         )}
       </div>
     </div>
