@@ -1,7 +1,7 @@
 import React from 'react';
 import { RefreshCw, Wifi, WifiOff, Clock } from 'lucide-react';
 
-const Header = ({ isConnected, lastUpdate, onRefresh }) => {
+const Header = ({ isConnected, lastUpdate, onRefresh, loading = false }) => {
   const formatTime = (date) => {
     if (!date) return 'Never';
     return date.toLocaleTimeString();
@@ -12,8 +12,8 @@ const Header = ({ isConnected, lastUpdate, onRefresh }) => {
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="text-2xl font-bold bg-gradient-to-r from-crypto-blue to-crypto-green bg-clip-text text-transparent">
-              Crypto Tracker Pro
+            <div className="text-2xl font-bold bg-gradient-to-r from-crypto-green to-crypto-red bg-clip-text text-transparent">
+              Crypto Tracker - Koi's Version v1.0.0
             </div>
             <div className="hidden sm:block text-gray-400 text-sm">
               Real-time cryptocurrency tracking
@@ -45,10 +45,11 @@ const Header = ({ isConnected, lastUpdate, onRefresh }) => {
             {/* Refresh Button */}
             <button 
               onClick={onRefresh}
-              className="btn-primary flex items-center space-x-2"
+              disabled={loading}
+              className={`btn-primary flex items-center space-x-2 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
             >
-              <RefreshCw className="w-4 h-4" />
-              <span className="hidden sm:inline">Refresh</span>
+              <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+              <span className="hidden sm:inline">{loading ? 'Loading...' : 'Refresh'}</span>
             </button>
           </div>
         </div>

@@ -20,7 +20,15 @@ const CryptoDetailPage = ({ cryptoId, onBack }) => {
       setError(null);
       console.log(`Fetching details for: ${cryptoId}`);
       
-      const response = await fetch(`/api/crypto/${cryptoId}/details`);
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 8000); // 8 second timeout
+      
+      const response = await fetch(`/api/crypto/${cryptoId}/details`, {
+        signal: controller.signal
+      });
+      
+      clearTimeout(timeoutId);
+      
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -46,7 +54,15 @@ const CryptoDetailPage = ({ cryptoId, onBack }) => {
       setLoading(true);
       console.log(`Fetching history for: ${cryptoId}, days: ${timeRange}`);
       
-      const response = await fetch(`/api/crypto/${cryptoId}/history?days=${timeRange}`);
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 8000); // 8 second timeout
+      
+      const response = await fetch(`/api/crypto/${cryptoId}/history?days=${timeRange}`, {
+        signal: controller.signal
+      });
+      
+      clearTimeout(timeoutId);
+      
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }

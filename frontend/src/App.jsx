@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import LoadingSpinner from './components/LoadingSpinner';
 import { io } from 'socket.io-client';
 import CryptoCard from './components/CryptoCard';
 import InteractivePriceChart from './components/InteractivePriceChart';
@@ -43,60 +44,134 @@ function App() {
     'the-sandbox': { name: 'The Sandbox', symbol: 'SAND', icon: '🏖️', color: '#00D4FF', cardColor: 'sky' }
   };
 
+  const [socket, setSocket] = useState(null);
+
   useEffect(() => {
-    // Initialize socket connection
-    const socket = io('http://localhost:3000');
+    // Initialize socket connection with better error handling
+    const socketInstance = io('http://localhost:3000', {
+      timeout: 10000,
+      reconnection: true,
+      reconnectionDelay: 2000,
+      reconnectionAttempts: 5
+    });
 
-    socket.on('connect', () => {
+    setSocket(socketInstance);
+
+    socketInstance.on('connect', () => {
       setIsConnected(true);
-      console.log('Connected to server');
+      console.log('✅ Connected to server');
     });
 
-    socket.on('disconnect', () => {
+    socketInstance.on('disconnect', () => {
       setIsConnected(false);
-      console.log('Disconnected from server');
+      console.log('❌ Disconnected from server');
     });
 
-    socket.on('cryptoData', (data) => {
+    socketInstance.on('cryptoData', (data) => {
+      if (data && Object.keys(data).length > 0) {
+        setCryptoData(data);
+        setLastUpdate(new Date());
+        setLoading(false);
+        
+        // Add to price history for charts
+        const timestamp = new Date().toLocaleTimeString();
+        setPriceHistory(prev => {
+          const newHistory = [...prev, {
+            time: timestamp,
+            ...Object.keys(cryptoConfig).reduce((acc, key) => {
+              const apiKey = key === 'avalanche-2' ? 'avalanche-2' : key;
+              acc[key] = data[apiKey]?.usd || 0;
+              return acc;
+            }, {})
+          }];
+          // Keep only last 20 data points
+          return newHistory.slice(-20);
+        });
+      } else {
+        console.log('⚠️ Received empty crypto data');
+      }
+    });
+
+    // Connection error handling
+    socketInstance.on('connect_error', (error) => {
+      console.error('❌ Connection error:', error);
+      setIsConnected(false);
+      // Fallback to REST API if WebSocket fails
+      setTimeout(() => {
+        fetchCryptoData();
+      }, 2000);
+    });
+
+    // Fetch initial data immediately (don't wait for WebSocket)
+    fetchCryptoData();
+
+    // Set up a fallback polling mechanism
+    const fallbackInterval = setInterval(() => {
+      if (!isConnected) {
+        console.log('🔄 WebSocket disconnected, using fallback fetch');
+        fetchCryptoData();
+      }
+    }, 30000);
+
+    return () => {
+      socketInstance.disconnect();
+      clearInterval(fallbackInterval);
+    };
+  }, []);
+
+  // Manual refresh function
+  const handleManualRefresh = () => {
+    if (socket && isConnected) {
+      socket.emit('requestRefresh');
+    } else {
+      fetchCryptoData();
+    }
+  };
+
+  const fetchCryptoData = async (retryCount = 0) => {
+    try {
+      setLoading(true);
+      console.log('🔄 Fetching crypto data...');
+      
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 8000); // 8 second timeout
+      
+      const response = await fetch('/api/crypto', {
+        signal: controller.signal,
+        headers: {
+          'Cache-Control': 'no-cache'
+        }
+      });
+      
+      clearTimeout(timeoutId);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      console.log('✅ Successfully fetched crypto data');
+      
       setCryptoData(data);
       setLastUpdate(new Date());
       setLoading(false);
       
-      // Add to price history for charts
-      const timestamp = new Date().toLocaleTimeString();
-      setPriceHistory(prev => {
-        const newHistory = [...prev, {
-          time: timestamp,
-          ...Object.keys(cryptoConfig).reduce((acc, key) => {
-            const apiKey = key === 'avalanche-2' ? 'avalanche-2' : key;
-            acc[key] = data[apiKey]?.usd || 0;
-            return acc;
-          }, {})
-        }];
-        // Keep only last 20 data points
-        return newHistory.slice(-20);
-      });
-    });
-
-    // Fetch initial data
-    fetchCryptoData();
-
-    return () => {
-      socket.disconnect();
-    };
-  }, []);
-
-  const fetchCryptoData = async () => {
-    try {
-      setLoading(true);
-      const response = await fetch('/api/crypto');
-      const data = await response.json();
-      setCryptoData(data);
-      setLastUpdate(new Date());
-      setLoading(false);
+      return data;
     } catch (error) {
-      console.error('Failed to fetch crypto data:', error);
-      setLoading(false);
+      console.error('❌ Failed to fetch crypto data:', error);
+      
+      // Retry logic
+      if (retryCount < 2 && error.name !== 'AbortError') {
+        const delay = (retryCount + 1) * 2000; // 2s, 4s delays
+        console.log(`🔄 Retrying in ${delay}ms... (attempt ${retryCount + 1}/2)`);
+        setTimeout(() => {
+          fetchCryptoData(retryCount + 1);
+        }, delay);
+      } else {
+        setLoading(false);
+        // Show user-friendly error message
+        console.error('Failed to load cryptocurrency data. Please check your connection.');
+      }
     }
   };
 
@@ -153,26 +228,26 @@ function App() {
     );
   }
 
-  if (loading) {
+  if (loading && !cryptoData) {
     return (
       <div className="min-h-screen bg-crypto-darker flex items-center justify-center">
-        <div className="text-center">
-          <RefreshCw className="w-8 h-8 animate-spin text-crypto-blue mx-auto mb-4" />
-          <p className="text-gray-400">Loading crypto data...</p>
-        </div>
+        <LoadingSpinner 
+          size="xl" 
+          message="Loading crypto data..." 
+          className="py-20"
+        />
       </div>
     );
   }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-crypto-darker via-crypto-dark to-crypto-darker">
-      <Header 
-        isConnected={isConnected} 
-        lastUpdate={lastUpdate}
-        onRefresh={fetchCryptoData}
-      />
-      
-      <div className="container mx-auto px-4 py-8">
+        <Header 
+          isConnected={isConnected} 
+          lastUpdate={lastUpdate} 
+          onRefresh={handleManualRefresh}
+          loading={loading}
+        />      <div className="container mx-auto px-4 py-8">
         {/* Market Overview */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <div className="card">

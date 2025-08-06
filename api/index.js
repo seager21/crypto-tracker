@@ -21,9 +21,12 @@ app.use(express.json());
 // Serve static files from frontend build
 app.use(express.static("../frontend/dist"));
 
-// Function to fetch crypto data
-const fetchCryptoData = async () => {
+// Function to fetch crypto data with timeout and retry
+const fetchCryptoData = async (retryCount = 0) => {
     try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+        
         const response = await axios.get("https://api.coingecko.com/api/v3/simple/price", {
             params: {
                 ids: "bitcoin,ethereum,cardano,polkadot,chainlink,litecoin,binancecoin,solana,dogecoin,ripple,avalanche-2,polygon,uniswap,cosmos,stellar,filecoin,aave,algorand,vechain,hedera-hashgraph,theta-token,the-sandbox",
@@ -32,11 +35,25 @@ const fetchCryptoData = async () => {
                 include_24hr_change: true,
                 include_24hr_vol: true,
                 include_last_updated_at: true
-            }
+            },
+            timeout: 10000, // 10 second timeout
+            signal: controller.signal
         });
+        
+        clearTimeout(timeoutId);
+        console.log("✅ Successfully fetched crypto data");
         return response.data;
     } catch (error) {
-        console.error("Failed to fetch crypto data", error);
+        console.error("❌ Failed to fetch crypto data:", error.message);
+        
+        // Retry logic for rate limiting or network issues
+        if (retryCount < 3 && (error.code === 'ECONNABORTED' || error.response?.status === 429)) {
+            const delay = Math.pow(2, retryCount) * 1000; // Exponential backoff
+            console.log(`🔄 Retrying in ${delay}ms... (attempt ${retryCount + 1}/3)`);
+            await new Promise(resolve => setTimeout(resolve, delay));
+            return fetchCryptoData(retryCount + 1);
+        }
+        
         return null;
     }
 };
@@ -131,32 +148,41 @@ app.get("/crypto/:id/history", async (req, res) => {
     }
 });
 
-// WebSocket connection
+// WebSocket connection with improved error handling
 io.on("connection", (socket) => {
-    console.log("Client connected");
+    console.log("📡 Client connected");
     
     const sendCryptoData = async () => {
         try {
             const data = await fetchCryptoData();
             if (data) {
                 socket.emit("cryptoData", data);
+                console.log("📊 Crypto data sent to client");
+            } else {
+                console.log("⚠️ No crypto data available, sending empty object");
+                socket.emit("cryptoData", {});
             }
         } catch (error) {
-            console.log("Error sending crypto data:", error.message);
-            // Send cached data or empty array if no data available
-            socket.emit("cryptoData", []);
+            console.log("❌ Error sending crypto data:", error.message);
+            socket.emit("cryptoData", {});
         }
     };
 
     // Send data immediately on connection
     sendCryptoData();
     
-    // Send data every 60 seconds to avoid rate limiting
-    const interval = setInterval(sendCryptoData, 60000);
+    // Send data every 30 seconds (faster than before)
+    const interval = setInterval(sendCryptoData, 30000);
     
     socket.on("disconnect", () => {
-        console.log("Client disconnected");
+        console.log("📡 Client disconnected");
         clearInterval(interval);
+    });
+    
+    // Handle manual refresh requests from client
+    socket.on("requestRefresh", () => {
+        console.log("🔄 Manual refresh requested");
+        sendCryptoData();
     });
 });
 
