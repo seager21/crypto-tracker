@@ -5,7 +5,7 @@ const testNewsAPI = () => {
   const options = {
     hostname: 'localhost',
     port: 3000,
-    path: '/api/news?limit=3',
+    path: '/news?limit=3',
     method: 'GET'
   };
 
@@ -18,7 +18,11 @@ const testNewsAPI = () => {
 
     res.on('end', () => {
       console.log('News API Response:');
-      console.log(JSON.stringify(JSON.parse(data), null, 2));
+      try {
+        console.log(JSON.stringify(JSON.parse(data), null, 2));
+      } catch (e) {
+        console.log('Raw response:', data);
+      }
     });
   });
 
