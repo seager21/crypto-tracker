@@ -393,6 +393,10 @@ function App() {
             />
           </div>
         )}
+
+        {activeView === 'news' && (
+          <CryptoNews />
+        )}
       </div>
     </div>
   );
