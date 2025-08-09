@@ -5,7 +5,7 @@ const testNewsAPI = () => {
   const options = {
     hostname: 'localhost',
     port: 3000,
-    path: '/news?limit=3',
+    path: '/news?limit=6&source=fallback',
     method: 'GET'
   };
 
@@ -19,7 +19,14 @@ const testNewsAPI = () => {
     res.on('end', () => {
       console.log('News API Response:');
       try {
-        console.log(JSON.stringify(JSON.parse(data), null, 2));
+        const parsed = JSON.parse(data);
+        console.log(`Found ${parsed.data.length} articles:`);
+        parsed.data.forEach((article, index) => {
+          console.log(`${index + 1}. ${article.title}`);
+          console.log(`   Source: ${article.source}`);
+          console.log(`   Tags: ${article.tags.join(', ')}`);
+          console.log('');
+        });
       } catch (e) {
         console.log('Raw response:', data);
       }
@@ -33,5 +40,5 @@ const testNewsAPI = () => {
   req.end();
 };
 
-console.log('Testing News API...');
+console.log('Testing News API with fallback data...');
 testNewsAPI();
