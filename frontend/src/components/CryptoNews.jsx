@@ -23,7 +23,7 @@ const CryptoNews = () => {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
 
-      const response = await fetch('/api/news?limit=12', {
+      const response = await fetch('/news?limit=12', {
         signal: controller.signal
       });
 

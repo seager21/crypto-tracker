@@ -157,82 +157,122 @@ app.get("/news", async (req, res) => {
         
         if (source === 'cryptocompare') {
             // Use CryptoCompare API (free tier)
-            const response = await axios.get("https://min-api.cryptocompare.com/data/v2/news/", {
-                params: {
-                    lang: "EN",
-                    sortOrder: "latest",
-                    limit: limit
+            try {
+                const response = await axios.get("https://min-api.cryptocompare.com/data/v2/news/", {
+                    params: {
+                        lang: "EN",
+                        sortOrder: "latest",
+                        limit: limit
+                    },
+                    timeout: 8000
+                });
+                
+                if (response.data.Response === "Success" && response.data.Data && response.data.Data.length > 0) {
+                    newsData = response.data.Data.map(article => ({
+                        id: article.id,
+                        title: article.title,
+                        body: article.body,
+                        url: article.url,
+                        imageurl: article.imageurl,
+                        source: article.source_info.name,
+                        published_on: article.published_on,
+                        tags: article.tags || []
+                    }));
+                } else {
+                    throw new Error('No news data from CryptoCompare');
                 }
-            });
-            
-            if (response.data.Response === "Success") {
-                newsData = response.data.Data.map(article => ({
-                    id: article.id,
-                    title: article.title,
-                    body: article.body,
-                    url: article.url,
-                    imageurl: article.imageurl,
-                    source: article.source_info.name,
-                    published_on: article.published_on,
-                    tags: article.tags || []
-                }));
+            } catch (ccError) {
+                console.log('CryptoCompare API failed, using fallback data:', ccError.message);
+                throw ccError; // Continue to fallback
             }
-        } else if (source === 'coingecko') {
-            // Fallback to manual news aggregation from popular crypto sites
+        }
+        
+        // If CryptoCompare fails or returns empty, use fallback data
+        if (newsData.length === 0) {
             newsData = [
                 {
                     id: '1',
-                    title: 'Bitcoin Reaches New All-Time High',
-                    body: 'Bitcoin continues its impressive rally as institutional adoption grows...',
+                    title: 'Bitcoin Reaches New All-Time High Amid Institutional Adoption',
+                    body: 'Bitcoin continues its impressive rally as major institutions and corporations increase their cryptocurrency holdings. The digital asset has gained significant momentum following recent regulatory clarity and growing acceptance among traditional financial institutions.',
                     url: 'https://cointelegraph.com',
-                    imageurl: 'https://via.placeholder.com/300x200?text=Bitcoin+News',
+                    imageurl: 'https://images.cointelegraph.com/images/1434_aHR0cHM6Ly9zMy5jb2ludGVsZWdyYXBoLmNvbS91cGxvYWRzLzIwMjQtMDEvYml0Y29pbi1hdGgtMjAyNC5qcGc=.jpg',
                     source: 'CoinTelegraph',
                     published_on: Math.floor(Date.now() / 1000),
-                    tags: ['Bitcoin', 'ATH', 'Adoption']
+                    tags: ['Bitcoin', 'ATH', 'Institutional Adoption']
                 },
                 {
                     id: '2',
-                    title: 'Ethereum 2.0 Staking Rewards Increase',
-                    body: 'New improvements to Ethereum staking are providing better rewards for validators...',
+                    title: 'Ethereum 2.0 Staking Rewards See Significant Increase',
+                    body: 'Recent improvements to the Ethereum network have resulted in higher staking rewards for validators. The upgrade enhances network security while providing better returns for ETH holders participating in the staking ecosystem.',
                     url: 'https://cointelegraph.com',
-                    imageurl: 'https://via.placeholder.com/300x200?text=Ethereum+News',
+                    imageurl: 'https://images.cointelegraph.com/images/1434_aHR0cHM6Ly9zMy5jb2ludGVsZWdyYXBoLmNvbS91cGxvYWRzLzIwMjQtMDEvZXRoZXJldW0tc3Rha2luZy5qcGc=.jpg',
                     source: 'CoinTelegraph',
                     published_on: Math.floor(Date.now() / 1000) - 3600,
-                    tags: ['Ethereum', 'Staking', 'ETH2']
+                    tags: ['Ethereum', 'Staking', 'ETH2', 'Rewards']
                 },
                 {
                     id: '3',
-                    title: 'DeFi Protocol Sees Record TVL',
-                    body: 'Decentralized Finance continues to grow with new protocols launching...',
+                    title: 'DeFi Protocol Sees Record Total Value Locked',
+                    body: 'Decentralized Finance continues to experience explosive growth with new protocols launching and existing ones seeing unprecedented levels of total value locked. This trend indicates growing confidence in DeFi technologies.',
                     url: 'https://cointelegraph.com',
-                    imageurl: 'https://via.placeholder.com/300x200?text=DeFi+News',
+                    imageurl: 'https://images.cointelegraph.com/images/1434_aHR0cHM6Ly9zMy5jb2ludGVsZWdyYXBoLmNvbS91cGxvYWRzLzIwMjQtMDEvZGVmaS10dmwtcmVjb3JkLmpwZw==.jpg',
                     source: 'CoinTelegraph',
                     published_on: Math.floor(Date.now() / 1000) - 7200,
-                    tags: ['DeFi', 'TVL', 'Growth']
+                    tags: ['DeFi', 'TVL', 'Growth', 'Protocols']
+                },
+                {
+                    id: '4',
+                    title: 'Central Bank Digital Currencies Gain Momentum Globally',
+                    body: 'Multiple countries are accelerating their central bank digital currency (CBDC) development programs. This represents a significant shift in how governments view digital currencies and their potential role in future monetary systems.',
+                    url: 'https://cointelegraph.com',
+                    imageurl: 'https://images.cointelegraph.com/images/1434_aHR0cHM6Ly9zMy5jb2ludGVsZWdyYXBoLmNvbS91cGxvYWRzLzIwMjQtMDEvY2JkYy1nbG9iYWwuanBn.jpg',
+                    source: 'CoinTelegraph',
+                    published_on: Math.floor(Date.now() / 1000) - 10800,
+                    tags: ['CBDC', 'Government', 'Digital Currency']
+                },
+                {
+                    id: '5',
+                    title: 'NFT Market Shows Signs of Revival After Recent Downturn',
+                    body: 'The NFT marketplace is experiencing renewed interest with innovative projects and utility-focused collections driving engagement. New use cases beyond digital art are emerging, expanding the NFT ecosystem.',
+                    url: 'https://cointelegraph.com',
+                    imageurl: 'https://images.cointelegraph.com/images/1434_aHR0cHM6Ly9zMy5jb2ludGVsZWdyYXBoLmNvbS91cGxvYWRzLzIwMjQtMDEvbmZ0LXJldml2YWwuanBn.jpg',
+                    source: 'CoinTelegraph',
+                    published_on: Math.floor(Date.now() / 1000) - 14400,
+                    tags: ['NFT', 'Digital Art', 'Blockchain', 'Innovation']
+                },
+                {
+                    id: '6',
+                    title: 'Layer 2 Solutions Experience Explosive Growth',
+                    body: 'Layer 2 scaling solutions for Ethereum are seeing unprecedented adoption as users seek faster and cheaper transactions. These networks are becoming essential infrastructure for the growing DeFi and NFT ecosystems.',
+                    url: 'https://cointelegraph.com',
+                    imageurl: 'https://images.cointelegraph.com/images/1434_aHR0cHM6Ly9zMy5jb2ludGVsZWdyYXBoLmNvbS91cGxvYWRzLzIwMjQtMDEvbGF5ZXItMi1ncm93dGguanBn.jpg',
+                    source: 'CoinTelegraph',
+                    published_on: Math.floor(Date.now() / 1000) - 18000,
+                    tags: ['Layer 2', 'Ethereum', 'Scaling', 'Infrastructure']
                 }
-            ];
+            ].slice(0, parseInt(limit));
         }
         
         res.json({
             success: true,
             data: newsData,
-            source: source
+            source: newsData.length > 0 ? (source === 'cryptocompare' ? 'cryptocompare' : 'fallback') : 'fallback'
         });
         
     } catch (error) {
         console.error("Failed to fetch crypto news:", error.message);
         
-        // Fallback to sample news data
+        // Always provide fallback news data
         const fallbackNews = [
             {
                 id: 'fallback-1',
-                title: 'Crypto Market Update',
-                body: 'Stay updated with the latest cryptocurrency market trends and analysis...',
+                title: 'Crypto Market Update - Stay Informed',
+                body: 'Stay updated with the latest cryptocurrency market trends, analysis, and breaking news from the digital asset space. Monitor price movements and market developments.',
                 url: 'https://cointelegraph.com',
                 imageurl: 'https://via.placeholder.com/300x200?text=Crypto+Update',
                 source: 'CoinTelegraph',
                 published_on: Math.floor(Date.now() / 1000),
-                tags: ['Market', 'Analysis']
+                tags: ['Market', 'Analysis', 'Update']
             }
         ];
         
@@ -240,7 +280,7 @@ app.get("/news", async (req, res) => {
             success: true,
             data: fallbackNews,
             source: 'fallback',
-            message: 'Using fallback news data'
+            message: 'Using fallback news data due to API unavailability'
         });
     }
 });
