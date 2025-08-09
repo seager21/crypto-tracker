@@ -5,8 +5,9 @@ import CryptoCard from './components/CryptoCard';
 import InteractivePriceChart from './components/InteractivePriceChart';
 import CryptoDetailPage from './components/CryptoDetailPage';
 import CryptoPortfolioOverview from './components/CryptoPortfolioOverview';
+import CryptoNews from './components/CryptoNews';
 import Header from './components/Header';
-import { TrendingUp, TrendingDown, Activity, RefreshCw, BarChart, Grid, List } from 'lucide-react';
+import { TrendingUp, TrendingDown, Activity, RefreshCw, BarChart, Grid, List, Newspaper } from 'lucide-react';
 
 function App() {
   const [cryptoData, setCryptoData] = useState(null);
@@ -335,6 +336,17 @@ function App() {
             >
               <List className="w-4 h-4" />
               <span>Portfolio</span>
+            </button>
+            <button
+              onClick={() => setActiveView('news')}
+              className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors ${
+                activeView === 'news' 
+                  ? 'bg-crypto-blue text-white' 
+                  : 'text-gray-400 hover:text-white'
+              }`}
+            >
+              <Newspaper className="w-4 h-4" />
+              <span>News</span>
             </button>
           </div>
         </div>
