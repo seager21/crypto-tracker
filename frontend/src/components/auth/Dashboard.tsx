@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '@/context/AuthContext';
 import UserProfile from './UserProfile';
 import Watchlist from '../Watchlist';
 import CryptoPortfolioOverview from '../CryptoPortfolioOverview';

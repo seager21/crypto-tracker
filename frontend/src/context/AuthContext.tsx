@@ -12,8 +12,8 @@ import {
   AuthError
 } from 'firebase/auth';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
-import { auth, db } from '../firebase/firebase';
-import { User, AuthState, UserData } from '../types/auth';
+import { auth, db } from '@/firebase/firebase';
+import { User, AuthState, UserData } from '@/types/auth';
 
 // Default user data structure
 const DEFAULT_USER_DATA: UserData = {
