@@ -10,7 +10,14 @@
     "dev-frontend": "cd frontend && npm run dev",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": ["crypto", "tracker", "bitcoin", "ethereum", "websocket", "real-time"],
+  "keywords": [
+    "crypto",
+    "tracker",
+    "bitcoin",
+    "ethereum",
+    "websocket",
+    "real-time"
+  ],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
@@ -20,5 +27,11 @@
     "cors": "^2.8.5",
     "express": "^4.21.2",
     "socket.io": "^4.7.4"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@types/node": "^24.3.1",
+    "typescript": "^5.9.2"
   }
 }

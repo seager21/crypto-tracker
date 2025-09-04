@@ -29,21 +29,33 @@ A **modern, real-time cryptocurrency tracking application** built with **Node.js
 ### 🛠 **Developer Experience**
 - **Vite** for fast development and building
 - **Hot reload** for instant development feedback
-- **Modern ES6+ JavaScript**
-- **Component-based architecture**
-- **Professional project structure**
+- **TypeScript** for improved code quality and developer experience
+- **ESLint & Prettier** for consistent code style
+- **Modern React patterns** with TypeScript interfaces
+- **Component-based architecture** with reusable components
+- **Professional project structure** with types and contexts
 
 ## Project Structure
-```
+
+```plaintext
 crypto-tracker/
 │── api/
 │   └── index.js       # Express.js API with WebSocket support
+│── frontend/
+│   ├── src/
+│   │   ├── components/   # React components
+│   │   ├── context/      # React contexts for state management
+│   │   └── types/        # TypeScript interfaces and types
+│   ├── tsconfig.json     # TypeScript configuration
+│   └── package.json      # Frontend dependencies
 │── public/
-│   ├── index.html     # Frontend page
-│   ├── styles.css     # Custom CSS (optional)
-│── vercel.json        # Vercel configuration
-│── package.json       # Project dependencies
-│── .gitignore         # Ignore node_modules, etc.
+│   └── index.html        # Static HTML
+│── vercel.json           # Vercel configuration
+│── package.json          # Project dependencies
+│── tsconfig.json         # Backend TypeScript configuration
+│── .gitignore            # Ignore node_modules, etc.
+│── .eslintrc.json        # ESLint configuration
+│── .prettierrc           # Prettier configuration
 ```
 
 ## Installation

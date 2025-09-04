@@ -6,6 +6,14 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
+# Project specific files
+upgrade-recommendations.txt
+typescript-migration-summary.md
+
+# TypeScript
+*.tsbuildinfo
+*.js.map
+
 # Runtime data
 pids
 *.pid
