@@ -4,6 +4,13 @@ const axios = require("axios");
 const cors = require("cors");
 const http = require("http");
 const { Server } = require("socket.io");
+const dotenv = require("dotenv");
+const authRoutes = require("./routes/auth");
+const userRoutes = require("./routes/users");
+const authenticate = require("./middleware/auth");
+
+// Load environment variables
+dotenv.config();
 
 const app = express();
 const server = http.createServer(app);
@@ -20,6 +27,10 @@ app.use(express.json());
 
 // Serve static files from frontend build
 app.use(express.static("../frontend/dist"));
+
+// Routes
+app.use("/api/auth", authRoutes);
+app.use("/api/users", userRoutes);
 
 // Function to fetch crypto data with timeout and retry
 const fetchCryptoData = async (retryCount = 0) => {
