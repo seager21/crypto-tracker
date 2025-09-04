@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { io, Socket } from 'socket.io-client';
-import { TrendingUp, TrendingDown, Activity, RefreshCw, BarChart, Grid, List, Newspaper } from 'lucide-react';
+import { Activity, BarChart, Grid, Newspaper } from 'lucide-react';
 
 // Components
 import LoadingSpinner from './components/LoadingSpinner';
@@ -13,7 +12,7 @@ import Header from './components/Header';
 import ErrorBoundary from './components/ErrorBoundary';
 
 // Types
-import { CryptoData, CryptoConfig, PriceHistoryPoint } from './types';
+import { CryptoConfig, PriceHistoryPoint } from './types';
 
 // Context
 import { useCrypto, CryptoProvider } from './context/CryptoContext';
@@ -44,29 +43,161 @@ const AppContent: React.FC = () => {
 
   // Configuration for all cryptocurrencies
   const cryptoConfig: Record<string, CryptoConfig> = {
-    bitcoin: { name: 'Bitcoin', symbol: 'BTC', icon: '₿', color: '#F59E0B', cardColor: 'orange' },
-    ethereum: { name: 'Ethereum', symbol: 'ETH', icon: '♦', color: '#3B82F6', cardColor: 'blue' },
-    cardano: { name: 'Cardano', symbol: 'ADA', icon: '♠', color: '#10B981', cardColor: 'green' },
-    polkadot: { name: 'Polkadot', symbol: 'DOT', icon: '●', color: '#8B5CF6', cardColor: 'purple' },
-    chainlink: { name: 'Chainlink', symbol: 'LINK', icon: '🔗', color: '#EF4444', cardColor: 'red' },
-    litecoin: { name: 'Litecoin', symbol: 'LTC', icon: 'Ł', color: '#A7A9AC', cardColor: 'slate' },
-    binancecoin: { name: 'Binance Coin', symbol: 'BNB', icon: '🅑', color: '#F3BA2F', cardColor: 'amber' },
-    solana: { name: 'Solana', symbol: 'SOL', icon: '◎', color: '#9945FF', cardColor: 'violet' },
-    dogecoin: { name: 'Dogecoin', symbol: 'DOGE', icon: '🐕', color: '#C2A633', cardColor: 'yellow' },
-    ripple: { name: 'XRP', symbol: 'XRP', icon: '✕', color: '#23292F', cardColor: 'gray' },
-    'avalanche-2': { name: 'Avalanche', symbol: 'AVAX', icon: '🏔', color: '#E84142', cardColor: 'red' },
-    polygon: { name: 'Polygon', symbol: 'MATIC', icon: '🔷', color: '#8247E5', cardColor: 'purple' },
+    bitcoin: { 
+      name: 'Bitcoin', 
+      symbol: 'BTC', 
+      icon: '₿', 
+      color: '#F59E0B', 
+      cardColor: 'orange',
+    },
+    ethereum: { 
+      name: 'Ethereum', 
+      symbol: 'ETH', 
+      icon: '♦', 
+      color: '#3B82F6', 
+      cardColor: 'blue',
+    },
+    cardano: { 
+      name: 'Cardano', 
+      symbol: 'ADA', 
+      icon: '♠', 
+      color: '#10B981', 
+      cardColor: 'green',
+    },
+    polkadot: { 
+      name: 'Polkadot', 
+      symbol: 'DOT', 
+      icon: '●', 
+      color: '#8B5CF6', 
+      cardColor: 'purple',
+    },
+    chainlink: { 
+      name: 'Chainlink', 
+      symbol: 'LINK', 
+      icon: '🔗', 
+      color: '#EF4444', 
+      cardColor: 'red',
+    },
+    litecoin: { 
+      name: 'Litecoin', 
+      symbol: 'LTC', 
+      icon: 'Ł', 
+      color: '#A7A9AC', 
+      cardColor: 'slate',
+    },
+    binancecoin: { 
+      name: 'Binance Coin', 
+      symbol: 'BNB', 
+      icon: '🅑', 
+      color: '#F3BA2F', 
+      cardColor: 'amber',
+    },
+    solana: { 
+      name: 'Solana', 
+      symbol: 'SOL', 
+      icon: '◎', 
+      color: '#9945FF', 
+      cardColor: 'violet',
+    },
+    dogecoin: { 
+      name: 'Dogecoin', 
+      symbol: 'DOGE', 
+      icon: '🐕', 
+      color: '#C2A633', 
+      cardColor: 'yellow',
+    },
+    ripple: { 
+      name: 'XRP', 
+      symbol: 'XRP', 
+      icon: '✕', 
+      color: '#23292F', 
+      cardColor: 'gray',
+    },
+    'avalanche-2': { 
+      name: 'Avalanche', 
+      symbol: 'AVAX', 
+      icon: '🏔', 
+      color: '#E84142', 
+      cardColor: 'red',
+    },
+    polygon: { 
+      name: 'Polygon', 
+      symbol: 'MATIC', 
+      icon: '🔷', 
+      color: '#8247E5', 
+      cardColor: 'purple',
+    },
     // Additional cryptocurrencies
-    'uniswap': { name: 'Uniswap', symbol: 'UNI', icon: '🦄', color: '#FF007A', cardColor: 'pink' },
-    'cosmos': { name: 'Cosmos', symbol: 'ATOM', icon: '⚛️', color: '#2E3148', cardColor: 'slate' },
-    'stellar': { name: 'Stellar', symbol: 'XLM', icon: '⭐', color: '#7D00FF', cardColor: 'indigo' },
-    'filecoin': { name: 'Filecoin', symbol: 'FIL', icon: '📁', color: '#0090FF', cardColor: 'blue' },
-    'aave': { name: 'Aave', symbol: 'AAVE', icon: '👻', color: '#B6509E', cardColor: 'pink' },
-    'algorand': { name: 'Algorand', symbol: 'ALGO', icon: '🔺', color: '#000000', cardColor: 'gray' },
-    'vechain': { name: 'VeChain', symbol: 'VET', icon: '⚡', color: '#15BDFF', cardColor: 'sky' },
-    'hedera-hashgraph': { name: 'Hedera', symbol: 'HBAR', icon: '🔷', color: '#000000', cardColor: 'gray' },
-    'theta-token': { name: 'Theta Network', symbol: 'THETA', icon: '🎥', color: '#2AB8E6', cardColor: 'cyan' },
-    'the-sandbox': { name: 'The Sandbox', symbol: 'SAND', icon: '🏖️', color: '#00D4FF', cardColor: 'sky' }
+    uniswap: { 
+      name: 'Uniswap', 
+      symbol: 'UNI', 
+      icon: '🦄', 
+      color: '#FF007A', 
+      cardColor: 'pink',
+    },
+    cosmos: { 
+      name: 'Cosmos', 
+      symbol: 'ATOM', 
+      icon: '⚛️', 
+      color: '#2E3148', 
+      cardColor: 'slate',
+    },
+    stellar: { 
+      name: 'Stellar', 
+      symbol: 'XLM', 
+      icon: '⭐', 
+      color: '#7D00FF', 
+      cardColor: 'indigo',
+    },
+    filecoin: { 
+      name: 'Filecoin', 
+      symbol: 'FIL', 
+      icon: '📁', 
+      color: '#0090FF', 
+      cardColor: 'blue',
+    },
+    aave: { 
+      name: 'Aave', 
+      symbol: 'AAVE', 
+      icon: '👻', 
+      color: '#B6509E', 
+      cardColor: 'pink',
+    },
+    algorand: { 
+      name: 'Algorand', 
+      symbol: 'ALGO', 
+      icon: '🔺', 
+      color: '#000000', 
+      cardColor: 'gray',
+    },
+    vechain: { 
+      name: 'VeChain', 
+      symbol: 'VET', 
+      icon: '⚡', 
+      color: '#15BDFF', 
+      cardColor: 'sky',
+    },
+    'hedera-hashgraph': { 
+      name: 'Hedera', 
+      symbol: 'HBAR', 
+      icon: '🔷', 
+      color: '#000000', 
+      cardColor: 'gray',
+    },
+    'theta-token': { 
+      name: 'Theta Network', 
+      symbol: 'THETA', 
+      icon: '🎥', 
+      color: '#2AB8E6', 
+      cardColor: 'cyan',
+    },
+    'the-sandbox': { 
+      name: 'The Sandbox', 
+      symbol: 'SAND', 
+      icon: '🏖️', 
+      color: '#00D4FF', 
+      cardColor: 'sky',
+    },
   };
 
   useEffect(() => {
@@ -174,6 +305,7 @@ const AppContent: React.FC = () => {
         {cryptoDetails && cryptoInfo && (
           <CryptoDetailPage 
             cryptoId={selectedCrypto}
+            onBack={() => setSelectedCrypto(null)}
             name={cryptoInfo.name}
             symbol={cryptoInfo.symbol}
             icon={cryptoInfo.icon}
@@ -284,14 +416,18 @@ const AppContent: React.FC = () => {
         <div>
           <h2 className="text-2xl font-bold mb-4">Price Trends</h2>
           <div className="bg-gray-800/50 p-6 rounded-xl border border-gray-700">
-            <InteractivePriceChart data={priceHistory} />
+            <InteractivePriceChart data={priceHistory} cryptoConfig={cryptoConfig} />
           </div>
         </div>
       )}
       
       {/* Portfolio View */}
       {activeView === 'portfolio' && (
-        <CryptoPortfolioOverview cryptoData={cryptoData} cryptoConfig={cryptoConfig} />
+        <CryptoPortfolioOverview 
+          cryptoData={cryptoData} 
+          cryptoConfig={cryptoConfig}
+          onCryptoClick={setSelectedCrypto}
+        />
       )}
       
       {/* News View */}
