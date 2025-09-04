@@ -4,28 +4,28 @@ import { TrendingUp, TrendingDown, ExternalLink } from 'lucide-react';
 interface CryptoCardProps {
   /** Name of the cryptocurrency */
   name: string;
-  
+
   /** Trading symbol of the cryptocurrency */
   symbol: string;
-  
+
   /** Current price in USD */
   price: number;
-  
+
   /** 24-hour price change percentage */
   change24h: number;
-  
+
   /** Market capitalization in USD */
   marketCap: number;
-  
+
   /** Icon/emoji to represent the cryptocurrency */
   icon: string;
-  
+
   /** Color theme for the card */
   color: string;
-  
+
   /** Handler for click events */
   onClick?: (cryptoId: string) => void;
-  
+
   /** Unique identifier for the cryptocurrency */
   cryptoId: string;
 }
@@ -33,19 +33,19 @@ interface CryptoCardProps {
 /**
  * CryptoCard component displays cryptocurrency information in a styled card
  */
-const CryptoCard: React.FC<CryptoCardProps> = ({ 
-  name, 
-  symbol, 
-  price, 
-  change24h, 
-  marketCap, 
-  icon, 
-  color, 
-  onClick, 
-  cryptoId 
+const CryptoCard: React.FC<CryptoCardProps> = ({
+  name,
+  symbol,
+  price,
+  change24h,
+  marketCap,
+  icon,
+  color,
+  onClick,
+  cryptoId,
 }) => {
   const isPositive = change24h >= 0;
-  
+
   // Color themes for different cryptocurrencies
   const colorClasses: Record<string, string> = {
     orange: 'from-orange-500/20 to-orange-600/20 border-orange-500/30',
@@ -80,14 +80,14 @@ const CryptoCard: React.FC<CryptoCardProps> = ({
   };
 
   return (
-    <div 
+    <div
       className={`crypto-card bg-gradient-to-br ${colorClasses[color]} animate-fade-in cursor-pointer relative group`}
       onClick={() => onClick && onClick(cryptoId)}
     >
       <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
         <ExternalLink className="w-5 h-5 text-gray-400" />
       </div>
-      
+
       <div className="flex items-start mb-6">
         <div className="crypto-icon mr-4 text-3xl leading-none">{icon}</div>
         <div>
@@ -99,19 +99,31 @@ const CryptoCard: React.FC<CryptoCardProps> = ({
       <div className="flex justify-between items-end">
         <div>
           <div className="text-sm text-gray-400 mb-1">Price</div>
-          <div className="text-2xl font-bold text-white">${price?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || '0.00'}</div>
+          <div className="text-2xl font-bold text-white">
+            $
+            {price?.toLocaleString(undefined, {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}
+          </div>
         </div>
-        
-        <div className={`flex flex-col items-end ${isPositive ? 'text-crypto-green' : 'text-crypto-red'}`}>
+        <div
+          className={`flex flex-col items-end ${
+            isPositive ? 'text-crypto-green' : 'text-crypto-red'
+          }`}
+        >
           <div className="flex items-center">
-            {isPositive ? <TrendingUp className="w-4 h-4 mr-1" /> : <TrendingDown className="w-4 h-4 mr-1" />}
+            {isPositive ? (
+              <TrendingUp className="w-4 h-4 mr-1" />
+            ) : (
+              <TrendingDown className="w-4 h-4 mr-1" />
+            )}
             <div className="font-medium">
-              {isPositive ? '+' : ''}{change24h?.toFixed(2)}%
+              {isPositive ? '+' : ''}
+              {change24h?.toFixed(2)}%
             </div>
           </div>
-          <div className="text-xs text-gray-400 mt-1">
-            24h: {formatNumber(marketCap)}
-          </div>
+          <div className="text-xs text-gray-400 mt-1">24h: {formatNumber(marketCap)}</div>
         </div>
       </div>
     </div>
