@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { ArrowLeft, ArrowRight, ExternalLink, X } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { useLocalization } from '../context/LocalizationContext';
 
 const CryptoNewsCarousel = () => {
   const [news, setNews] = useState([]);
@@ -33,12 +35,22 @@ const CryptoNewsCarousel = () => {
     document.body.style.overflow = 'auto'; // Re-enable scrolling
   }, []);
 
+  // Import localization hook
+  const { settings } = useLocalization();
+  const { t } = useTranslation();
+  
   const fetchNews = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
-
-      const response = await fetch('http://localhost:4000/api/news?limit=10');
+      
+      // Use language and region from settings
+      const language = settings.language;
+      const region = settings.newsRegion;
+      
+      const response = await fetch(
+        `http://localhost:4000/api/news?limit=10&language=${language}&region=${region}`
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP Error: ${response.status}`);
@@ -80,7 +92,7 @@ const CryptoNewsCarousel = () => {
 
     // Cleanup
     return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  }, [settings.language, settings.newsRegion]);
 
   useEffect(() => {
     fetchNews();
@@ -108,7 +120,7 @@ const CryptoNewsCarousel = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [modalOpen, handlePrevSlide, handleNextSlide, closeModal]);
 
-  // Format dates consistently
+  // Format dates consistently with timezone support
   const formatDate = useCallback((dateString) => {
     if (!dateString) return '';
 
@@ -118,8 +130,14 @@ const CryptoNewsCarousel = () => {
         ? new Date(dateString * 1000) // Convert UNIX timestamp (seconds) to milliseconds
         : new Date(dateString);
 
-    return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
-  }, []);
+    // Use the user's preferred timezone and language
+    return new Intl.DateTimeFormat(settings.language, {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      timeZone: settings.timezone
+    }).format(date);
+  }, [settings.language, settings.timezone]);
 
   // Calculate visible news items
   const visibleNews = news.slice(
@@ -134,7 +152,7 @@ const CryptoNewsCarousel = () => {
           <div className="w-3 h-3 bg-crypto-blue rounded-full"></div>
           <div className="w-3 h-3 bg-crypto-blue rounded-full"></div>
         </div>
-        <span className="ml-3 text-gray-400">Loading news...</span>
+        <span className="ml-3 text-gray-400">{t('app.loadingText')}</span>
       </div>
     );
   }
@@ -169,12 +187,12 @@ const CryptoNewsCarousel = () => {
               d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"
             />
           </svg>
-          <p>No news articles available at the moment</p>
+          <p>{t('news.noNewsAvailable')}</p>
           <button
             className="mt-4 bg-crypto-blue hover:bg-blue-700 text-white px-4 py-2 rounded"
             onClick={fetchNews}
           >
-            Refresh
+            {t('app.refresh')}
           </button>
         </div>
       </div>
@@ -184,7 +202,7 @@ const CryptoNewsCarousel = () => {
   return (
     <div className="relative">
       <div className="card p-6">
-        <h2 className="text-xl font-bold mb-4 text-white">Crypto News</h2>
+        <h2 className="text-xl font-bold mb-4 text-white">{t('news.latestNews')}</h2>
 
         {/* News Carousel */}
         <div className="relative">
@@ -238,7 +256,7 @@ const CryptoNewsCarousel = () => {
                   </div>
                 ) : (
                   <div className="w-full h-40 bg-crypto-darker flex items-center justify-center">
-                    <span className="text-gray-400 text-sm">No image available</span>
+                                        <span className="text-xs text-gray-400">{t('news.noImageAvailable')}</span>
                   </div>
                 )}
 
@@ -260,7 +278,7 @@ const CryptoNewsCarousel = () => {
 
                   <div className="flex justify-end">
                     <span className="text-crypto-blue font-medium text-xs flex items-center">
-                      Read more
+                      {t('news.readMore')}
                       <ExternalLink className="w-3 h-3 ml-1" aria-hidden="true" />
                     </span>
                   </div>

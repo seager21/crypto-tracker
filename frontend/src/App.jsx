@@ -7,16 +7,22 @@ import CryptoDetailPage from './components/CryptoDetailPage';
 import CryptoPortfolioOverview from './components/CryptoPortfolioOverview';
 import CryptoNewsCarousel from './components/CryptoNewsCarousel';
 import Header from './components/Header';
+import SettingsPanel from './components/SettingsPanel';
 import { TrendingUp, Activity, BarChart, Grid, List, Newspaper } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { LocalizationProvider, useLocalization } from './context/LocalizationContext';
+import './i18n';
 
-function App() {
+function AppContent() {
+  const { t } = useTranslation();
+  const { settings, formatCurrency } = useLocalization();
   const [cryptoData, setCryptoData] = useState(null);
   const [priceHistory, setPriceHistory] = useState([]);
   const [isConnected, setIsConnected] = useState(false);
   const [lastUpdate, setLastUpdate] = useState(null);
   const [loading, setLoading] = useState(true);
   const [selectedCrypto, setSelectedCrypto] = useState(null);
-  const [activeView, setActiveView] = useState('overview'); // 'overview', 'chart', 'portfolio'
+  const [activeView, setActiveView] = useState('overview'); // 'overview', 'chart', 'portfolio', 'news'
 
   // Configuration for all cryptocurrencies (22 total)
   const cryptoConfig = {
@@ -442,6 +448,16 @@ function App() {
         {activeView === 'news' && <CryptoNewsCarousel />}
       </div>
     </div>
+  );
+}
+
+// Wrap the app with our LocalizationProvider
+function App() {
+  return (
+    <LocalizationProvider>
+      <AppContent />
+      <SettingsPanel />
+    </LocalizationProvider>
   );
 }
 

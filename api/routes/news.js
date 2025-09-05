@@ -6,11 +6,12 @@ const router = express.Router();
 // Route to get crypto news from NewsData.io
 router.get('/', async (req, res) => {
   try {
-    const { limit = 12, language = 'en' } = req.query;
+    const { limit = 12, language = 'en', region = 'global' } = req.query;
 
     const newsArticles = await fetchCryptoNews({
       limit: parseInt(limit, 10),
       language,
+      region,
     });
 
     res.json({

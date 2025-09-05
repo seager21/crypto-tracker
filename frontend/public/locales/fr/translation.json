@@ -1,0 +1,53 @@
+{
+  "app": {
+    "title": "Crypto Tracker Pro",
+    "loadingText": "Chargement...",
+    "lastUpdated": "Dernière mise à jour",
+    "connectionStatus": {
+      "connected": "Connecté",
+      "disconnected": "Déconnecté"
+    }
+  },
+  "navigation": {
+    "overview": "Aperçu",
+    "chart": "Graphiques",
+    "portfolio": "Portefeuille",
+    "news": "Actualités"
+  },
+  "crypto": {
+    "price": "Prix",
+    "change24h": "Variation 24h",
+    "marketCap": "Cap. marché",
+    "volume": "Volume"
+  },
+  "news": {
+    "latestNews": "Dernières actualités crypto",
+    "readMore": "Lire plus",
+    "source": "Source",
+    "publishedOn": "Publié le",
+    "noNewsAvailable": "Aucune actualité disponible"
+  },
+  "portfolio": {
+    "totalValue": "Valeur totale",
+    "holdings": "Avoirs",
+    "profitLoss": "Profits/Pertes"
+  },
+  "settings": {
+    "title": "Paramètres",
+    "language": "Langue",
+    "currency": "Devise",
+    "timezone": "Fuseau horaire",
+    "newsRegion": "Région des actualités",
+    "theme": "Thème",
+    "dark": "Sombre",
+    "light": "Clair"
+  },
+  "currencies": {
+    "usd": "USD ($)",
+    "eur": "EUR (€)",
+    "gbp": "GBP (£)",
+    "jpy": "JPY (¥)",
+    "cny": "CNY (¥)",
+    "inr": "INR (₹)"
+  }
+}

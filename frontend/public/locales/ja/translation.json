@@ -1,0 +1,53 @@
+{
+  "app": {
+    "title": "クリプトトラッカープロ",
+    "loadingText": "読み込み中...",
+    "lastUpdated": "最終更新",
+    "connectionStatus": {
+      "connected": "接続済み",
+      "disconnected": "切断済み"
+    }
+  },
+  "navigation": {
+    "overview": "概要",
+    "chart": "チャート",
+    "portfolio": "ポートフォリオ",
+    "news": "ニュース"
+  },
+  "crypto": {
+    "price": "価格",
+    "change24h": "24時間変動",
+    "marketCap": "時価総額",
+    "volume": "取引量"
+  },
+  "news": {
+    "latestNews": "暗号資産の最新ニュース",
+    "readMore": "続きを読む",
+    "source": "情報源",
+    "publishedOn": "公開日",
+    "noNewsAvailable": "利用可能なニュースはありません"
+  },
+  "portfolio": {
+    "totalValue": "合計価値",
+    "holdings": "保有高",
+    "profitLoss": "損益"
+  },
+  "settings": {
+    "title": "設定",
+    "language": "言語",
+    "currency": "通貨",
+    "timezone": "タイムゾーン",
+    "newsRegion": "ニュース地域",
+    "theme": "テーマ",
+    "dark": "ダーク",
+    "light": "ライト"
+  },
+  "currencies": {
+    "usd": "USD ($)",
+    "eur": "EUR (€)",
+    "gbp": "GBP (£)",
+    "jpy": "JPY (¥)",
+    "cny": "CNY (¥)",
+    "inr": "INR (₹)"
+  }
+}

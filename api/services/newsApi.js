@@ -19,15 +19,16 @@ const newsCache = new NodeCache({
  * @param {Object} options - Options for fetching news
  * @param {number} options.limit - Number of news articles to fetch
  * @param {string} options.language - Language code (e.g., 'en')
+ * @param {string} options.region - News region (e.g., 'us', 'global')
  * @returns {Promise<Array>} - Array of news articles
  */
-async function fetchCryptoNews({ limit = 10, language = 'en' } = {}) {
-  const cacheKey = `crypto-news:${limit}:${language}`;
+async function fetchCryptoNews({ limit = 10, language = 'en', region = 'global' } = {}) {
+  const cacheKey = `crypto-news:${limit}:${language}:${region}`;
 
   // Check cache first
   const cachedNews = newsCache.get(cacheKey);
   if (cachedNews) {
-    console.log(`🔍 Cache hit for crypto news (${limit} articles)`);
+    console.log(`🔍 Cache hit for crypto news (${limit} articles, language: ${language}, region: ${region})`);
     return cachedNews;
   }
 
@@ -47,11 +48,31 @@ async function fetchCryptoNews({ limit = 10, language = 'en' } = {}) {
       throw new Error('API key is required for NewsData.io');
     }
 
+    // Map region to country codes
+    let country = '';
+    switch (region) {
+      case 'us':
+        country = 'us';
+        break;
+      case 'uk':
+        country = 'gb';
+        break;
+      case 'eu':
+        country = 'fr,de,es,it';
+        break;
+      case 'asia':
+        country = 'jp,cn,in,sg';
+        break;
+      default:
+        country = '';
+    }
+
     const response = await axios.get('https://newsdata.io/api/1/news', {
       params: {
         apikey: API_KEY,
         q: 'crypto OR cryptocurrency OR bitcoin OR ethereum OR blockchain',
         language: language,
+        country: country || undefined, // Only include if specified
         size: limit,
       },
       timeout: 15000, // 15 seconds timeout
