@@ -40,7 +40,8 @@ const CryptoNews: React.FC<CryptoNewsProps> = ({ limit = 12 }) => {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
 
-      const response = await fetch(`/news?limit=${limit}`, {
+      // Updated to use our new API endpoint
+      const response = await fetch(`/api/news?limit=${limit}`, {
         signal: controller.signal
       });
 

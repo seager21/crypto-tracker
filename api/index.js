@@ -9,6 +9,7 @@ const dotenv = require("dotenv");
 const authRoutes = require("./routes/auth");
 const userRoutes = require("./routes/users");
 const cryptoRoutes = require("./routes/crypto");
+const newsRoutes = require("./routes/news");
 const authenticate = require("./middleware/auth");
 const cryptoApi = require("./services/cryptoApi");
 
@@ -45,6 +46,7 @@ app.use(express.static("../frontend/dist"));
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/crypto", cryptoRoutes);
+app.use("/api/news", newsRoutes);
 
 // Use the cryptoApi service for fetching data
 const fetchCryptoData = async () => {

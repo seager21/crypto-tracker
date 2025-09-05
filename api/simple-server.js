@@ -6,6 +6,7 @@ const cors = require("cors");
 const path = require("path");
 const dotenv = require("dotenv");
 const cryptoApi = require("./services/cryptoApi");
+const newsRoutes = require("./routes/news");
 
 // Load environment variables
 dotenv.config();
@@ -34,6 +35,9 @@ app.use(express.static(path.join(__dirname, "../frontend/dist")));
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
+
+// Use news routes
+app.use("/api/news", newsRoutes);
 
 // API endpoint for crypto data
 app.get("/api/crypto", async (req, res) => {

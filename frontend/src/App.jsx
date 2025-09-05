@@ -5,7 +5,7 @@ import CryptoCard from './components/CryptoCard';
 import InteractivePriceChart from './components/InteractivePriceChart';
 import CryptoDetailPage from './components/CryptoDetailPage';
 import CryptoPortfolioOverview from './components/CryptoPortfolioOverview';
-import CryptoNews from './components/CryptoNews';
+import CryptoNewsCarousel from './components/CryptoNewsCarousel';
 import Header from './components/Header';
 import { TrendingUp, TrendingDown, Activity, RefreshCw, BarChart, Grid, List, Newspaper } from 'lucide-react';
 
@@ -398,9 +398,7 @@ function App() {
           </div>
         )}
 
-        {activeView === 'news' && (
-          <CryptoNews />
-        )}
+        {activeView === 'news' && <CryptoNewsCarousel />}
       </div>
     </div>
   );
