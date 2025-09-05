@@ -12,6 +12,7 @@ import {
   AlertCircle,
   RefreshCw,
 } from 'lucide-react';
+import { fetchWithRetry } from '../utils/apiUtils';
 import {
   LineChart,
   Line,
@@ -36,24 +37,19 @@ const CryptoDetailPage = ({ cryptoId, onBack }) => {
     fetchDetailData();
     fetchHistoricalData();
   }, [cryptoId, timeRange]);
-
+  
   const fetchDetailData = async () => {
     try {
       setError(null);
       console.log(`Fetching details for: ${cryptoId}`);
 
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 8000); // 8 second timeout
-
-      const response = await fetch(`/api/crypto/${cryptoId}/details`, {
-        signal: controller.signal,
-      });
-
-      clearTimeout(timeoutId);
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+      const response = await fetchWithRetry(
+        `/api/crypto/${cryptoId}/details`,
+        {},
+        10000,  // 10 second timeout
+        3       // 3 retries
+      );
+      
       const data = await response.json();
       console.log('Detail data received:', data);
       setDetailData(data);
@@ -77,22 +73,15 @@ const CryptoDetailPage = ({ cryptoId, onBack }) => {
   const fetchHistoricalData = async () => {
     try {
       setLoading(true);
-      console.log(`Fetching history for: ${cryptoId}, days: ${timeRange}`);
-
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 8000); // 8 second timeout
-
-      const response = await fetch(`/api/crypto/${cryptoId}/history?days=${timeRange}`, {
-        signal: controller.signal,
-      });
-
-      clearTimeout(timeoutId);
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+      
+      const response = await fetchWithRetry(
+        `/api/crypto/${cryptoId}/history?days=${timeRange}`,
+        {},
+        10000, // 10 second timeout
+        3      // 3 retries
+      );
+      
       const data = await response.json();
-      console.log('Historical data received:', data);
 
       // Transform the data for the chart
       const chartData =

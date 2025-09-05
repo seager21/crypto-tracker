@@ -42,6 +42,18 @@ app.use((req, res, next) => {
   next();
 });
 
+// Add health check endpoint
+app.get('/api/health', (req, res) => {
+  res.status(200).json({ status: 'ok', timestamp: Date.now() });
+});
+
+// Add connection keepalive
+app.use((req, res, next) => {
+  res.set('Connection', 'keep-alive');
+  res.set('Keep-Alive', 'timeout=120');
+  next();
+});
+
 // Serve static files from frontend build
 app.use(express.static('../frontend/dist'));
 
