@@ -3,11 +3,14 @@ const express = require("express");
 const axios = require("axios");
 const cors = require("cors");
 const http = require("http");
+const path = require("path");
 const { Server } = require("socket.io");
 const dotenv = require("dotenv");
 const authRoutes = require("./routes/auth");
 const userRoutes = require("./routes/users");
+const cryptoRoutes = require("./routes/crypto");
 const authenticate = require("./middleware/auth");
+const cryptoApi = require("./services/cryptoApi");
 
 // Load environment variables
 dotenv.config();
@@ -31,40 +34,22 @@ app.use(express.static("../frontend/dist"));
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/crypto", cryptoRoutes);
 
-// Function to fetch crypto data with timeout and retry
-const fetchCryptoData = async (retryCount = 0) => {
+// Use the cryptoApi service for fetching data
+const fetchCryptoData = async () => {
     try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+        const coinIds = [
+            "bitcoin", "ethereum", "cardano", "polkadot", "chainlink", 
+            "litecoin", "binancecoin", "solana", "dogecoin", "ripple",
+            "avalanche-2", "polygon", "uniswap", "cosmos", "stellar", 
+            "filecoin", "aave", "algorand", "vechain", "hedera-hashgraph", 
+            "theta-token", "the-sandbox"
+        ];
         
-        const response = await axios.get("https://api.coingecko.com/api/v3/simple/price", {
-            params: {
-                ids: "bitcoin,ethereum,cardano,polkadot,chainlink,litecoin,binancecoin,solana,dogecoin,ripple,avalanche-2,polygon,uniswap,cosmos,stellar,filecoin,aave,algorand,vechain,hedera-hashgraph,theta-token,the-sandbox",
-                vs_currencies: "usd",
-                include_market_cap: true,
-                include_24hr_change: true,
-                include_24hr_vol: true,
-                include_last_updated_at: true
-            },
-            timeout: 10000, // 10 second timeout
-            signal: controller.signal
-        });
-        
-        clearTimeout(timeoutId);
-        console.log("✅ Successfully fetched crypto data");
-        return response.data;
+        return await cryptoApi.getCryptoPrices(coinIds);
     } catch (error) {
         console.error("❌ Failed to fetch crypto data:", error.message);
-        
-        // Retry logic for rate limiting or network issues
-        if (retryCount < 3 && (error.code === 'ECONNABORTED' || error.response?.status === 429)) {
-            const delay = Math.pow(2, retryCount) * 1000; // Exponential backoff
-            console.log(`🔄 Retrying in ${delay}ms... (attempt ${retryCount + 1}/3)`);
-            await new Promise(resolve => setTimeout(resolve, delay));
-            return fetchCryptoData(retryCount + 1);
-        }
-        
         return null;
     }
 };
@@ -72,15 +57,14 @@ const fetchCryptoData = async (retryCount = 0) => {
 // Function to get global market data
 const fetchGlobalData = async () => {
     try {
-        const response = await axios.get("https://api.coingecko.com/api/v3/global");
-        return response.data.data;
+        return await cryptoApi.getGlobalMarketData();
     } catch (error) {
         console.error("Failed to fetch global data", error);
         return null;
     }
 };
 
-// API route to fetch crypto data
+// Legacy API routes for backward compatibility
 app.get("/crypto", async (req, res) => {
     const data = await fetchCryptoData();
     if (data) {
@@ -90,7 +74,7 @@ app.get("/crypto", async (req, res) => {
     }
 });
 
-// API route to fetch global market data
+// Legacy API route for global market data
 app.get("/global", async (req, res) => {
     const data = await fetchGlobalData();
     if (data) {
@@ -335,6 +319,9 @@ io.on("connection", (socket) => {
 });
 
 // Default route
+app.get('*', (req, res) => {
+    res.sendFile(path.resolve(__dirname, '../frontend/dist', 'index.html'));
+});
 app.get("/", (req, res) => {
     res.send("Crypto Tracking API is running");
 });
