@@ -4,6 +4,15 @@ A **modern, real-time cryptocurrency tracking application** built with **Node.js
 
 ## ✨ New Features & Improvements
 
+### 📰 **Cryptocurrency News Feed**
+
+- **Latest crypto news** from NewsData.io API integration
+- **Interactive news carousel** with article previews
+- **Detailed article view** with modal popup
+- **Keyboard navigation** for accessibility
+- **News caching** for improved performance
+- **Fallback mock data** when API is unavailable
+
 ### 🎨 **Modern React Frontend**
 
 - **Professional UI** with Tailwind CSS and custom animations
@@ -56,16 +65,22 @@ A **modern, real-time cryptocurrency tracking application** built with **Node.js
 ```plaintext
 crypto-tracker/
 │── api/
-│   └── index.js       # Express.js API with WebSocket support
+│   ├── index.js           # Express.js API with WebSocket support
+│   ├── routes/
+│   │   └── news.js        # News API routes
+│   └── services/
+│       └── newsApi.js     # News API service with caching
 │── frontend/
 │   ├── src/
-│   │   ├── components/   # React components
+│   │   ├── components/
+│   │   │   └── CryptoNewsCarousel.jsx  # News carousel component
 │   │   ├── context/      # React contexts for state management
 │   │   └── types/        # TypeScript interfaces and types
 │   ├── tsconfig.json     # TypeScript configuration
 │   └── package.json      # Frontend dependencies
 │── public/
 │   └── index.html        # Static HTML
+│── .env.example          # Example environment variables
 │── vercel.json           # Vercel configuration
 │── package.json          # Project dependencies
 │── tsconfig.json         # Backend TypeScript configuration
@@ -130,8 +145,36 @@ cd crypto-tracker
 ### Install Dependencies
 
 ```sh
-npm install
+npm run install-all
 ```
+
+### Environment Variables
+
+Copy the example environment file:
+
+```sh
+cp .env.example .env
+```
+
+Update the `.env` file with your API keys and configuration:
+
+```env
+# API Keys
+COINGECKO_API_KEY=your_coingecko_api_key
+NEWSDATA_API_KEY=your_newsdata_api_key
+
+# Feature Flags
+USE_MOCK_NEWS=false  # Set to true if you don't have a NewsData.io API key
+
+# Firebase Configuration
+FIREBASE_API_KEY=your_firebase_api_key
+FIREBASE_AUTH_DOMAIN=your_firebase_auth_domain
+FIREBASE_PROJECT_ID=your_firebase_project_id
+```
+
+- Get a free CoinGecko API key at [CoinGecko](https://www.coingecko.com/en/api)
+- Get a free NewsData.io API key at [NewsData.io](https://newsdata.io/)
+- Set up a Firebase project for authentication features
 
 ## Running the Project Locally
 
@@ -165,6 +208,34 @@ Response:
     "usd": 3000,
     "usd_24h_change": 1.5
   }
+}
+```
+
+### GET `/api/news`
+
+Fetches the latest cryptocurrency news articles.
+
+```sh
+curl http://localhost:3000/api/news
+```
+
+Response:
+
+```json
+{
+  "status": "success",
+  "totalResults": 10,
+  "results": [
+    {
+      "title": "Bitcoin Reaches New All-Time High",
+      "link": "https://example.com/news/bitcoin-ath",
+      "description": "Bitcoin has reached a new all-time high price...",
+      "pubDate": "2023-05-15 09:30:00",
+      "imageUrl": "https://example.com/images/bitcoin.jpg",
+      "source": "Crypto News Network"
+    },
+    // More articles...
+  ]
 }
 ```
 
@@ -273,11 +344,14 @@ The project uses ESLint with TypeScript-specific rules to ensure code quality:
 
 ## Next Steps
 
-- Expand TypeScript coverage to API layer
+- Expand TypeScript coverage to API layer including the News API
+- Enhance the News feed with article filtering by cryptocurrency
 - Add unit tests with TypeScript support (Jest/React Testing Library)
 - Implement more advanced TypeScript features like discriminated unions
 - Further improve component reusability with generic TypeScript patterns
 - Add documentation comments for better IDE integration
+- Add search functionality to the News feed
+- Implement user preferences for News content
 
 ## License
 
