@@ -8,6 +8,7 @@ import CryptoPortfolioOverview from './components/CryptoPortfolioOverview';
 import CryptoNewsCarousel from './components/CryptoNewsCarousel';
 import Header from './components/Header';
 import SettingsPanel from './components/SettingsPanel';
+import FallingCoins from './components/FallingCoins';
 import { TrendingUp, Activity, BarChart, Grid, List, Newspaper } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { LocalizationProvider, useLocalization } from './context/LocalizationContext';
@@ -23,6 +24,7 @@ function AppContent() {
   const [loading, setLoading] = useState(true);
   const [selectedCrypto, setSelectedCrypto] = useState(null);
   const [activeView, setActiveView] = useState('overview'); // 'overview', 'chart', 'portfolio', 'news'
+  const [showCoins] = useState(true); // Control the coin animation
 
   // Configuration for all cryptocurrencies (22 total)
   const cryptoConfig = {
@@ -294,117 +296,121 @@ function AppContent() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-crypto-darker via-crypto-dark to-crypto-darker">
+    <div className="min-h-screen bg-gradient-to-br from-crypto-darker via-crypto-dark to-crypto-darker relative">
+      {/* Add falling coins background */}
+      {showCoins && <FallingCoins count={20} />}
       <Header
         isConnected={isConnected}
         lastUpdate={lastUpdate}
         onRefresh={handleManualRefresh}
         loading={loading}
       />{' '}
-      <div className="container mx-auto px-4 py-8">
-        {/* Market Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <div className="card">
+      <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-8">
+        {/* Market Overview - Mobile Optimized */}
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mb-6 sm:mb-8">
+          <div className="card p-3 sm:p-4 animate-fade-in hover-glow group">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-400 text-sm">Total Market Cap</p>
-                <p className="text-2xl font-bold text-crypto-blue">
+                <p className="text-gray-400 text-xs sm:text-sm">Market Cap</p>
+                <p className="text-lg sm:text-2xl font-bold text-crypto-blue group-hover:text-crypto-gold transition-colors">
                   ${getTotalMarketValue().toFixed(2)}B
                 </p>
               </div>
-              <TrendingUp className="w-8 h-8 text-crypto-green" />
+              <TrendingUp className="w-6 h-6 sm:w-8 sm:h-8 text-crypto-green group-hover:text-crypto-gold transition-colors" />
             </div>
           </div>
 
-          <div className="card">
+          <div className="card p-3 sm:p-4 animate-fade-in hover-glow group" style={{animationDelay: '0.1s'}}>
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-400 text-sm">Portfolio Size</p>
-                <p className="text-2xl font-bold text-crypto-green">
+                <p className="text-gray-400 text-xs sm:text-sm">Portfolio</p>
+                <p className="text-lg sm:text-2xl font-bold text-crypto-green group-hover:text-crypto-gold transition-colors">
                   {Object.keys(cryptoConfig).length}
                 </p>
-                <p className="text-xs text-gray-500">Cryptocurrencies</p>
+                <p className="text-xs text-gray-500 hidden sm:block">Cryptocurrencies</p>
               </div>
-              <Activity className="w-8 h-8 text-crypto-blue" />
+              <Activity className="w-6 h-6 sm:w-8 sm:h-8 text-crypto-blue group-hover:text-crypto-gold transition-colors" />
             </div>
           </div>
 
-          <div className="card">
+          <div className="card p-3 sm:p-4 animate-fade-in hover-glow group" style={{animationDelay: '0.2s'}}>
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-400 text-sm">Active Cryptos</p>
-                <p className="text-2xl font-bold text-white">{getActiveCryptos()}</p>
-                <p className="text-xs text-gray-500">Currently Trading</p>
+                <p className="text-gray-400 text-xs sm:text-sm">Active</p>
+                <p className="text-lg sm:text-2xl font-bold text-white group-hover:text-crypto-gold transition-colors">{getActiveCryptos()}</p>
+                <p className="text-xs text-gray-500 hidden sm:block">Currently Trading</p>
               </div>
-              <div className="w-3 h-3 bg-crypto-green rounded-full animate-pulse"></div>
+              <div className="w-3 h-3 bg-crypto-green group-hover:bg-crypto-gold rounded-full animate-pulse transition-colors"></div>
             </div>
           </div>
 
-          <div className="card">
+          <div className="card p-3 sm:p-4 animate-fade-in hover-glow group" style={{animationDelay: '0.3s'}}>
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-400 text-sm">Top Performer</p>
-                <p className="text-lg font-bold text-crypto-green">{getTopPerformer()}</p>
-                <p className="text-xs text-gray-500">24h Change</p>
+                <p className="text-gray-400 text-xs sm:text-sm">Top Performer</p>
+                <p className="text-sm sm:text-lg font-bold text-crypto-green truncate max-w-[100px] sm:max-w-none group-hover:text-crypto-gold transition-colors">
+                  {getTopPerformer()}
+                </p>
+                <p className="text-xs text-gray-500 hidden sm:block">24h Change</p>
               </div>
-              <TrendingUp className="w-8 h-8 text-crypto-green" />
+              <TrendingUp className="w-6 h-6 sm:w-8 sm:h-8 text-crypto-green group-hover:text-crypto-gold transition-colors" />
             </div>
           </div>
         </div>
 
-        {/* View Toggle */}
-        <div className="flex items-center justify-center mb-8">
-          <div className="flex bg-crypto-dark border border-gray-700 rounded-lg p-1">
+        {/* View Toggle - Mobile Optimized */}
+        <div className="flex items-center justify-center mb-6 sm:mb-8 overflow-x-auto pb-2 no-scrollbar">
+          <div className="flex bg-crypto-dark border border-gray-700 rounded-lg p-1 shadow-lg">
             <button
               onClick={() => setActiveView('overview')}
-              className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors ${
+              className={`flex items-center space-x-1 sm:space-x-2 px-2 sm:px-4 py-2 rounded-lg transition-colors whitespace-nowrap btn-lightning ${
                 activeView === 'overview'
-                  ? 'bg-crypto-blue text-white'
-                  : 'text-gray-400 hover:text-white'
+                  ? 'bg-crypto-dark border-2 border-f1c40f text-f1c40f'
+                  : 'bg-crypto-dark border border-gray-600 text-gray-400 hover:text-f1c40f hover:border-f1c40f'
               }`}
             >
               <Grid className="w-4 h-4" />
-              <span>Overview</span>
+              <span className="text-xs sm:text-sm">Overview</span>
             </button>
             <button
               onClick={() => setActiveView('chart')}
-              className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors ${
+              className={`flex items-center space-x-1 sm:space-x-2 px-2 sm:px-4 py-2 rounded-lg transition-colors whitespace-nowrap btn-lightning ${
                 activeView === 'chart'
-                  ? 'bg-crypto-blue text-white'
-                  : 'text-gray-400 hover:text-white'
+                  ? 'bg-crypto-dark border-2 border-f1c40f text-f1c40f'
+                  : 'bg-crypto-dark border border-gray-600 text-gray-400 hover:text-f1c40f hover:border-f1c40f'
               }`}
             >
               <BarChart className="w-4 h-4" />
-              <span>Interactive Chart</span>
+              <span className="text-xs sm:text-sm">Chart</span>
             </button>
             <button
               onClick={() => setActiveView('portfolio')}
-              className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors ${
+              className={`flex items-center space-x-1 sm:space-x-2 px-2 sm:px-4 py-2 rounded-lg transition-colors whitespace-nowrap btn-lightning ${
                 activeView === 'portfolio'
-                  ? 'bg-crypto-blue text-white'
-                  : 'text-gray-400 hover:text-white'
+                  ? 'bg-crypto-dark border-2 border-f1c40f text-f1c40f'
+                  : 'bg-crypto-dark border border-gray-600 text-gray-400 hover:text-f1c40f hover:border-f1c40f'
               }`}
             >
               <List className="w-4 h-4" />
-              <span>Portfolio</span>
+              <span className="text-xs sm:text-sm">Portfolio</span>
             </button>
             <button
               onClick={() => setActiveView('news')}
-              className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors ${
+              className={`flex items-center space-x-1 sm:space-x-2 px-2 sm:px-4 py-2 rounded-lg transition-colors whitespace-nowrap btn-lightning ${
                 activeView === 'news'
-                  ? 'bg-crypto-blue text-white'
-                  : 'text-gray-400 hover:text-white'
+                  ? 'bg-crypto-dark border-2 border-f1c40f text-f1c40f'
+                  : 'bg-crypto-dark border border-gray-600 text-gray-400 hover:text-f1c40f hover:border-f1c40f'
               }`}
             >
               <Newspaper className="w-4 h-4" />
-              <span>News</span>
+              <span className="text-xs sm:text-sm">News</span>
             </button>
           </div>
         </div>
 
-        {/* Content Based on Active View */}
+        {/* Content Based on Active View - Mobile Optimized */}
         {activeView === 'overview' && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 sm:gap-6">
             {Object.entries(cryptoConfig).map(([key, config]) => {
               const apiKey = key === 'avalanche-2' ? 'avalanche-2' : key;
               const data = cryptoData?.[apiKey];

@@ -43,55 +43,62 @@ const CryptoCard = ({
 
   return (
     <div
-      className={`crypto-card bg-gradient-to-br ${colorClasses[color]} animate-fade-in cursor-pointer relative group`}
+      className={`crypto-card bg-gradient-to-br ${colorClasses[color]} animate-fade-in cursor-pointer relative group hover-glow`}
       onClick={() => onClick && onClick(cryptoId)}
     >
-      <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
-        <ExternalLink className="w-5 h-5 text-gray-400" />
+      {/* External link icon - hidden on mobile, visible on hover on desktop */}
+      <div className="absolute top-2 sm:top-4 right-2 sm:right-4 opacity-0 group-hover:opacity-100 transition-opacity hidden sm:block">
+        <ExternalLink className="w-5 h-5 text-gray-400 hover:text-f1c40f" />
       </div>
+      
+      {/* Add subtle coin animation */}
+      <div className="absolute -z-10 w-40 h-40 rounded-full bg-f1c40f/5 blur-3xl top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 group-hover:bg-f1c40f/10 transition-all duration-700"></div>
 
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center space-x-3">
-          <div className="text-3xl">{icon}</div>
+      <div className="flex items-center justify-between mb-3 sm:mb-4">
+        <div className="flex items-center space-x-2 sm:space-x-3">
+          <div className="text-2xl sm:text-3xl">{icon}</div>
           <div>
-            <h3 className="text-xl font-bold">{name}</h3>
-            <p className="text-gray-400 text-sm">{symbol}</p>
+            <h3 className="text-lg sm:text-xl font-bold truncate max-w-[100px] sm:max-w-none">{name}</h3>
+            <p className="text-gray-400 text-xs sm:text-sm">{symbol}</p>
           </div>
         </div>
         <div
-          className={`flex items-center space-x-1 px-3 py-1 rounded-full ${
+          className={`flex items-center space-x-1 px-2 sm:px-3 py-1 rounded-full ${
             isPositive ? 'bg-crypto-green/20 text-crypto-green' : 'bg-crypto-red/20 text-crypto-red'
           }`}
         >
-          {isPositive ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
-          <span className="text-sm font-medium">
+          {isPositive ? <TrendingUp className="w-3 h-3 sm:w-4 sm:h-4" /> : <TrendingDown className="w-3 h-3 sm:w-4 sm:h-4" />}
+          <span className="text-xs sm:text-sm font-medium">
             {isPositive ? '+' : ''}
             {change24h?.toFixed(2) || '0.00'}%
           </span>
         </div>
       </div>
 
-      <div className="space-y-3">
+      <div className="space-y-2 sm:space-y-3">
         <div>
-          <p className="text-gray-400 text-sm">Current Price</p>
-          <p className="text-3xl font-bold">${price?.toLocaleString() || '0.00'}</p>
+          <p className="text-gray-400 text-xs sm:text-sm">Current Price</p>
+          <p className="text-xl sm:text-3xl font-bold">${price?.toLocaleString() || '0.00'}</p>
         </div>
 
         <div>
-          <p className="text-gray-400 text-sm">Market Cap</p>
-          <p className="text-lg font-semibold">{formatNumber(marketCap)}</p>
+          <p className="text-gray-400 text-xs sm:text-sm">Market Cap</p>
+          <p className="text-base sm:text-lg font-semibold">{formatNumber(marketCap)}</p>
         </div>
       </div>
 
-      <div className="mt-4 h-1 bg-gray-700 rounded-full overflow-hidden">
+      <div className="mt-3 sm:mt-4 h-1 bg-gray-700 rounded-full overflow-hidden">
         <div
-          className={`h-full ${isPositive ? 'bg-crypto-green' : 'bg-crypto-red'} rounded-full transition-all duration-1000`}
+          className={`h-full ${isPositive ? 'bg-crypto-green' : 'bg-crypto-red'} rounded-full transition-all duration-1000 group-hover:bg-f1c40f`}
           style={{ width: `${Math.min(Math.abs(change24h) * 10, 100)}%` }}
         ></div>
       </div>
 
-      <div className="mt-3 text-center">
-        <p className="text-xs text-gray-500">Click to view details</p>
+      <div className="mt-2 sm:mt-3 text-center">
+        <p className="text-xs text-gray-500 touch-tap-highlight group-hover:text-f1c40f group-hover:animate-pulse transition-all duration-300">
+          <span className="hidden sm:inline">Click</span>
+          <span className="inline sm:hidden">Tap</span> to view details
+        </p>
       </div>
     </div>
   );
