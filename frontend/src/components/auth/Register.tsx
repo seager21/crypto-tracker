@@ -14,14 +14,14 @@ const Register: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (password !== confirmPassword) {
       toast.error('Passwords do not match');
       return;
     }
-    
+
     setIsLoading(true);
-    
+
     try {
       await register(email, password, displayName);
       toast.success('Account created successfully!');
@@ -40,13 +40,10 @@ const Register: React.FC = () => {
           <h1 className="text-2xl font-bold text-white mb-2">Create Account</h1>
           <p className="text-gray-400">Join our crypto tracking community</p>
         </div>
-        
+
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label 
-              htmlFor="displayName" 
-              className="text-sm font-medium text-gray-300 block mb-1"
-            >
+            <label htmlFor="displayName" className="text-sm font-medium text-gray-300 block mb-1">
               Display Name
             </label>
             <input
@@ -58,12 +55,9 @@ const Register: React.FC = () => {
               required
             />
           </div>
-          
+
           <div>
-            <label 
-              htmlFor="email" 
-              className="text-sm font-medium text-gray-300 block mb-1"
-            >
+            <label htmlFor="email" className="text-sm font-medium text-gray-300 block mb-1">
               Email Address
             </label>
             <input
@@ -75,12 +69,9 @@ const Register: React.FC = () => {
               required
             />
           </div>
-          
+
           <div>
-            <label 
-              htmlFor="password" 
-              className="text-sm font-medium text-gray-300 block mb-1"
-            >
+            <label htmlFor="password" className="text-sm font-medium text-gray-300 block mb-1">
               Password
             </label>
             <input
@@ -92,10 +83,10 @@ const Register: React.FC = () => {
               required
             />
           </div>
-          
+
           <div>
-            <label 
-              htmlFor="confirmPassword" 
+            <label
+              htmlFor="confirmPassword"
               className="text-sm font-medium text-gray-300 block mb-1"
             >
               Confirm Password
@@ -109,29 +100,26 @@ const Register: React.FC = () => {
               required
             />
           </div>
-          
+
           <button
             type="submit"
             disabled={isLoading}
             className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200 flex justify-center items-center disabled:opacity-50"
           >
             {isLoading ? (
-              <svg 
-                className="animate-spin h-5 w-5 mr-2" 
-                viewBox="0 0 24 24"
-              >
-                <circle 
-                  className="opacity-25" 
-                  cx="12" 
-                  cy="12" 
-                  r="10" 
-                  stroke="currentColor" 
-                  strokeWidth="4" 
+              <svg className="animate-spin h-5 w-5 mr-2" viewBox="0 0 24 24">
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
                   fill="none"
                 ></circle>
-                <path 
-                  className="opacity-75" 
-                  fill="currentColor" 
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
                   d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                 ></path>
               </svg>
@@ -139,7 +127,7 @@ const Register: React.FC = () => {
             Sign Up
           </button>
         </form>
-        
+
         <div className="text-center mt-4">
           <p className="text-gray-400">
             Already have an account?{' '}

@@ -1,7 +1,17 @@
 import React from 'react';
 import { TrendingUp, TrendingDown, ExternalLink } from 'lucide-react';
 
-const CryptoCard = ({ name, symbol, price, change24h, marketCap, icon, color, onClick, cryptoId }) => {
+const CryptoCard = ({
+  name,
+  symbol,
+  price,
+  change24h,
+  marketCap,
+  icon,
+  color,
+  onClick,
+  cryptoId,
+}) => {
   const isPositive = change24h >= 0;
   const colorClasses = {
     orange: 'from-orange-500/20 to-orange-600/20 border-orange-500/30',
@@ -32,14 +42,14 @@ const CryptoCard = ({ name, symbol, price, change24h, marketCap, icon, color, on
   };
 
   return (
-    <div 
+    <div
       className={`crypto-card bg-gradient-to-br ${colorClasses[color]} animate-fade-in cursor-pointer relative group`}
       onClick={() => onClick && onClick(cryptoId)}
     >
       <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
         <ExternalLink className="w-5 h-5 text-gray-400" />
       </div>
-      
+
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center space-x-3">
           <div className="text-3xl">{icon}</div>
@@ -48,35 +58,38 @@ const CryptoCard = ({ name, symbol, price, change24h, marketCap, icon, color, on
             <p className="text-gray-400 text-sm">{symbol}</p>
           </div>
         </div>
-        <div className={`flex items-center space-x-1 px-3 py-1 rounded-full ${
-          isPositive ? 'bg-crypto-green/20 text-crypto-green' : 'bg-crypto-red/20 text-crypto-red'
-        }`}>
+        <div
+          className={`flex items-center space-x-1 px-3 py-1 rounded-full ${
+            isPositive ? 'bg-crypto-green/20 text-crypto-green' : 'bg-crypto-red/20 text-crypto-red'
+          }`}
+        >
           {isPositive ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
           <span className="text-sm font-medium">
-            {isPositive ? '+' : ''}{change24h?.toFixed(2) || '0.00'}%
+            {isPositive ? '+' : ''}
+            {change24h?.toFixed(2) || '0.00'}%
           </span>
         </div>
       </div>
-      
+
       <div className="space-y-3">
         <div>
           <p className="text-gray-400 text-sm">Current Price</p>
           <p className="text-3xl font-bold">${price?.toLocaleString() || '0.00'}</p>
         </div>
-        
+
         <div>
           <p className="text-gray-400 text-sm">Market Cap</p>
           <p className="text-lg font-semibold">{formatNumber(marketCap)}</p>
         </div>
       </div>
-      
+
       <div className="mt-4 h-1 bg-gray-700 rounded-full overflow-hidden">
-        <div 
+        <div
           className={`h-full ${isPositive ? 'bg-crypto-green' : 'bg-crypto-red'} rounded-full transition-all duration-1000`}
           style={{ width: `${Math.min(Math.abs(change24h) * 10, 100)}%` }}
         ></div>
       </div>
-      
+
       <div className="mt-3 text-center">
         <p className="text-xs text-gray-500">Click to view details</p>
       </div>

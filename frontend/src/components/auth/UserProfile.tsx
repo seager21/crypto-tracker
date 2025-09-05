@@ -8,7 +8,7 @@ const UserProfile: React.FC = () => {
 
   const handleThemeChange = async (theme: 'light' | 'dark') => {
     if (!userData) return;
-    
+
     setIsLoading(true);
     try {
       await updateUserSettings({ theme });
@@ -22,7 +22,7 @@ const UserProfile: React.FC = () => {
 
   const handleCurrencyChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
     if (!userData) return;
-    
+
     const currency = e.target.value;
     setIsLoading(true);
     try {
@@ -37,7 +37,7 @@ const UserProfile: React.FC = () => {
 
   const handleNotificationsChange = async (notifications: boolean) => {
     if (!userData) return;
-    
+
     setIsLoading(true);
     try {
       await updateUserSettings({ notifications });
@@ -80,7 +80,7 @@ const UserProfile: React.FC = () => {
 
       <div className="border-t border-gray-700 pt-4">
         <h3 className="text-lg font-medium text-white mb-4">Settings</h3>
-        
+
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <label className="text-gray-300">Theme</label>
@@ -109,9 +109,11 @@ const UserProfile: React.FC = () => {
               </button>
             </div>
           </div>
-          
+
           <div className="flex items-center justify-between">
-            <label htmlFor="currency" className="text-gray-300">Currency</label>
+            <label htmlFor="currency" className="text-gray-300">
+              Currency
+            </label>
             <select
               id="currency"
               value={userData.settings.currency}
@@ -126,7 +128,7 @@ const UserProfile: React.FC = () => {
               <option value="cad">CAD</option>
             </select>
           </div>
-          
+
           <div className="flex items-center justify-between">
             <label className="text-gray-300">Notifications</label>
             <div className="relative inline-block w-10 align-middle select-none">
@@ -154,7 +156,7 @@ const UserProfile: React.FC = () => {
           </div>
         </div>
       </div>
-      
+
       <div className="mt-6 pt-4 border-t border-gray-700">
         <button
           onClick={handleLogout}

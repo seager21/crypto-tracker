@@ -7,20 +7,20 @@ const router = express.Router();
 router.get('/', async (req, res) => {
   try {
     const { limit = 12, language = 'en' } = req.query;
-    
+
     const newsArticles = await fetchCryptoNews({
       limit: parseInt(limit, 10),
-      language
+      language,
     });
-    
+
     res.json({
       success: true,
       results: newsArticles,
-      source: 'newsdata.io'
+      source: 'newsdata.io',
     });
   } catch (error) {
     console.error('Error in news route:', error.message);
-    
+
     // Provide fallback news data
     const fallbackNews = [
       {
@@ -31,15 +31,15 @@ router.get('/', async (req, res) => {
         imageurl: 'https://via.placeholder.com/300x200?text=Crypto+Update',
         source: 'CryptoTracker',
         published_on: Math.floor(Date.now() / 1000),
-        tags: ['Market', 'Analysis', 'Update']
-      }
+        tags: ['Market', 'Analysis', 'Update'],
+      },
     ];
-    
+
     res.json({
       success: true,
       results: fallbackNews,
       source: 'fallback',
-      message: 'Using fallback news data due to API unavailability'
+      message: 'Using fallback news data due to API unavailability',
     });
   }
 });

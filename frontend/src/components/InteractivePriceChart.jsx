@@ -1,5 +1,14 @@
 import React, { useState } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  Legend,
+} from 'recharts';
 import { Eye, EyeOff, BarChart3, Filter, Settings } from 'lucide-react';
 
 const InteractivePriceChart = ({ data, cryptoConfig }) => {
@@ -9,31 +18,31 @@ const InteractivePriceChart = ({ data, cryptoConfig }) => {
       return acc;
     }, {})
   );
-  
+
   const [showFilters, setShowFilters] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState(['all']);
 
   // Categorize cryptocurrencies
   const categories = {
-    'major': ['bitcoin', 'ethereum', 'binancecoin', 'ripple', 'cardano', 'solana', 'polkadot'],
-    'defi': ['uniswap', 'aave', 'chainlink', 'polygon'],
-    'platform': ['avalanche-2', 'algorand', 'cosmos', 'stellar'],
-    'utility': ['litecoin', 'dogecoin', 'vechain', 'filecoin'],
-    'gaming': ['the-sandbox'],
-    'media': ['theta-token'],
-    'enterprise': ['hedera-hashgraph']
+    major: ['bitcoin', 'ethereum', 'binancecoin', 'ripple', 'cardano', 'solana', 'polkadot'],
+    defi: ['uniswap', 'aave', 'chainlink', 'polygon'],
+    platform: ['avalanche-2', 'algorand', 'cosmos', 'stellar'],
+    utility: ['litecoin', 'dogecoin', 'vechain', 'filecoin'],
+    gaming: ['the-sandbox'],
+    media: ['theta-token'],
+    enterprise: ['hedera-hashgraph'],
   };
 
   const toggleCrypto = (cryptoKey) => {
-    setVisibleCryptos(prev => ({
+    setVisibleCryptos((prev) => ({
       ...prev,
-      [cryptoKey]: !prev[cryptoKey]
+      [cryptoKey]: !prev[cryptoKey],
     }));
   };
 
   const toggleAll = () => {
-    const allVisible = Object.values(visibleCryptos).every(v => v);
-    setVisibleCryptos(prev => 
+    const allVisible = Object.values(visibleCryptos).every((v) => v);
+    setVisibleCryptos((prev) =>
       Object.keys(prev).reduce((acc, key) => {
         acc[key] = !allVisible;
         return acc;
@@ -46,13 +55,13 @@ const InteractivePriceChart = ({ data, cryptoConfig }) => {
       toggleAll();
       return;
     }
-    
+
     const cryptosInCategory = categories[category] || [];
-    const allCategoryVisible = cryptosInCategory.every(crypto => visibleCryptos[crypto]);
-    
-    setVisibleCryptos(prev => {
+    const allCategoryVisible = cryptosInCategory.every((crypto) => visibleCryptos[crypto]);
+
+    setVisibleCryptos((prev) => {
       const newState = { ...prev };
-      cryptosInCategory.forEach(crypto => {
+      cryptosInCategory.forEach((crypto) => {
         newState[crypto] = !allCategoryVisible;
       });
       return newState;
@@ -60,7 +69,7 @@ const InteractivePriceChart = ({ data, cryptoConfig }) => {
   };
 
   const getVisibleCount = () => {
-    return Object.values(visibleCryptos).filter(v => v).length;
+    return Object.values(visibleCryptos).filter((v) => v).length;
   };
 
   const CustomTooltip = ({ active, payload, label }) => {
@@ -72,10 +81,7 @@ const InteractivePriceChart = ({ data, cryptoConfig }) => {
             {payload.map((entry, index) => (
               <div key={index} className="flex items-center justify-between space-x-4">
                 <div className="flex items-center space-x-2">
-                  <div 
-                    className="w-3 h-3 rounded-full"
-                    style={{ backgroundColor: entry.color }}
-                  />
+                  <div className="w-3 h-3 rounded-full" style={{ backgroundColor: entry.color }} />
                   <span className="text-sm text-gray-200 font-medium">
                     {cryptoConfig[entry.dataKey]?.name}
                   </span>
@@ -105,7 +111,7 @@ const InteractivePriceChart = ({ data, cryptoConfig }) => {
             {getVisibleCount()} of {Object.keys(cryptoConfig).length} cryptocurrencies visible
           </div>
         </div>
-        
+
         <div className="flex items-center space-x-2">
           <button
             onClick={toggleAll}
@@ -114,11 +120,13 @@ const InteractivePriceChart = ({ data, cryptoConfig }) => {
             <Eye className="w-4 h-4" />
             <span>Toggle All</span>
           </button>
-          
+
           <button
             onClick={() => setShowFilters(!showFilters)}
             className={`flex items-center space-x-2 px-3 py-1 rounded-lg transition-colors text-sm ${
-              showFilters ? 'bg-crypto-dark border border-crypto-blue text-crypto-blue' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+              showFilters
+                ? 'bg-crypto-dark border border-crypto-blue text-crypto-blue'
+                : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
             }`}
           >
             <Filter className="w-4 h-4" />
@@ -143,7 +151,7 @@ const InteractivePriceChart = ({ data, cryptoConfig }) => {
                 key={category}
                 onClick={() => toggleCategory(category)}
                 className={`px-3 py-1 rounded-lg text-sm transition-colors capitalize ${
-                  cryptos.every(crypto => visibleCryptos[crypto])
+                  cryptos.every((crypto) => visibleCryptos[crypto])
                     ? 'bg-crypto-green/20 text-crypto-green border border-crypto-green/50'
                     : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
                 }`}
@@ -163,8 +171,8 @@ const InteractivePriceChart = ({ data, cryptoConfig }) => {
               key={key}
               onClick={() => toggleCrypto(key)}
               className={`flex items-center justify-between p-3 rounded-lg border transition-all duration-200 ${
-                visibleCryptos[key] 
-                  ? 'bg-crypto-dark border-crypto-blue text-white shadow-lg' 
+                visibleCryptos[key]
+                  ? 'bg-crypto-dark border-crypto-blue text-white shadow-lg'
                   : 'bg-gray-800 border-gray-700 text-gray-400 hover:bg-gray-700'
               }`}
             >
@@ -190,14 +198,14 @@ const InteractivePriceChart = ({ data, cryptoConfig }) => {
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-            <XAxis 
-              dataKey="time" 
+            <XAxis
+              dataKey="time"
               stroke="#9CA3AF"
               fontSize={12}
               tickLine={false}
               axisLine={false}
             />
-            <YAxis 
+            <YAxis
               stroke="#9CA3AF"
               fontSize={12}
               tickLine={false}
@@ -205,29 +213,30 @@ const InteractivePriceChart = ({ data, cryptoConfig }) => {
               tickFormatter={(value) => `$${value.toLocaleString()}`}
             />
             <Tooltip content={<CustomTooltip />} />
-            <Legend 
+            <Legend
               wrapperStyle={{ color: '#9CA3AF' }}
               formatter={(value) => cryptoConfig[value]?.name || value}
             />
-            {Object.entries(cryptoConfig).map(([key, config]) => (
-              visibleCryptos[key] && (
-                <Line
-                  key={key}
-                  type="monotone"
-                  dataKey={key}
-                  stroke={config.color}
-                  strokeWidth={2}
-                  dot={{ fill: config.color, strokeWidth: 2, r: 3 }}
-                  activeDot={{ r: 5, fill: config.color }}
-                  name={config.name}
-                  connectNulls={false}
-                />
-              )
-            ))}
+            {Object.entries(cryptoConfig).map(
+              ([key, config]) =>
+                visibleCryptos[key] && (
+                  <Line
+                    key={key}
+                    type="monotone"
+                    dataKey={key}
+                    stroke={config.color}
+                    strokeWidth={2}
+                    dot={{ fill: config.color, strokeWidth: 2, r: 3 }}
+                    activeDot={{ r: 5, fill: config.color }}
+                    name={config.name}
+                    connectNulls={false}
+                  />
+                )
+            )}
           </LineChart>
         </ResponsiveContainer>
       </div>
-      
+
       {/* Chart Statistics */}
       <div className="mt-4 text-center">
         <p className="text-sm text-gray-400">

@@ -1,6 +1,28 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, TrendingUp, TrendingDown, Globe, Calendar, DollarSign, BarChart3, Activity, Users, AlertCircle, RefreshCw } from 'lucide-react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
+import {
+  ArrowLeft,
+  TrendingUp,
+  TrendingDown,
+  Globe,
+  Calendar,
+  DollarSign,
+  BarChart3,
+  Activity,
+  Users,
+  AlertCircle,
+  RefreshCw,
+} from 'lucide-react';
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  AreaChart,
+  Area,
+} from 'recharts';
 
 const CryptoDetailPage = ({ cryptoId, onBack }) => {
   const [detailData, setDetailData] = useState(null);
@@ -19,16 +41,16 @@ const CryptoDetailPage = ({ cryptoId, onBack }) => {
     try {
       setError(null);
       console.log(`Fetching details for: ${cryptoId}`);
-      
+
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 8000); // 8 second timeout
-      
+
       const response = await fetch(`/api/crypto/${cryptoId}/details`, {
-        signal: controller.signal
+        signal: controller.signal,
       });
-      
+
       clearTimeout(timeoutId);
-      
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -38,13 +60,16 @@ const CryptoDetailPage = ({ cryptoId, onBack }) => {
     } catch (error) {
       console.error('Failed to fetch detail data:', error);
       setError(`Failed to load cryptocurrency details: ${error.message}`);
-      
+
       // Retry mechanism for rate limiting
       if (error.message.includes('429') && retryCount < 3) {
-        setTimeout(() => {
-          setRetryCount(prev => prev + 1);
-          fetchDetailData();
-        }, 2000 * (retryCount + 1)); // Exponential backoff
+        setTimeout(
+          () => {
+            setRetryCount((prev) => prev + 1);
+            fetchDetailData();
+          },
+          2000 * (retryCount + 1)
+        ); // Exponential backoff
       }
     }
   };
@@ -53,31 +78,33 @@ const CryptoDetailPage = ({ cryptoId, onBack }) => {
     try {
       setLoading(true);
       console.log(`Fetching history for: ${cryptoId}, days: ${timeRange}`);
-      
+
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 8000); // 8 second timeout
-      
+
       const response = await fetch(`/api/crypto/${cryptoId}/history?days=${timeRange}`, {
-        signal: controller.signal
+        signal: controller.signal,
       });
-      
+
       clearTimeout(timeoutId);
-      
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data = await response.json();
       console.log('Historical data received:', data);
-      
+
       // Transform the data for the chart
-      const chartData = data.prices?.map((price, index) => ({
-        time: timeRange === '1' 
-          ? new Date(price[0]).toLocaleTimeString() 
-          : new Date(price[0]).toLocaleDateString(),
-        price: price[1],
-        volume: data.total_volumes?.[index]?.[1] || 0
-      })) || [];
-      
+      const chartData =
+        data.prices?.map((price, index) => ({
+          time:
+            timeRange === '1'
+              ? new Date(price[0]).toLocaleTimeString()
+              : new Date(price[0]).toLocaleDateString(),
+          price: price[1],
+          volume: data.total_volumes?.[index]?.[1] || 0,
+        })) || [];
+
       setHistoricalData(chartData);
       setLoading(false);
     } catch (error) {
@@ -106,9 +133,14 @@ const CryptoDetailPage = ({ cryptoId, onBack }) => {
     if (num === null || num === undefined) return <span className="text-gray-400">N/A</span>;
     const isPositive = num >= 0;
     return (
-      <span className={`flex items-center space-x-1 ${isPositive ? 'text-crypto-green' : 'text-crypto-red'}`}>
+      <span
+        className={`flex items-center space-x-1 ${isPositive ? 'text-crypto-green' : 'text-crypto-red'}`}
+      >
         {isPositive ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
-        <span>{isPositive ? '+' : ''}{num?.toFixed(2)}%</span>
+        <span>
+          {isPositive ? '+' : ''}
+          {num?.toFixed(2)}%
+        </span>
       </span>
     );
   };
@@ -137,10 +169,12 @@ const CryptoDetailPage = ({ cryptoId, onBack }) => {
       vechain: { name: 'VeChain', symbol: 'VET', icon: '⚡' },
       'hedera-hashgraph': { name: 'Hedera', symbol: 'HBAR', icon: '🔷' },
       'theta-token': { name: 'Theta Network', symbol: 'THETA', icon: '🎥' },
-      'the-sandbox': { name: 'The Sandbox', symbol: 'SAND', icon: '🏖️' }
+      'the-sandbox': { name: 'The Sandbox', symbol: 'SAND', icon: '🏖️' },
     };
-    
-    return cryptoMapping[cryptoId] || { name: cryptoId, symbol: cryptoId.toUpperCase(), icon: '🪙' };
+
+    return (
+      cryptoMapping[cryptoId] || { name: cryptoId, symbol: cryptoId.toUpperCase(), icon: '🪙' }
+    );
   };
 
   const cryptoInfo = getCryptoInfo();
@@ -168,14 +202,14 @@ const CryptoDetailPage = ({ cryptoId, onBack }) => {
             <ArrowLeft className="w-5 h-5" />
             <span>Back to Dashboard</span>
           </button>
-          
+
           <div className="flex items-center space-x-4">
             {detailData?.image?.large ? (
-              <img 
-                src={detailData.image.large} 
-                alt={detailData.name} 
+              <img
+                src={detailData.image.large}
+                alt={detailData.name}
                 className="w-12 h-12 rounded-full"
-                onError={(e) => e.target.style.display = 'none'}
+                onError={(e) => (e.target.style.display = 'none')}
               />
             ) : (
               <div className="w-12 h-12 bg-crypto-dark rounded-full flex items-center justify-center text-2xl">
@@ -183,9 +217,7 @@ const CryptoDetailPage = ({ cryptoId, onBack }) => {
               </div>
             )}
             <div>
-              <h1 className="text-3xl font-bold">
-                {detailData?.name || cryptoInfo.name}
-              </h1>
+              <h1 className="text-3xl font-bold">{detailData?.name || cryptoInfo.name}</h1>
               <p className="text-gray-400 text-lg">
                 {detailData?.symbol?.toUpperCase() || cryptoInfo.symbol}
               </p>
@@ -251,7 +283,9 @@ const CryptoDetailPage = ({ cryptoId, onBack }) => {
                   {formatNumber(detailData.market_data?.total_volume?.usd)}
                 </p>
                 <div className="mt-2">
-                  {formatPercentage(detailData.market_data?.price_change_percentage_24h_in_currency?.usd)}
+                  {formatPercentage(
+                    detailData.market_data?.price_change_percentage_24h_in_currency?.usd
+                  )}
                 </div>
               </div>
 
@@ -279,8 +313,8 @@ const CryptoDetailPage = ({ cryptoId, onBack }) => {
                       key={range}
                       onClick={() => setTimeRange(range)}
                       className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors ${
-                        timeRange === range 
-                          ? 'bg-crypto-blue text-white' 
+                        timeRange === range
+                          ? 'bg-crypto-blue text-white'
                           : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
                       }`}
                     >
@@ -289,7 +323,7 @@ const CryptoDetailPage = ({ cryptoId, onBack }) => {
                   ))}
                 </div>
               </div>
-              
+
               {loading ? (
                 <div className="h-80 flex items-center justify-center">
                   <div className="w-8 h-8 border-4 border-crypto-blue border-t-transparent rounded-full animate-spin"></div>
@@ -299,39 +333,34 @@ const CryptoDetailPage = ({ cryptoId, onBack }) => {
                   <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={historicalData}>
                       <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                      <XAxis 
-                        dataKey="time" 
-                        stroke="#9CA3AF"
-                        fontSize={12}
-                        tickLine={false}
-                      />
-                      <YAxis 
+                      <XAxis dataKey="time" stroke="#9CA3AF" fontSize={12} tickLine={false} />
+                      <YAxis
                         stroke="#9CA3AF"
                         fontSize={12}
                         tickLine={false}
                         tickFormatter={(value) => `$${value.toLocaleString()}`}
                       />
-                      <Tooltip 
+                      <Tooltip
                         contentStyle={{
                           backgroundColor: '#1F2937',
                           border: '1px solid #374151',
                           borderRadius: '8px',
-                          color: '#F9FAFB'
+                          color: '#F9FAFB',
                         }}
                         formatter={(value) => [`$${value.toLocaleString()}`, 'Price']}
                         labelStyle={{ color: '#9CA3AF' }}
                       />
-                      <Area 
-                        type="monotone" 
-                        dataKey="price" 
-                        stroke="#F59E0B" 
+                      <Area
+                        type="monotone"
+                        dataKey="price"
+                        stroke="#F59E0B"
                         fill="url(#colorPrice)"
                         strokeWidth={3}
                       />
                       <defs>
                         <linearGradient id="colorPrice" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="#F59E0B" stopOpacity={0.3}/>
-                          <stop offset="95%" stopColor="#F59E0B" stopOpacity={0}/>
+                          <stop offset="5%" stopColor="#F59E0B" stopOpacity={0.3} />
+                          <stop offset="95%" stopColor="#F59E0B" stopOpacity={0} />
                         </linearGradient>
                       </defs>
                     </AreaChart>
@@ -399,7 +428,9 @@ const CryptoDetailPage = ({ cryptoId, onBack }) => {
                 <div className="space-y-3">
                   <div className="flex justify-between items-center">
                     <span className="text-gray-400">1 Hour</span>
-                    {formatPercentage(detailData.market_data?.price_change_percentage_1h_in_currency?.usd)}
+                    {formatPercentage(
+                      detailData.market_data?.price_change_percentage_1h_in_currency?.usd
+                    )}
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-gray-400">24 Hours</span>
@@ -421,23 +452,25 @@ const CryptoDetailPage = ({ cryptoId, onBack }) => {
               </div>
             </div>
           </>
-        ) : !error && (
-          <div className="card text-center">
-            <div className="py-12">
-              <AlertCircle className="w-16 h-16 text-gray-500 mx-auto mb-4" />
-              <h3 className="text-xl font-bold mb-2">Data Not Available</h3>
-              <p className="text-gray-400 mb-4">
-                Unable to load detailed information for {cryptoInfo.name}
-              </p>
-              <button
-                onClick={retryFetch}
-                className="flex items-center space-x-2 bg-crypto-blue hover:bg-crypto-blue/80 text-white px-4 py-2 rounded-lg transition-colors mx-auto"
-              >
-                <RefreshCw className="w-4 h-4" />
-                <span>Try Again</span>
-              </button>
+        ) : (
+          !error && (
+            <div className="card text-center">
+              <div className="py-12">
+                <AlertCircle className="w-16 h-16 text-gray-500 mx-auto mb-4" />
+                <h3 className="text-xl font-bold mb-2">Data Not Available</h3>
+                <p className="text-gray-400 mb-4">
+                  Unable to load detailed information for {cryptoInfo.name}
+                </p>
+                <button
+                  onClick={retryFetch}
+                  className="flex items-center space-x-2 bg-crypto-blue hover:bg-crypto-blue/80 text-white px-4 py-2 rounded-lg transition-colors mx-auto"
+                >
+                  <RefreshCw className="w-4 h-4" />
+                  <span>Try Again</span>
+                </button>
+              </div>
             </div>
-          </div>
+          )
         )}
       </div>
     </div>

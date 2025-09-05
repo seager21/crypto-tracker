@@ -24,7 +24,7 @@ const Dashboard: React.FC<DashboardProps> = ({ cryptoData, cryptoConfig }) => {
           Manage your crypto watchlist, portfolio, and account settings
         </p>
       </div>
-      
+
       <div className="flex flex-col md:flex-row gap-6">
         <div className="md:w-1/4">
           <div className="bg-gray-800 rounded-xl p-4">
@@ -32,32 +32,32 @@ const Dashboard: React.FC<DashboardProps> = ({ cryptoData, cryptoConfig }) => {
               <button
                 onClick={() => setActiveTab('watchlist')}
                 className={`w-full flex items-center p-3 rounded-lg transition ${
-                  activeTab === 'watchlist' 
-                    ? 'bg-blue-600 text-white' 
+                  activeTab === 'watchlist'
+                    ? 'bg-blue-600 text-white'
                     : 'text-gray-300 hover:bg-gray-700'
                 }`}
               >
                 <List size={18} className="mr-3" />
                 <span>Watchlist</span>
               </button>
-              
+
               <button
                 onClick={() => setActiveTab('portfolio')}
                 className={`w-full flex items-center p-3 rounded-lg transition ${
-                  activeTab === 'portfolio' 
-                    ? 'bg-blue-600 text-white' 
+                  activeTab === 'portfolio'
+                    ? 'bg-blue-600 text-white'
                     : 'text-gray-300 hover:bg-gray-700'
                 }`}
               >
                 <Settings size={18} className="mr-3" />
                 <span>Portfolio</span>
               </button>
-              
+
               <button
                 onClick={() => setActiveTab('profile')}
                 className={`w-full flex items-center p-3 rounded-lg transition ${
-                  activeTab === 'profile' 
-                    ? 'bg-blue-600 text-white' 
+                  activeTab === 'profile'
+                    ? 'bg-blue-600 text-white'
                     : 'text-gray-300 hover:bg-gray-700'
                 }`}
               >
@@ -67,19 +67,17 @@ const Dashboard: React.FC<DashboardProps> = ({ cryptoData, cryptoConfig }) => {
             </nav>
           </div>
         </div>
-        
+
         <div className="md:w-3/4">
           {activeTab === 'watchlist' && (
             <Watchlist cryptoData={cryptoData} cryptoConfig={cryptoConfig} />
           )}
-          
+
           {activeTab === 'portfolio' && (
             <CryptoPortfolioOverview cryptoData={cryptoData} cryptoConfig={cryptoConfig} />
           )}
-          
-          {activeTab === 'profile' && (
-            <UserProfile />
-          )}
+
+          {activeTab === 'profile' && <UserProfile />}
         </div>
       </div>
     </div>

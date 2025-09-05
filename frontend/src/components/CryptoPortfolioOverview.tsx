@@ -1,5 +1,15 @@
 import React, { useState } from 'react';
-import { Search, Filter, SortAsc, SortDesc, Grid, List, Star, TrendingUp, TrendingDown } from 'lucide-react';
+import {
+  Search,
+  Filter,
+  SortAsc,
+  SortDesc,
+  Grid,
+  List,
+  Star,
+  TrendingUp,
+  TrendingDown,
+} from 'lucide-react';
 import { CryptoData, CryptoConfig } from '../types';
 
 interface CryptoPortfolioOverviewProps {
@@ -7,12 +17,12 @@ interface CryptoPortfolioOverviewProps {
    * Cryptocurrency data from API
    */
   cryptoData: Record<string, CryptoData> | null;
-  
+
   /**
    * Configuration for cryptocurrencies
    */
   cryptoConfig: Record<string, CryptoConfig>;
-  
+
   /**
    * Handler for when a cryptocurrency is clicked
    */
@@ -22,10 +32,10 @@ interface CryptoPortfolioOverviewProps {
 /**
  * Component for displaying and managing a cryptocurrency portfolio
  */
-const CryptoPortfolioOverview: React.FC<CryptoPortfolioOverviewProps> = ({ 
-  cryptoData, 
-  cryptoConfig, 
-  onCryptoClick 
+const CryptoPortfolioOverview: React.FC<CryptoPortfolioOverviewProps> = ({
+  cryptoData,
+  cryptoConfig,
+  onCryptoClick,
 }) => {
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [sortBy, setSortBy] = useState<string>('marketCap');
@@ -40,7 +50,7 @@ const CryptoPortfolioOverview: React.FC<CryptoPortfolioOverviewProps> = ({
     platform: 'Platform Tokens',
     utility: 'Utility Tokens',
     gaming: 'Gaming & NFT',
-    media: 'Media & Entertainment'
+    media: 'Media & Entertainment',
   };
 
   // Categorize cryptos
@@ -50,7 +60,7 @@ const CryptoPortfolioOverview: React.FC<CryptoPortfolioOverviewProps> = ({
     platform: ['avalanche-2', 'algorand', 'cosmos', 'stellar', 'polkadot'],
     utility: ['litecoin', 'vechain', 'hedera-hashgraph'],
     gaming: ['the-sandbox', 'dogecoin'],
-    media: ['theta-token']
+    media: ['theta-token'],
   };
 
   /**
@@ -69,35 +79,35 @@ const CryptoPortfolioOverview: React.FC<CryptoPortfolioOverviewProps> = ({
    */
   const getFilteredCryptos = (): Array<{ id: string; data: CryptoData }> => {
     if (!cryptoData) return [];
-    
+
     return Object.keys(cryptoConfig)
-      .filter(key => {
+      .filter((key) => {
         const apiKey = key === 'avalanche-2' ? 'avalanche-2' : key;
-        
+
         // Check if data exists
         if (!cryptoData[apiKey]) return false;
-        
+
         // Filter by search term
-        const matchesSearch = 
-          searchTerm === '' || 
+        const matchesSearch =
+          searchTerm === '' ||
           cryptoConfig[key].name.toLowerCase().includes(searchTerm.toLowerCase()) ||
           cryptoConfig[key].symbol.toLowerCase().includes(searchTerm.toLowerCase());
-        
+
         // Filter by category
-        const matchesCategory = 
-          selectedCategory === 'all' || 
+        const matchesCategory =
+          selectedCategory === 'all' ||
           (cryptoCategories[selectedCategory] && cryptoCategories[selectedCategory].includes(key));
-        
+
         return matchesSearch && matchesCategory;
       })
-      .map(key => {
+      .map((key) => {
         const apiKey = key === 'avalanche-2' ? 'avalanche-2' : key;
         return { id: key, data: cryptoData[apiKey] };
       })
       .sort((a, b) => {
         const aValue = getSortValue(a.id, a.data);
         const bValue = getSortValue(b.id, b.data);
-        
+
         return sortOrder === 'asc' ? aValue - bValue : bValue - aValue;
       });
   };
@@ -126,7 +136,7 @@ const CryptoPortfolioOverview: React.FC<CryptoPortfolioOverviewProps> = ({
    * Handle sort order change
    */
   const handleSortOrderChange = (): void => {
-    setSortOrder(prev => prev === 'asc' ? 'desc' : 'asc');
+    setSortOrder((prev) => (prev === 'asc' ? 'desc' : 'asc'));
   };
 
   /**
@@ -147,7 +157,7 @@ const CryptoPortfolioOverview: React.FC<CryptoPortfolioOverviewProps> = ({
     // This would be replaced with actual portfolio holdings calculation
     // For now, just sum up the market caps as a placeholder
     return getFilteredCryptos().reduce((total, { data }) => {
-      return total + (data.usd_market_cap / 1e9); // Convert to billions
+      return total + data.usd_market_cap / 1e9; // Convert to billions
     }, 0);
   };
 
@@ -166,46 +176,49 @@ const CryptoPortfolioOverview: React.FC<CryptoPortfolioOverviewProps> = ({
             <div className="text-2xl font-bold">{filteredCryptos.length}</div>
           </div>
         </div>
-        
+
         <div className="filter-card">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={18} />
-            <input 
+            <Search
+              className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500"
+              size={18}
+            />
+            <input
               type="text"
               className="w-full bg-gray-800 border border-gray-700 rounded-lg py-2 px-10 text-gray-300 focus:outline-none focus:ring-2 focus:ring-crypto-blue focus:border-transparent"
               placeholder="Search cryptocurrencies..."
               value={searchTerm}
-              onChange={e => setSearchTerm(e.target.value)}
+              onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
           <div className="flex justify-between mt-3">
             <div className="flex space-x-1">
-              <button 
-                onClick={() => setViewMode('grid')} 
+              <button
+                onClick={() => setViewMode('grid')}
                 className={`view-toggle-btn ${viewMode === 'grid' ? 'active' : ''}`}
                 aria-label="Grid view"
               >
                 <Grid size={18} />
               </button>
-              <button 
-                onClick={() => setViewMode('list')} 
+              <button
+                onClick={() => setViewMode('list')}
                 className={`view-toggle-btn ${viewMode === 'list' ? 'active' : ''}`}
                 aria-label="List view"
               >
                 <List size={18} />
               </button>
             </div>
-            <button 
-              onClick={handleSortOrderChange} 
+            <button
+              onClick={handleSortOrderChange}
               className="view-toggle-btn"
-              aria-label={sortOrder === 'asc' ? "Sort descending" : "Sort ascending"}
+              aria-label={sortOrder === 'asc' ? 'Sort descending' : 'Sort ascending'}
             >
               {sortOrder === 'asc' ? <SortAsc size={18} /> : <SortDesc size={18} />}
             </button>
           </div>
         </div>
       </div>
-      
+
       <div className="mb-6 overflow-x-auto">
         <div className="flex space-x-2">
           {Object.entries(categories).map(([key, label]) => (
@@ -219,42 +232,42 @@ const CryptoPortfolioOverview: React.FC<CryptoPortfolioOverviewProps> = ({
           ))}
         </div>
       </div>
-      
+
       {viewMode === 'list' ? (
         <div className="rounded-xl overflow-hidden bg-gray-800/50 border border-gray-700">
           <table className="min-w-full divide-y divide-gray-700">
             <thead className="bg-gray-900/30">
               <tr>
-                <th 
-                  scope="col" 
+                <th
+                  scope="col"
                   className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider cursor-pointer"
                   onClick={() => handleSortByChange('name')}
                 >
                   Name
                 </th>
-                <th 
-                  scope="col" 
+                <th
+                  scope="col"
                   className="px-6 py-3 text-right text-xs font-medium text-gray-400 uppercase tracking-wider cursor-pointer"
                   onClick={() => handleSortByChange('price')}
                 >
                   Price
                 </th>
-                <th 
-                  scope="col" 
+                <th
+                  scope="col"
                   className="px-6 py-3 text-right text-xs font-medium text-gray-400 uppercase tracking-wider cursor-pointer"
                   onClick={() => handleSortByChange('change')}
                 >
                   24h %
                 </th>
-                <th 
-                  scope="col" 
+                <th
+                  scope="col"
                   className="px-6 py-3 text-right text-xs font-medium text-gray-400 uppercase tracking-wider cursor-pointer hidden md:table-cell"
                   onClick={() => handleSortByChange('marketCap')}
                 >
                   Market Cap
                 </th>
-                <th 
-                  scope="col" 
+                <th
+                  scope="col"
                   className="px-6 py-3 text-right text-xs font-medium text-gray-400 uppercase tracking-wider cursor-pointer hidden lg:table-cell"
                   onClick={() => handleSortByChange('volume')}
                 >
@@ -265,10 +278,10 @@ const CryptoPortfolioOverview: React.FC<CryptoPortfolioOverviewProps> = ({
             <tbody className="divide-y divide-gray-700">
               {filteredCryptos.map(({ id, data }) => {
                 const isPositive = data.usd_24h_change >= 0;
-                
+
                 return (
-                  <tr 
-                    key={id} 
+                  <tr
+                    key={id}
                     className="hover:bg-gray-700/30 cursor-pointer transition-colors"
                     onClick={() => onCryptoClick(id)}
                   >
@@ -285,9 +298,14 @@ const CryptoPortfolioOverview: React.FC<CryptoPortfolioOverviewProps> = ({
                       <div className="font-medium">${data.usd.toLocaleString()}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right">
-                      <div className={`flex items-center justify-end space-x-1 ${isPositive ? 'text-green-400' : 'text-red-400'}`}>
+                      <div
+                        className={`flex items-center justify-end space-x-1 ${isPositive ? 'text-green-400' : 'text-red-400'}`}
+                      >
                         {isPositive ? <TrendingUp size={14} /> : <TrendingDown size={14} />}
-                        <span>{isPositive ? '+' : ''}{data.usd_24h_change.toFixed(2)}%</span>
+                        <span>
+                          {isPositive ? '+' : ''}
+                          {data.usd_24h_change.toFixed(2)}%
+                        </span>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right hidden md:table-cell">
@@ -306,7 +324,7 @@ const CryptoPortfolioOverview: React.FC<CryptoPortfolioOverviewProps> = ({
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {filteredCryptos.map(({ id, data }) => {
             const isPositive = data.usd_24h_change >= 0;
-            
+
             return (
               <div
                 key={id}
@@ -337,28 +355,33 @@ const CryptoPortfolioOverview: React.FC<CryptoPortfolioOverviewProps> = ({
                       <p className="text-gray-400 text-sm">{cryptoConfig[id].symbol}</p>
                     </div>
                   </div>
-                  <div className={`flex items-center space-x-1 px-2 py-1 rounded-full ${
-                    isPositive ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'
-                  }`}>
+                  <div
+                    className={`flex items-center space-x-1 px-2 py-1 rounded-full ${
+                      isPositive ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'
+                    }`}
+                  >
                     {isPositive ? <TrendingUp size={14} /> : <TrendingDown size={14} />}
-                    <span className="text-xs">{isPositive ? '+' : ''}{data.usd_24h_change.toFixed(2)}%</span>
+                    <span className="text-xs">
+                      {isPositive ? '+' : ''}
+                      {data.usd_24h_change.toFixed(2)}%
+                    </span>
                   </div>
                 </div>
-                
+
                 <div className="text-lg font-bold">${data.usd.toLocaleString()}</div>
-                
+
                 <div className="flex justify-between text-sm text-gray-400 mt-2">
                   <span>Market Cap:</span>
                   <span>{formatNumber(data.usd_market_cap)}</span>
                 </div>
-                
+
                 <div className="flex justify-between text-sm text-gray-400">
                   <span>Volume (24h):</span>
                   <span>{formatNumber(data.usd_24h_vol)}</span>
                 </div>
-                
+
                 <div className="mt-3 h-1 bg-gray-700 rounded-full overflow-hidden">
-                  <div 
+                  <div
                     className={`h-full ${isPositive ? 'bg-green-500' : 'bg-red-500'} rounded-full`}
                     style={{ width: `${Math.min(Math.abs(data.usd_24h_change) * 5, 100)}%` }}
                   ></div>
@@ -368,11 +391,11 @@ const CryptoPortfolioOverview: React.FC<CryptoPortfolioOverviewProps> = ({
           })}
         </div>
       )}
-      
+
       {filteredCryptos.length === 0 && (
         <div className="text-center py-12">
           <p className="text-gray-400">No cryptocurrencies found matching your search criteria.</p>
-          <button 
+          <button
             className="mt-4 px-4 py-2 bg-crypto-blue/30 hover:bg-crypto-blue/50 text-crypto-blue rounded-lg"
             onClick={() => {
               setSearchTerm('');

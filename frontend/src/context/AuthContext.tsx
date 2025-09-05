@@ -9,7 +9,7 @@ import {
   UserCredential,
   User as FirebaseUser,
   updateProfile,
-  AuthError
+  AuthError,
 } from 'firebase/auth';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { auth, db } from '@/firebase/firebase';
@@ -23,8 +23,8 @@ const DEFAULT_USER_DATA: UserData = {
   settings: {
     theme: 'dark',
     currency: 'usd',
-    notifications: true
-  }
+    notifications: true,
+  },
 };
 
 interface AuthContextType {
@@ -41,7 +41,13 @@ interface AuthContextType {
   removeFromWatchlist: (cryptoId: string) => Promise<void>;
   addToFavorites: (cryptoId: string) => Promise<void>;
   removeFromFavorites: (cryptoId: string) => Promise<void>;
-  addToPortfolio: (cryptoId: string, name: string, symbol: string, amount: number, purchasePrice: number) => Promise<void>;
+  addToPortfolio: (
+    cryptoId: string,
+    name: string,
+    symbol: string,
+    amount: number,
+    purchasePrice: number
+  ) => Promise<void>;
   removeFromPortfolio: (id: string) => Promise<void>;
   updateUserSettings: (settings: Partial<UserData['settings']>) => Promise<void>;
 }
@@ -56,7 +62,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [authState, setAuthState] = useState<AuthState>({
     user: null,
     loading: true,
-    error: null
+    error: null,
   });
 
   const [userData, setUserData] = useState<UserData | null>(null);
@@ -66,7 +72,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     uid: firebaseUser.uid,
     email: firebaseUser.email,
     displayName: firebaseUser.displayName,
-    photoURL: firebaseUser.photoURL
+    photoURL: firebaseUser.photoURL,
   });
 
   // Fetch user data from Firestore
@@ -84,7 +90,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }
     } catch (error) {
       console.error('Error fetching user data:', error);
-      setAuthState(prev => ({ ...prev, error: 'Failed to load user data' }));
+      setAuthState((prev) => ({ ...prev, error: 'Failed to load user data' }));
     }
   };
 
@@ -108,18 +114,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const register = async (email: string, password: string, displayName: string) => {
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      
+
       // Update profile with display name
       if (auth.currentUser) {
         await updateProfile(auth.currentUser, { displayName });
       }
-      
+
       // Create user document in Firestore
       await setDoc(doc(db, 'users', userCredential.user.uid), DEFAULT_USER_DATA);
-      
+
       return userCredential;
     } catch (error: any) {
-      setAuthState(prev => ({ ...prev, error: error.message }));
+      setAuthState((prev) => ({ ...prev, error: error.message }));
       throw error;
     }
   };
@@ -130,7 +136,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       return userCredential;
     } catch (error: any) {
-      setAuthState(prev => ({ ...prev, error: error.message }));
+      setAuthState((prev) => ({ ...prev, error: error.message }));
       throw error;
     }
   };
@@ -140,18 +146,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       const provider = new GoogleAuthProvider();
       const userCredential = await signInWithPopup(auth, provider);
-      
+
       // Check if this is a new user and create a document if needed
       const userDocRef = doc(db, 'users', userCredential.user.uid);
       const userDoc = await getDoc(userDocRef);
-      
+
       if (!userDoc.exists()) {
         await setDoc(userDocRef, DEFAULT_USER_DATA);
       }
-      
+
       return userCredential;
     } catch (error: any) {
-      setAuthState(prev => ({ ...prev, error: error.message }));
+      setAuthState((prev) => ({ ...prev, error: error.message }));
       throw error;
     }
   };
@@ -161,65 +167,65 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       await signOut(auth);
     } catch (error: any) {
-      setAuthState(prev => ({ ...prev, error: error.message }));
+      setAuthState((prev) => ({ ...prev, error: error.message }));
       throw error;
     }
   };
 
   // Reset error state
   const resetError = () => {
-    setAuthState(prev => ({ ...prev, error: null }));
+    setAuthState((prev) => ({ ...prev, error: null }));
   };
 
   // Update user data in Firestore
   const updateUserDocInFirestore = async (newData: Partial<UserData>) => {
     if (!authState.user?.uid) return;
-    
+
     try {
       const userDocRef = doc(db, 'users', authState.user.uid);
       await setDoc(userDocRef, { ...userData, ...newData }, { merge: true });
-      setUserData(prev => prev ? { ...prev, ...newData } : null);
+      setUserData((prev) => (prev ? { ...prev, ...newData } : null));
     } catch (error) {
       console.error('Error updating user data:', error);
-      setAuthState(prev => ({ ...prev, error: 'Failed to update user data' }));
+      setAuthState((prev) => ({ ...prev, error: 'Failed to update user data' }));
     }
   };
 
   // Watchlist functions
   const addToWatchlist = async (cryptoId: string, name: string, symbol: string) => {
     if (!userData) return;
-    
+
     const newWatchlistItem = {
       id: Date.now().toString(),
       cryptoId,
       name,
       symbol,
-      addedAt: Date.now()
+      addedAt: Date.now(),
     };
-    
+
     const newWatchlist = [...userData.watchlist, newWatchlistItem];
     await updateUserDocInFirestore({ watchlist: newWatchlist });
   };
 
   const removeFromWatchlist = async (cryptoId: string) => {
     if (!userData) return;
-    
-    const newWatchlist = userData.watchlist.filter(item => item.cryptoId !== cryptoId);
+
+    const newWatchlist = userData.watchlist.filter((item) => item.cryptoId !== cryptoId);
     await updateUserDocInFirestore({ watchlist: newWatchlist });
   };
 
   // Favorite coins functions
   const addToFavorites = async (cryptoId: string) => {
     if (!userData) return;
-    
+
     const newFavorites = [...userData.favoriteCoins, cryptoId];
     await updateUserDocInFirestore({ favoriteCoins: newFavorites });
   };
 
   const removeFromFavorites = async (cryptoId: string) => {
     if (!userData) return;
-    
-    const newFavorites = userData.favoriteCoins.filter(id => id !== cryptoId);
+
+    const newFavorites = userData.favoriteCoins.filter((id) => id !== cryptoId);
     await updateUserDocInFirestore({ favoriteCoins: newFavorites });
   };
 
@@ -232,7 +238,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     purchasePrice: number
   ) => {
     if (!userData) return;
-    
+
     const newPortfolioItem = {
       id: Date.now().toString(),
       cryptoId,
@@ -240,24 +246,24 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       symbol,
       amount,
       purchasePrice,
-      purchaseDate: Date.now()
+      purchaseDate: Date.now(),
     };
-    
+
     const newPortfolio = [...userData.portfolio, newPortfolioItem];
     await updateUserDocInFirestore({ portfolio: newPortfolio });
   };
 
   const removeFromPortfolio = async (id: string) => {
     if (!userData) return;
-    
-    const newPortfolio = userData.portfolio.filter(item => item.id !== id);
+
+    const newPortfolio = userData.portfolio.filter((item) => item.id !== id);
     await updateUserDocInFirestore({ portfolio: newPortfolio });
   };
 
   // Settings functions
   const updateUserSettings = async (settings: Partial<UserData['settings']>) => {
     if (!userData) return;
-    
+
     const newSettings = { ...userData.settings, ...settings };
     await updateUserDocInFirestore({ settings: newSettings });
   };
@@ -278,22 +284,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     removeFromFavorites,
     addToPortfolio,
     removeFromPortfolio,
-    updateUserSettings
+    updateUserSettings,
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
 export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
-  
+
   if (context === undefined) {
     throw new Error('useAuth must be used within an AuthProvider');
   }
-  
+
   return context;
 };

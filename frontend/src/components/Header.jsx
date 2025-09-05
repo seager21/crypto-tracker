@@ -19,7 +19,7 @@ const Header = ({ isConnected, lastUpdate, onRefresh, loading = false }) => {
               Real-time cryptocurrency tracking
             </div>
           </div>
-          
+
           <div className="flex items-center space-x-4">
             {/* Connection Status */}
             <div className="flex items-center space-x-2">
@@ -35,15 +35,15 @@ const Header = ({ isConnected, lastUpdate, onRefresh, loading = false }) => {
                 </>
               )}
             </div>
-            
+
             {/* Last Update */}
             <div className="flex items-center space-x-2 text-gray-400 text-sm hidden md:flex">
               <Clock className="w-4 h-4" />
               <span>Updated: {formatTime(lastUpdate)}</span>
             </div>
-            
+
             {/* Refresh Button */}
-            <button 
+            <button
               onClick={onRefresh}
               disabled={loading}
               className={`btn-primary flex items-center space-x-2 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}

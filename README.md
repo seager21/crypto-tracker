@@ -5,6 +5,7 @@ A **modern, real-time cryptocurrency tracking application** built with **Node.js
 ## ✨ New Features & Improvements
 
 ### 🎨 **Modern React Frontend**
+
 - **Professional UI** with Tailwind CSS and custom animations
 - **Real-time price charts** using Recharts library
 - **Responsive design** that works on all devices
@@ -13,6 +14,7 @@ A **modern, real-time cryptocurrency tracking application** built with **Node.js
 - **Dark theme** with gradient backgrounds
 
 ### 📊 **Enhanced Data Visualization**
+
 - **Interactive price charts** with Bitcoin and Ethereum
 - **Market overview cards** with total market cap
 - **24h change indicators** with color-coded trends
@@ -20,6 +22,7 @@ A **modern, real-time cryptocurrency tracking application** built with **Node.js
 - **Live update timestamps**
 
 ### 🔧 **Improved Backend**
+
 - **Enhanced API endpoints** with more crypto data
 - **Better error handling** and logging
 - **Support for additional cryptocurrencies**
@@ -27,6 +30,7 @@ A **modern, real-time cryptocurrency tracking application** built with **Node.js
 - **Individual crypto data endpoint**
 
 ### 🛠 **Developer Experience**
+
 - **Vite** for fast development and building
 - **Hot reload** for instant development feedback
 - **TypeScript** for improved code quality and developer experience
@@ -153,14 +157,14 @@ Response:
 
 ```json
 {
-    "bitcoin": {
-        "usd": 42000,
-        "usd_24h_change": -2.3
-    },
-    "ethereum": {
-        "usd": 3000,
-        "usd_24h_change": 1.5
-    }
+  "bitcoin": {
+    "usd": 42000,
+    "usd_24h_change": -2.3
+  },
+  "ethereum": {
+    "usd": 3000,
+    "usd_24h_change": 1.5
+  }
 }
 ```
 
@@ -177,7 +181,7 @@ import { CryptoData } from './types';
 
 const socket: Socket = io('http://localhost:3000');
 socket.on('cryptoData', (data: CryptoData) => {
-    console.log("Updated Prices:", data);
+  console.log('Updated Prices:', data);
 });
 ```
 
@@ -278,4 +282,3 @@ The project uses ESLint with TypeScript-specific rules to ensure code quality:
 ## License
 
 MIT License
-

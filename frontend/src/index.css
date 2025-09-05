@@ -12,19 +12,19 @@
   .card {
     @apply bg-crypto-dark rounded-xl p-6 shadow-lg border border-gray-700/50 backdrop-blur-sm;
   }
-  
+
   .btn-primary {
     @apply bg-crypto-blue hover:bg-crypto-blue/80 text-white font-medium py-2 px-4 rounded-lg transition-all duration-200 transform hover:scale-105;
   }
-  
+
   .crypto-card {
     @apply card hover:shadow-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl;
   }
-  
+
   .crypto-card:hover {
     @apply shadow-crypto-blue/10;
   }
-  
+
   .loading-spinner {
     @apply w-8 h-8 border-4 border-crypto-blue border-t-transparent rounded-full animate-spin;
   }
@@ -40,12 +40,12 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #F59E0B;
+  background: #f59e0b;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #D97706;
+  background: #d97706;
 }
 
 /* Smooth transitions for all interactive elements */

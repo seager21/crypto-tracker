@@ -7,7 +7,7 @@ import CryptoDetailPage from './components/CryptoDetailPage';
 import CryptoPortfolioOverview from './components/CryptoPortfolioOverview';
 import CryptoNewsCarousel from './components/CryptoNewsCarousel';
 import Header from './components/Header';
-import { TrendingUp, TrendingDown, Activity, RefreshCw, BarChart, Grid, List, Newspaper } from 'lucide-react';
+import { TrendingUp, Activity, BarChart, Grid, List, Newspaper } from 'lucide-react';
 
 function App() {
   const [cryptoData, setCryptoData] = useState(null);
@@ -24,25 +24,73 @@ function App() {
     ethereum: { name: 'Ethereum', symbol: 'ETH', icon: '♦', color: '#3B82F6', cardColor: 'blue' },
     cardano: { name: 'Cardano', symbol: 'ADA', icon: '♠', color: '#10B981', cardColor: 'green' },
     polkadot: { name: 'Polkadot', symbol: 'DOT', icon: '●', color: '#8B5CF6', cardColor: 'purple' },
-    chainlink: { name: 'Chainlink', symbol: 'LINK', icon: '🔗', color: '#EF4444', cardColor: 'red' },
+    chainlink: {
+      name: 'Chainlink',
+      symbol: 'LINK',
+      icon: '🔗',
+      color: '#EF4444',
+      cardColor: 'red',
+    },
     litecoin: { name: 'Litecoin', symbol: 'LTC', icon: 'Ł', color: '#A7A9AC', cardColor: 'slate' },
-    binancecoin: { name: 'Binance Coin', symbol: 'BNB', icon: '🅑', color: '#F3BA2F', cardColor: 'amber' },
+    binancecoin: {
+      name: 'Binance Coin',
+      symbol: 'BNB',
+      icon: '🅑',
+      color: '#F3BA2F',
+      cardColor: 'amber',
+    },
     solana: { name: 'Solana', symbol: 'SOL', icon: '◎', color: '#9945FF', cardColor: 'violet' },
-    dogecoin: { name: 'Dogecoin', symbol: 'DOGE', icon: '🐕', color: '#C2A633', cardColor: 'yellow' },
+    dogecoin: {
+      name: 'Dogecoin',
+      symbol: 'DOGE',
+      icon: '🐕',
+      color: '#C2A633',
+      cardColor: 'yellow',
+    },
     ripple: { name: 'XRP', symbol: 'XRP', icon: '✕', color: '#23292F', cardColor: 'gray' },
-    'avalanche-2': { name: 'Avalanche', symbol: 'AVAX', icon: '🏔', color: '#E84142', cardColor: 'red' },
-    polygon: { name: 'Polygon', symbol: 'MATIC', icon: '🔷', color: '#8247E5', cardColor: 'purple' },
+    'avalanche-2': {
+      name: 'Avalanche',
+      symbol: 'AVAX',
+      icon: '🏔',
+      color: '#E84142',
+      cardColor: 'red',
+    },
+    polygon: {
+      name: 'Polygon',
+      symbol: 'MATIC',
+      icon: '🔷',
+      color: '#8247E5',
+      cardColor: 'purple',
+    },
     // Adding 10 more popular cryptocurrencies
-    'uniswap': { name: 'Uniswap', symbol: 'UNI', icon: '🦄', color: '#FF007A', cardColor: 'pink' },
-    'cosmos': { name: 'Cosmos', symbol: 'ATOM', icon: '⚛️', color: '#2E3148', cardColor: 'slate' },
-    'stellar': { name: 'Stellar', symbol: 'XLM', icon: '⭐', color: '#7D00FF', cardColor: 'indigo' },
-    'filecoin': { name: 'Filecoin', symbol: 'FIL', icon: '📁', color: '#0090FF', cardColor: 'blue' },
-    'aave': { name: 'Aave', symbol: 'AAVE', icon: '👻', color: '#B6509E', cardColor: 'pink' },
-    'algorand': { name: 'Algorand', symbol: 'ALGO', icon: '🔺', color: '#000000', cardColor: 'gray' },
-    'vechain': { name: 'VeChain', symbol: 'VET', icon: '⚡', color: '#15BDFF', cardColor: 'sky' },
-    'hedera-hashgraph': { name: 'Hedera', symbol: 'HBAR', icon: '🔷', color: '#000000', cardColor: 'gray' },
-    'theta-token': { name: 'Theta Network', symbol: 'THETA', icon: '🎥', color: '#2AB8E6', cardColor: 'cyan' },
-    'the-sandbox': { name: 'The Sandbox', symbol: 'SAND', icon: '🏖️', color: '#00D4FF', cardColor: 'sky' }
+    uniswap: { name: 'Uniswap', symbol: 'UNI', icon: '🦄', color: '#FF007A', cardColor: 'pink' },
+    cosmos: { name: 'Cosmos', symbol: 'ATOM', icon: '⚛️', color: '#2E3148', cardColor: 'slate' },
+    stellar: { name: 'Stellar', symbol: 'XLM', icon: '⭐', color: '#7D00FF', cardColor: 'indigo' },
+    filecoin: { name: 'Filecoin', symbol: 'FIL', icon: '📁', color: '#0090FF', cardColor: 'blue' },
+    aave: { name: 'Aave', symbol: 'AAVE', icon: '👻', color: '#B6509E', cardColor: 'pink' },
+    algorand: { name: 'Algorand', symbol: 'ALGO', icon: '🔺', color: '#000000', cardColor: 'gray' },
+    vechain: { name: 'VeChain', symbol: 'VET', icon: '⚡', color: '#15BDFF', cardColor: 'sky' },
+    'hedera-hashgraph': {
+      name: 'Hedera',
+      symbol: 'HBAR',
+      icon: '🔷',
+      color: '#000000',
+      cardColor: 'gray',
+    },
+    'theta-token': {
+      name: 'Theta Network',
+      symbol: 'THETA',
+      icon: '🎥',
+      color: '#2AB8E6',
+      cardColor: 'cyan',
+    },
+    'the-sandbox': {
+      name: 'The Sandbox',
+      symbol: 'SAND',
+      icon: '🏖️',
+      color: '#00D4FF',
+      cardColor: 'sky',
+    },
   };
 
   const [socket, setSocket] = useState(null);
@@ -53,7 +101,7 @@ function App() {
       timeout: 10000,
       reconnection: true,
       reconnectionDelay: 2000,
-      reconnectionAttempts: 5
+      reconnectionAttempts: 5,
     });
 
     setSocket(socketInstance);
@@ -73,18 +121,21 @@ function App() {
         setCryptoData(data);
         setLastUpdate(new Date());
         setLoading(false);
-        
+
         // Add to price history for charts
         const timestamp = new Date().toLocaleTimeString();
-        setPriceHistory(prev => {
-          const newHistory = [...prev, {
-            time: timestamp,
-            ...Object.keys(cryptoConfig).reduce((acc, key) => {
-              const apiKey = key === 'avalanche-2' ? 'avalanche-2' : key;
-              acc[key] = data[apiKey]?.usd || 0;
-              return acc;
-            }, {})
-          }];
+        setPriceHistory((prev) => {
+          const newHistory = [
+            ...prev,
+            {
+              time: timestamp,
+              ...Object.keys(cryptoConfig).reduce((acc, key) => {
+                const apiKey = key === 'avalanche-2' ? 'avalanche-2' : key;
+                acc[key] = data[apiKey]?.usd || 0;
+                return acc;
+              }, {}),
+            },
+          ];
           // Keep only last 20 data points
           return newHistory.slice(-20);
         });
@@ -133,38 +184,38 @@ function App() {
     try {
       setLoading(true);
       console.log('🔄 Fetching crypto data...');
-      
+
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 8000); // 8 second timeout
-      
+
       // Use direct API url instead of relative path
       const API_URL = 'http://localhost:4000/api/crypto';
       console.log(`🌐 Attempting to fetch from: ${API_URL}`);
-      
+
       const response = await fetch(API_URL, {
         signal: controller.signal,
         headers: {
-          'Cache-Control': 'no-cache'
-        }
+          'Cache-Control': 'no-cache',
+        },
       });
-      
+
       clearTimeout(timeoutId);
-      
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      
+
       const data = await response.json();
       console.log('✅ Successfully fetched crypto data');
-      
+
       setCryptoData(data);
       setLastUpdate(new Date());
       setLoading(false);
-      
+
       return data;
     } catch (error) {
       console.error('❌ Failed to fetch crypto data:', error);
-      
+
       // Retry logic
       if (retryCount < 2 && error.name !== 'AbortError') {
         const delay = (retryCount + 1) * 2000; // 2s, 4s delays
@@ -191,7 +242,7 @@ function App() {
 
   const getActiveCryptos = () => {
     if (!cryptoData) return 0;
-    return Object.keys(cryptoConfig).filter(key => {
+    return Object.keys(cryptoConfig).filter((key) => {
       const apiKey = key === 'avalanche-2' ? 'avalanche-2' : key;
       return cryptoData[apiKey]?.usd > 0;
     }).length;
@@ -199,11 +250,11 @@ function App() {
 
   const getTopPerformer = () => {
     if (!cryptoData) return 'N/A';
-    
+
     let topPerformer = null;
     let maxChange = -Infinity;
-    
-    Object.keys(cryptoConfig).forEach(key => {
+
+    Object.keys(cryptoConfig).forEach((key) => {
       const apiKey = key === 'avalanche-2' ? 'avalanche-2' : key;
       const change = cryptoData[apiKey]?.usd_24h_change;
       if (change && change > maxChange) {
@@ -211,7 +262,7 @@ function App() {
         topPerformer = cryptoConfig[key].symbol;
       }
     });
-    
+
     return topPerformer ? `${topPerformer} +${maxChange.toFixed(2)}%` : 'N/A';
   };
 
@@ -225,34 +276,26 @@ function App() {
 
   // Show detail page if crypto is selected
   if (selectedCrypto) {
-    return (
-      <CryptoDetailPage 
-        cryptoId={selectedCrypto} 
-        onBack={handleBackToDashboard}
-      />
-    );
+    return <CryptoDetailPage cryptoId={selectedCrypto} onBack={handleBackToDashboard} />;
   }
 
   if (loading && !cryptoData) {
     return (
       <div className="min-h-screen bg-crypto-darker flex items-center justify-center">
-        <LoadingSpinner 
-          size="xl" 
-          message="Loading crypto data..." 
-          className="py-20"
-        />
+        <LoadingSpinner size="xl" message="Loading crypto data..." className="py-20" />
       </div>
     );
   }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-crypto-darker via-crypto-dark to-crypto-darker">
-        <Header 
-          isConnected={isConnected} 
-          lastUpdate={lastUpdate} 
-          onRefresh={handleManualRefresh}
-          loading={loading}
-        />      <div className="container mx-auto px-4 py-8">
+      <Header
+        isConnected={isConnected}
+        lastUpdate={lastUpdate}
+        onRefresh={handleManualRefresh}
+        loading={loading}
+      />{' '}
+      <div className="container mx-auto px-4 py-8">
         {/* Market Overview */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <div className="card">
@@ -266,7 +309,7 @@ function App() {
               <TrendingUp className="w-8 h-8 text-crypto-green" />
             </div>
           </div>
-          
+
           <div className="card">
             <div className="flex items-center justify-between">
               <div>
@@ -279,7 +322,7 @@ function App() {
               <Activity className="w-8 h-8 text-crypto-blue" />
             </div>
           </div>
-          
+
           <div className="card">
             <div className="flex items-center justify-between">
               <div>
@@ -290,14 +333,12 @@ function App() {
               <div className="w-3 h-3 bg-crypto-green rounded-full animate-pulse"></div>
             </div>
           </div>
-          
+
           <div className="card">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-400 text-sm">Top Performer</p>
-                <p className="text-lg font-bold text-crypto-green">
-                  {getTopPerformer()}
-                </p>
+                <p className="text-lg font-bold text-crypto-green">{getTopPerformer()}</p>
                 <p className="text-xs text-gray-500">24h Change</p>
               </div>
               <TrendingUp className="w-8 h-8 text-crypto-green" />
@@ -311,8 +352,8 @@ function App() {
             <button
               onClick={() => setActiveView('overview')}
               className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors ${
-                activeView === 'overview' 
-                  ? 'bg-crypto-blue text-white' 
+                activeView === 'overview'
+                  ? 'bg-crypto-blue text-white'
                   : 'text-gray-400 hover:text-white'
               }`}
             >
@@ -322,8 +363,8 @@ function App() {
             <button
               onClick={() => setActiveView('chart')}
               className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors ${
-                activeView === 'chart' 
-                  ? 'bg-crypto-blue text-white' 
+                activeView === 'chart'
+                  ? 'bg-crypto-blue text-white'
                   : 'text-gray-400 hover:text-white'
               }`}
             >
@@ -333,8 +374,8 @@ function App() {
             <button
               onClick={() => setActiveView('portfolio')}
               className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors ${
-                activeView === 'portfolio' 
-                  ? 'bg-crypto-blue text-white' 
+                activeView === 'portfolio'
+                  ? 'bg-crypto-blue text-white'
                   : 'text-gray-400 hover:text-white'
               }`}
             >
@@ -344,8 +385,8 @@ function App() {
             <button
               onClick={() => setActiveView('news')}
               className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors ${
-                activeView === 'news' 
-                  ? 'bg-crypto-blue text-white' 
+                activeView === 'news'
+                  ? 'bg-crypto-blue text-white'
                   : 'text-gray-400 hover:text-white'
               }`}
             >
@@ -361,7 +402,7 @@ function App() {
             {Object.entries(cryptoConfig).map(([key, config]) => {
               const apiKey = key === 'avalanche-2' ? 'avalanche-2' : key;
               const data = cryptoData?.[apiKey];
-              
+
               if (!data) return null;
 
               return (
@@ -390,7 +431,7 @@ function App() {
 
         {activeView === 'portfolio' && (
           <div className="card">
-            <CryptoPortfolioOverview 
+            <CryptoPortfolioOverview
               cryptoData={cryptoData}
               cryptoConfig={cryptoConfig}
               onCryptoClick={handleCryptoClick}

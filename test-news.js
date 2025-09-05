@@ -6,7 +6,7 @@ const testNewsAPI = () => {
     hostname: 'localhost',
     port: 3000,
     path: '/news?limit=6&source=fallback',
-    method: 'GET'
+    method: 'GET',
   };
 
   const req = http.request(options, (res) => {

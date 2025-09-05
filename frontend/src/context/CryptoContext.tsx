@@ -40,32 +40,31 @@ export const CryptoProvider: React.FC<CryptoProviderProps> = ({ children }) => {
     try {
       setLoading(true);
       setError(null);
-      
+
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 8000);
-      
+
       const response = await fetch('/api/crypto', {
         signal: controller.signal,
         headers: {
-          'Cache-Control': 'no-cache'
-        }
+          'Cache-Control': 'no-cache',
+        },
       });
-      
+
       clearTimeout(timeoutId);
-      
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      
+
       const data = await response.json();
-      
+
       setCryptoData(data);
       setLastUpdate(new Date());
       setLoading(false);
-      
     } catch (error) {
       console.error('Failed to fetch crypto data:', error);
-      
+
       // Retry logic
       if (retryCount < 2 && error instanceof Error && error.name !== 'AbortError') {
         const delay = (retryCount + 1) * 2000;
@@ -83,11 +82,11 @@ export const CryptoProvider: React.FC<CryptoProviderProps> = ({ children }) => {
   useEffect(() => {
     // Fetch data on initial load
     fetchCryptoData();
-    
+
     // Set up WebSocket connection
     // (Placeholder for WebSocket implementation)
     setIsConnected(true);
-    
+
     // Clean up function
     return () => {
       // Disconnect WebSocket
@@ -108,11 +107,7 @@ export const CryptoProvider: React.FC<CryptoProviderProps> = ({ children }) => {
     refreshData,
   };
 
-  return (
-    <CryptoContext.Provider value={value}>
-      {children}
-    </CryptoContext.Provider>
-  );
+  return <CryptoContext.Provider value={value}>{children}</CryptoContext.Provider>;
 };
 
 /**
@@ -120,10 +115,10 @@ export const CryptoProvider: React.FC<CryptoProviderProps> = ({ children }) => {
  */
 export const useCrypto = (): CryptoContextState => {
   const context = useContext(CryptoContext);
-  
+
   if (context === undefined) {
     throw new Error('useCrypto must be used within a CryptoProvider');
   }
-  
+
   return context;
 };

@@ -8,13 +8,30 @@ const router = express.Router();
 router.get('/', async (req, res) => {
   try {
     const coinIds = [
-      'bitcoin', 'ethereum', 'cardano', 'polkadot', 'chainlink', 
-      'litecoin', 'binancecoin', 'solana', 'dogecoin', 'ripple',
-      'avalanche-2', 'polygon', 'uniswap', 'cosmos', 'stellar', 
-      'filecoin', 'aave', 'algorand', 'vechain', 'hedera-hashgraph', 
-      'theta-token', 'the-sandbox'
+      'bitcoin',
+      'ethereum',
+      'cardano',
+      'polkadot',
+      'chainlink',
+      'litecoin',
+      'binancecoin',
+      'solana',
+      'dogecoin',
+      'ripple',
+      'avalanche-2',
+      'polygon',
+      'uniswap',
+      'cosmos',
+      'stellar',
+      'filecoin',
+      'aave',
+      'algorand',
+      'vechain',
+      'hedera-hashgraph',
+      'theta-token',
+      'the-sandbox',
     ];
-    
+
     const data = await cryptoApi.getCryptoPrices(coinIds, 'usd');
     res.json(data);
   } catch (error) {
@@ -26,16 +43,35 @@ router.get('/', async (req, res) => {
 // Public routes
 router.get('/prices', async (req, res) => {
   try {
-    const coinIds = req.query.ids ? req.query.ids.split(',') : [
-      'bitcoin', 'ethereum', 'cardano', 'polkadot', 'chainlink', 
-      'litecoin', 'binancecoin', 'solana', 'dogecoin', 'ripple',
-      'avalanche-2', 'polygon', 'uniswap', 'cosmos', 'stellar', 
-      'filecoin', 'aave', 'algorand', 'vechain', 'hedera-hashgraph', 
-      'theta-token', 'the-sandbox'
-    ];
-    
+    const coinIds = req.query.ids
+      ? req.query.ids.split(',')
+      : [
+          'bitcoin',
+          'ethereum',
+          'cardano',
+          'polkadot',
+          'chainlink',
+          'litecoin',
+          'binancecoin',
+          'solana',
+          'dogecoin',
+          'ripple',
+          'avalanche-2',
+          'polygon',
+          'uniswap',
+          'cosmos',
+          'stellar',
+          'filecoin',
+          'aave',
+          'algorand',
+          'vechain',
+          'hedera-hashgraph',
+          'theta-token',
+          'the-sandbox',
+        ];
+
     const currency = req.query.currency || 'usd';
-    
+
     const data = await cryptoApi.getCryptoPrices(coinIds, currency);
     res.json(data);
   } catch (error) {
@@ -72,7 +108,7 @@ router.get('/history/:id', authenticate, async (req, res) => {
     const { id } = req.params;
     const days = req.query.days || '7';
     const currency = req.query.currency || 'usd';
-    
+
     const data = await cryptoApi.getCoinHistory(id, days, currency);
     res.json(data);
   } catch (error) {
@@ -86,7 +122,7 @@ router.get('/cache/stats', authenticate, async (req, res) => {
   try {
     // Check if user is admin (you'll need to implement this check)
     // if (!req.user.isAdmin) return res.status(403).json({ error: 'Admin access required' });
-    
+
     const stats = cryptoApi.getCacheStats();
     res.json(stats);
   } catch (error) {
@@ -99,7 +135,7 @@ router.post('/cache/clear', authenticate, async (req, res) => {
   try {
     // Check if user is admin (you'll need to implement this check)
     // if (!req.user.isAdmin) return res.status(403).json({ error: 'Admin access required' });
-    
+
     cryptoApi.clearCache();
     res.json({ message: 'Cache cleared successfully' });
   } catch (error) {

@@ -40,9 +40,7 @@ const Watchlist: React.FC<WatchlistProps> = ({ cryptoData, cryptoConfig }) => {
       {userData.watchlist.length === 0 ? (
         <div className="text-center py-8">
           <p className="text-gray-400">Your watchlist is empty</p>
-          <p className="text-gray-500 text-sm mt-2">
-            Add cryptocurrencies to track them here
-          </p>
+          <p className="text-gray-500 text-sm mt-2">Add cryptocurrencies to track them here</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -58,7 +56,9 @@ const Watchlist: React.FC<WatchlistProps> = ({ cryptoData, cryptoConfig }) => {
                 className="flex items-center justify-between bg-gray-700 p-3 rounded-lg"
               >
                 <div className="flex items-center">
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white font-medium bg-${cryptoInfo?.cardColor || 'gray'}-600`}>
+                  <div
+                    className={`w-8 h-8 rounded-full flex items-center justify-center text-white font-medium bg-${cryptoInfo?.cardColor || 'gray'}-600`}
+                  >
                     {cryptoInfo?.icon || '?'}
                   </div>
                   <div className="ml-3">
@@ -72,11 +72,7 @@ const Watchlist: React.FC<WatchlistProps> = ({ cryptoData, cryptoConfig }) => {
                     <p className="text-white font-medium">
                       ${price.toLocaleString(undefined, { maximumFractionDigits: 2 })}
                     </p>
-                    <p
-                      className={`text-sm ${
-                        isPositive ? 'text-green-500' : 'text-red-500'
-                      }`}
-                    >
+                    <p className={`text-sm ${isPositive ? 'text-green-500' : 'text-red-500'}`}>
                       {isPositive ? '+' : ''}
                       {priceChange.toFixed(2)}%
                     </p>

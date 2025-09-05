@@ -20,28 +20,29 @@ router.post('/register', async (req, res) => {
     const userRecord = await admin.auth().createUser({
       email,
       password,
-      displayName
+      displayName,
     });
 
     // Create user document in Firestore
-    await db.collection('users').doc(userRecord.uid).set({
-      watchlist: [],
-      portfolio: [],
-      favoriteCoins: [],
-      settings: {
-        theme: 'dark',
-        currency: 'usd',
-        notifications: true
-      },
-      createdAt: new Date().toISOString()
-    });
+    await db
+      .collection('users')
+      .doc(userRecord.uid)
+      .set({
+        watchlist: [],
+        portfolio: [],
+        favoriteCoins: [],
+        settings: {
+          theme: 'dark',
+          currency: 'usd',
+          notifications: true,
+        },
+        createdAt: new Date().toISOString(),
+      });
 
     // Generate JWT token
-    const token = jwt.sign(
-      { uid: userRecord.uid, email, displayName },
-      process.env.JWT_SECRET,
-      { expiresIn: '7d' }
-    );
+    const token = jwt.sign({ uid: userRecord.uid, email, displayName }, process.env.JWT_SECRET, {
+      expiresIn: '7d',
+    });
 
     res.status(201).json({
       message: 'User registered successfully',
@@ -49,16 +50,16 @@ router.post('/register', async (req, res) => {
       user: {
         uid: userRecord.uid,
         email,
-        displayName
-      }
+        displayName,
+      },
     });
   } catch (error) {
     console.error('Registration error:', error);
-    
+
     if (error.code === 'auth/email-already-exists') {
       return res.status(400).json({ message: 'Email already in use' });
     }
-    
+
     res.status(500).json({ message: 'Server error' });
   }
 });
@@ -77,10 +78,10 @@ router.post('/login', async (req, res) => {
 
     // Generate JWT token
     const token = jwt.sign(
-      { 
-        uid: userRecord.uid, 
-        email: userRecord.email, 
-        displayName: userRecord.displayName 
+      {
+        uid: userRecord.uid,
+        email: userRecord.email,
+        displayName: userRecord.displayName,
       },
       process.env.JWT_SECRET,
       { expiresIn: '7d' }
@@ -93,8 +94,8 @@ router.post('/login', async (req, res) => {
         uid: userRecord.uid,
         email: userRecord.email,
         displayName: userRecord.displayName,
-        photoURL: userRecord.photoURL
-      }
+        photoURL: userRecord.photoURL,
+      },
     });
   } catch (error) {
     console.error('Login error:', error);

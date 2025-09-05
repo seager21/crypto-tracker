@@ -1,5 +1,15 @@
 import React, { useState } from 'react';
-import { Search, Filter, SortAsc, SortDesc, Grid, List, Star, TrendingUp, TrendingDown } from 'lucide-react';
+import {
+  Search,
+  Filter,
+  SortAsc,
+  SortDesc,
+  Grid,
+  List,
+  Star,
+  TrendingUp,
+  TrendingDown,
+} from 'lucide-react';
 
 const CryptoPortfolioOverview = ({ cryptoData, cryptoConfig, onCryptoClick }) => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -15,7 +25,7 @@ const CryptoPortfolioOverview = ({ cryptoData, cryptoConfig, onCryptoClick }) =>
     platform: 'Platform Tokens',
     utility: 'Utility Tokens',
     gaming: 'Gaming & NFT',
-    media: 'Media & Entertainment'
+    media: 'Media & Entertainment',
   };
 
   const categoryMappings = {
@@ -25,7 +35,7 @@ const CryptoPortfolioOverview = ({ cryptoData, cryptoConfig, onCryptoClick }) =>
     utility: ['litecoin', 'dogecoin', 'vechain', 'filecoin'],
     gaming: ['the-sandbox'],
     media: ['theta-token'],
-    enterprise: ['hedera-hashgraph']
+    enterprise: ['hedera-hashgraph'],
   };
 
   const filterCryptos = () => {
@@ -37,8 +47,10 @@ const CryptoPortfolioOverview = ({ cryptoData, cryptoConfig, onCryptoClick }) =>
       // Search filter
       if (searchTerm) {
         const searchLower = searchTerm.toLowerCase();
-        if (!config.name.toLowerCase().includes(searchLower) && 
-            !config.symbol.toLowerCase().includes(searchLower)) {
+        if (
+          !config.name.toLowerCase().includes(searchLower) &&
+          !config.symbol.toLowerCase().includes(searchLower)
+        ) {
           return false;
         }
       }
@@ -125,7 +137,9 @@ const CryptoPortfolioOverview = ({ cryptoData, cryptoConfig, onCryptoClick }) =>
             className="px-4 py-2 bg-crypto-dark border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-crypto-blue"
           >
             {Object.entries(categories).map(([key, label]) => (
-              <option key={key} value={key}>{label}</option>
+              <option key={key} value={key}>
+                {label}
+              </option>
             ))}
           </select>
         </div>
@@ -147,7 +161,11 @@ const CryptoPortfolioOverview = ({ cryptoData, cryptoConfig, onCryptoClick }) =>
             onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
             className="p-2 bg-crypto-dark border border-gray-700 rounded-lg text-gray-400 hover:text-white transition-colors"
           >
-            {sortOrder === 'asc' ? <SortAsc className="w-4 h-4" /> : <SortDesc className="w-4 h-4" />}
+            {sortOrder === 'asc' ? (
+              <SortAsc className="w-4 h-4" />
+            ) : (
+              <SortDesc className="w-4 h-4" />
+            )}
           </button>
 
           {/* View Mode */}
@@ -199,16 +217,27 @@ const CryptoPortfolioOverview = ({ cryptoData, cryptoConfig, onCryptoClick }) =>
                     <div className="text-sm text-gray-400">{config.symbol}</div>
                   </div>
                 </div>
-                
+
                 <div className="flex items-center space-x-6 text-right">
                   <div>
                     <div className="font-semibold">${data?.usd?.toLocaleString()}</div>
-                    <div className="text-sm text-gray-400">{formatNumber(data?.usd_market_cap)}</div>
+                    <div className="text-sm text-gray-400">
+                      {formatNumber(data?.usd_market_cap)}
+                    </div>
                   </div>
-                  
-                  <div className={`flex items-center space-x-1 ${isPositive ? 'text-crypto-green' : 'text-crypto-red'}`}>
-                    {isPositive ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
-                    <span>{isPositive ? '+' : ''}{data?.usd_24h_change?.toFixed(2)}%</span>
+
+                  <div
+                    className={`flex items-center space-x-1 ${isPositive ? 'text-crypto-green' : 'text-crypto-red'}`}
+                  >
+                    {isPositive ? (
+                      <TrendingUp className="w-4 h-4" />
+                    ) : (
+                      <TrendingDown className="w-4 h-4" />
+                    )}
+                    <span>
+                      {isPositive ? '+' : ''}
+                      {data?.usd_24h_change?.toFixed(2)}%
+                    </span>
                   </div>
                 </div>
               </div>
@@ -223,7 +252,7 @@ const CryptoPortfolioOverview = ({ cryptoData, cryptoConfig, onCryptoClick }) =>
           {filteredCryptos.map(([key, config]) => {
             const apiKey = key === 'avalanche-2' ? 'avalanche-2' : key;
             const data = cryptoData?.[apiKey];
-            
+
             return (
               <div
                 key={key}
@@ -239,20 +268,23 @@ const CryptoPortfolioOverview = ({ cryptoData, cryptoConfig, onCryptoClick }) =>
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="space-y-2">
                   <div>
                     <p className="text-gray-400 text-sm">Price</p>
                     <p className="text-xl font-bold">${data?.usd?.toLocaleString()}</p>
                   </div>
-                  
+
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-gray-400 text-xs">24h Change</p>
-                      <p className={`text-sm font-semibold ${
-                        data?.usd_24h_change >= 0 ? 'text-crypto-green' : 'text-crypto-red'
-                      }`}>
-                        {data?.usd_24h_change >= 0 ? '+' : ''}{data?.usd_24h_change?.toFixed(2)}%
+                      <p
+                        className={`text-sm font-semibold ${
+                          data?.usd_24h_change >= 0 ? 'text-crypto-green' : 'text-crypto-red'
+                        }`}
+                      >
+                        {data?.usd_24h_change >= 0 ? '+' : ''}
+                        {data?.usd_24h_change?.toFixed(2)}%
                       </p>
                     </div>
                     <div className="text-right">
@@ -271,9 +303,7 @@ const CryptoPortfolioOverview = ({ cryptoData, cryptoConfig, onCryptoClick }) =>
       {filteredCryptos.length === 0 && (
         <div className="text-center py-12">
           <div className="text-gray-400 text-lg mb-2">No cryptocurrencies found</div>
-          <div className="text-gray-500 text-sm">
-            Try adjusting your search or filter criteria
-          </div>
+          <div className="text-gray-500 text-sm">Try adjusting your search or filter criteria</div>
         </div>
       )}
     </div>

@@ -8,6 +8,9 @@
     "build": "cd frontend && npm run build",
     "install-all": "npm install && cd frontend && npm install",
     "dev-frontend": "cd frontend && npm run dev",
+    "lint": "eslint --ext .js,.jsx ./api ./frontend/src",
+    "lint:fix": "eslint --ext .js,.jsx ./api ./frontend/src --fix",
+    "format": "prettier --write \"**/*.{js,jsx,json,md}\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
@@ -41,6 +44,10 @@
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
     "@types/node": "^24.3.1",
+    "eslint": "^9.34.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-react": "^7.37.5",
+    "prettier": "^3.6.2",
     "typescript": "^5.9.2"
   }
 }
