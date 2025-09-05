@@ -4,6 +4,25 @@ const authenticate = require('../middleware/auth');
 
 const router = express.Router();
 
+// Root route to match the frontend's fetch to /api/crypto
+router.get('/', async (req, res) => {
+  try {
+    const coinIds = [
+      'bitcoin', 'ethereum', 'cardano', 'polkadot', 'chainlink', 
+      'litecoin', 'binancecoin', 'solana', 'dogecoin', 'ripple',
+      'avalanche-2', 'polygon', 'uniswap', 'cosmos', 'stellar', 
+      'filecoin', 'aave', 'algorand', 'vechain', 'hedera-hashgraph', 
+      'theta-token', 'the-sandbox'
+    ];
+    
+    const data = await cryptoApi.getCryptoPrices(coinIds, 'usd');
+    res.json(data);
+  } catch (error) {
+    console.error('Error fetching crypto prices:', error);
+    res.status(500).json({ error: 'Failed to fetch crypto price data' });
+  }
+});
+
 // Public routes
 router.get('/prices', async (req, res) => {
   try {

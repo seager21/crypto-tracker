@@ -4,7 +4,6 @@
 const axios = require('axios');
 const NodeCache = require('node-cache');
 const rateLimit = require('axios-rate-limit');
-const pRetry = require('p-retry');
 const memoryCache = require('memory-cache');
 const dotenv = require('dotenv');
 
@@ -96,71 +95,54 @@ async function makeRequest(endpoint, params = {}, cacheTTL = CACHE_TTL.PRICES) {
     return cachedData;
   }
   
-  // No cache hit, make the actual request with retries
+  // No cache hit, make the actual request with simple retry logic
   try {
-    const response = await pRetry(async () => {
-      try {
-        const url = `${BASE_URL}${endpoint}`;
-        
-        // Add a timestamp to bypass any intermediary caching (e.g. browser cache, CDN)
-        const finalParams = {
-          ...params,
-          _t: Date.now()
-        };
-        
-        const response = await http.get(url, {
-          params: finalParams,
-          headers: getHeaders(),
-          timeout: 15000, // 15 seconds timeout
-        });
-        
-        // Reset consecutive failures on success
-        if (rateLimitTracker.consecutiveFailures > 0) {
-          console.log('✅ API request succeeded after previous failures. Resetting failure counter.');
-          rateLimitTracker.consecutiveFailures = 0;
-          rateLimitTracker.backoffTime = 1000;
-        }
-        
-        // Cache the successful response
-        cache.set(cacheKey, response.data, cacheTTL);
-        
-        return response;
-      } catch (error) {
-        // Handle rate limiting
-        if (error.response && error.response.status === 429) {
-          rateLimitTracker.lastRateLimitHit = Date.now();
-          rateLimitTracker.isRateLimited = true;
-          rateLimitTracker.consecutiveFailures++;
-          rateLimitTracker.backoffTime = Math.min(60000, Math.pow(2, rateLimitTracker.consecutiveFailures) * 1000);
-          
-          console.log(`⏱️ Rate limited! Backing off for ${rateLimitTracker.backoffTime / 1000}s...`);
-          
-          // Throw a retriable error
-          throw new pRetry.AbortError(`Rate limited. Backing off for ${rateLimitTracker.backoffTime / 1000}s.`);
-        }
-        
-        // For network errors, retries might help
-        if (!error.response) {
-          console.log('🌐 Network error. Will retry...');
-          throw error;
-        }
-        
-        // For other errors, abort retry
-        console.error(`❌ API error: ${error.message}`);
-        throw new pRetry.AbortError(error.message);
-      }
-    }, {
-      retries: 3,
-      minTimeout: 500,
-      maxTimeout: 10000,
-      onFailedAttempt: error => {
-        console.log(`🔄 Attempt ${error.attemptNumber} failed. ${error.retriesLeft} retries left.`);
-      },
+    const url = `${BASE_URL}${endpoint}`;
+    console.log(`🌐 API Request URL: ${url}`);
+    
+    // Add a timestamp to bypass any intermediary caching (e.g. browser cache, CDN)
+    const finalParams = {
+      ...params,
+      _t: Date.now()
+    };
+    
+    // Add the API key if available for Pro API
+    const headers = getHeaders();
+    console.log(`🔑 Using API Key: ${API_KEY ? 'Yes' : 'No'}`);
+    
+    const response = await http.get(url, {
+      params: finalParams,
+      headers: headers,
+      timeout: 15000, // 15 seconds timeout
     });
+    
+    console.log(`📡 Got response from ${url} with status: ${response.status}`);
+    
+    // Reset consecutive failures on success
+    if (rateLimitTracker.consecutiveFailures > 0) {
+      console.log('✅ API request succeeded after previous failures. Resetting failure counter.');
+      rateLimitTracker.consecutiveFailures = 0;
+      rateLimitTracker.backoffTime = 1000;
+    }
+    
+    // Cache the successful response
+    cache.set(cacheKey, response.data, cacheTTL);
+    
+    return response.data;
     
     return response.data;
   } catch (error) {
     console.error(`❌ Failed to fetch data from ${endpoint}:`, error.message);
+    
+    // Handle rate limiting
+    if (error.response && error.response.status === 429) {
+      rateLimitTracker.lastRateLimitHit = Date.now();
+      rateLimitTracker.isRateLimited = true;
+      rateLimitTracker.consecutiveFailures++;
+      rateLimitTracker.backoffTime = Math.min(60000, Math.pow(2, rateLimitTracker.consecutiveFailures) * 1000);
+      
+      console.log(`⏱️ Rate limited! Backing off for ${rateLimitTracker.backoffTime / 1000}s...`);
+    }
     
     // If we have a slightly stale version in the cache, return that as fallback
     const staleData = memoryCache.get(`stale:${cacheKey}`);
@@ -179,8 +161,14 @@ async function makeRequest(endpoint, params = {}, cacheTTL = CACHE_TTL.PRICES) {
  * @param {string} currency - Currency (default: usd)
  */
 async function getCryptoPrices(coinIds = [], currency = 'usd') {
+  console.log(`📊 Fetching crypto prices for ${coinIds.length} coins`);
+  
+  // If using the demo service with no key, don't request too many coins at once
+  const maxCoinsPerRequest = API_KEY ? coinIds.length : Math.min(coinIds.length, 10);
+  const batchedCoinIds = coinIds.slice(0, maxCoinsPerRequest);
+  
   const params = {
-    ids: coinIds.join(','),
+    ids: batchedCoinIds.join(','),
     vs_currencies: currency,
     include_market_cap: true,
     include_24hr_change: true,
@@ -189,7 +177,9 @@ async function getCryptoPrices(coinIds = [], currency = 'usd') {
   };
   
   try {
+    console.log(`🔗 Making request to CoinGecko API: /simple/price for ${batchedCoinIds.join(', ')}`);
     const data = await makeRequest('/simple/price', params, CACHE_TTL.PRICES);
+    console.log(`✅ Successfully got price data for ${Object.keys(data).length} coins`);
     
     // Keep a copy in stale cache for fallback with a longer TTL
     memoryCache.put(`stale:/simple/price:${JSON.stringify(params)}`, data, CACHE_TTL.PRICES * 5 * 1000);
@@ -197,7 +187,9 @@ async function getCryptoPrices(coinIds = [], currency = 'usd') {
     return data;
   } catch (error) {
     console.error('Error fetching crypto prices:', error);
-    throw error;
+    
+    // Return an empty object instead of throwing to prevent cascading failures
+    return {};
   }
 }
 

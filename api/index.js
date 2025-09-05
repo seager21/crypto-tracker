@@ -23,10 +23,20 @@ const io = new Server(server, {
     },
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = 4000; // Force a different port
 
-app.use(cors());
+app.use(cors({
+  origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use(express.json());
+
+// Add request logging middleware
+app.use((req, res, next) => {
+  console.log(`📝 ${req.method} request to ${req.url}`);
+  next();
+});
 
 // Serve static files from frontend build
 app.use(express.static("../frontend/dist"));
@@ -38,23 +48,24 @@ app.use("/api/crypto", cryptoRoutes);
 
 // Use the cryptoApi service for fetching data
 const fetchCryptoData = async () => {
-    try {
-        const coinIds = [
-            "bitcoin", "ethereum", "cardano", "polkadot", "chainlink", 
-            "litecoin", "binancecoin", "solana", "dogecoin", "ripple",
-            "avalanche-2", "polygon", "uniswap", "cosmos", "stellar", 
-            "filecoin", "aave", "algorand", "vechain", "hedera-hashgraph", 
-            "theta-token", "the-sandbox"
-        ];
-        
-        return await cryptoApi.getCryptoPrices(coinIds);
-    } catch (error) {
-        console.error("❌ Failed to fetch crypto data:", error.message);
-        return null;
-    }
-};
-
-// Function to get global market data
+  try {
+    console.log("🔄 Attempting to fetch crypto data from service");
+    const coinIds = [
+      "bitcoin", "ethereum", "cardano", "polkadot", "chainlink", 
+      "litecoin", "binancecoin", "solana", "dogecoin", "ripple",
+      "avalanche-2", "polygon", "uniswap", "cosmos", "stellar", 
+      "filecoin", "aave", "algorand", "vechain", "hedera-hashgraph", 
+      "theta-token", "the-sandbox"
+    ];
+    
+    const data = await cryptoApi.getCryptoPrices(coinIds);
+    console.log(`✅ Crypto data fetched successfully. Got data for ${Object.keys(data).length} coins`);
+    return data;
+  } catch (error) {
+    console.error("❌ Failed to fetch crypto data:", error.message);
+    return {};  // Return empty object instead of null
+  }
+};// Function to get global market data
 const fetchGlobalData = async () => {
     try {
         return await cryptoApi.getGlobalMarketData();
@@ -318,6 +329,11 @@ io.on("connection", (socket) => {
     });
 });
 
+// Simple health check route
+app.get('/api/health', (req, res) => {
+    res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
 // Default route
 app.get('*', (req, res) => {
     res.sendFile(path.resolve(__dirname, '../frontend/dist', 'index.html'));
@@ -328,7 +344,11 @@ app.get("/", (req, res) => {
 
 // Start server (for local testing)
 if (process.env.NODE_ENV !== "vercel") {
-    server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+    server.listen(PORT, '0.0.0.0', () => {
+  console.log(`✅ Server running on port ${PORT}`);
+  console.log(`🔗 API available at: http://localhost:${PORT}/api/`);
+  console.log(`🌐 Frontend available at: http://localhost:${PORT}/`);
+});
 }
 
 // Export the app for Vercel

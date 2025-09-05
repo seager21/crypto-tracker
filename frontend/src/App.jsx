@@ -49,7 +49,7 @@ function App() {
 
   useEffect(() => {
     // Initialize socket connection with better error handling
-    const socketInstance = io('http://localhost:3000', {
+    const socketInstance = io('http://localhost:4000', {
       timeout: 10000,
       reconnection: true,
       reconnectionDelay: 2000,
@@ -137,7 +137,11 @@ function App() {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 8000); // 8 second timeout
       
-      const response = await fetch('/api/crypto', {
+      // Use direct API url instead of relative path
+      const API_URL = 'http://localhost:4000/api/crypto';
+      console.log(`🌐 Attempting to fetch from: ${API_URL}`);
+      
+      const response = await fetch(API_URL, {
         signal: controller.signal,
         headers: {
           'Cache-Control': 'no-cache'
