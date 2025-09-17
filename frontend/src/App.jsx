@@ -9,7 +9,12 @@ import CryptoNewsCarousel from './components/CryptoNewsCarousel';
 import Header from './components/Header';
 import SettingsPanel from './components/SettingsPanel';
 import FallingCoins from './components/FallingCoins';
-import { TrendingUp, Activity, BarChart, Grid, List, Newspaper } from 'lucide-react';
+import PortfolioHoldings from './components/PortfolioHoldings';
+import TransactionHistory from './components/TransactionHistory';
+import PerformanceVisualization from './components/PerformanceVisualization';
+import DataExport from './components/DataExport';
+import { PortfolioProvider } from './context/PortfolioContext';
+import { TrendingUp, Activity, BarChart, Grid, List, Newspaper, Wallet, History, LineChart, Download } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { LocalizationProvider, useLocalization } from './context/LocalizationContext';
 import './i18n';
@@ -23,7 +28,7 @@ function AppContent() {
   const [lastUpdate, setLastUpdate] = useState(null);
   const [loading, setLoading] = useState(true);
   const [selectedCrypto, setSelectedCrypto] = useState(null);
-  const [activeView, setActiveView] = useState('overview'); // 'overview', 'chart', 'portfolio', 'news'
+  const [activeView, setActiveView] = useState('overview'); // 'overview', 'chart', 'portfolio', 'holdings', 'transactions', 'performance', 'export', 'news'
   const [showCoins] = useState(true); // Control the coin animation
 
   // Configuration for all cryptocurrencies (22 total)
@@ -360,50 +365,94 @@ function AppContent() {
 
         {/* View Toggle - Mobile Optimized */}
         <div className="flex items-center justify-center mb-6 sm:mb-8 overflow-x-auto pb-2 no-scrollbar">
-          <div className="flex bg-crypto-dark border border-gray-700 rounded-lg p-1 shadow-lg">
+          <div className="flex bg-crypto-dark border border-gray-700 rounded-lg p-1 shadow-lg space-x-1">
             <button
               onClick={() => setActiveView('overview')}
-              className={`flex items-center space-x-1 sm:space-x-2 px-2 sm:px-4 py-2 rounded-lg transition-colors whitespace-nowrap btn-lightning ${
+              className={`flex items-center space-x-1 sm:space-x-2 px-2 sm:px-3 py-2 rounded-lg transition-colors whitespace-nowrap btn-lightning text-xs sm:text-sm ${
                 activeView === 'overview'
                   ? 'bg-crypto-dark border-2 border-f1c40f text-f1c40f'
                   : 'bg-crypto-dark border border-gray-600 text-gray-400 hover:text-f1c40f hover:border-f1c40f'
               }`}
             >
-              <Grid className="w-4 h-4" />
-              <span className="text-xs sm:text-sm">Overview</span>
+              <Grid className="w-3 h-3 sm:w-4 sm:h-4" />
+              <span className="hidden sm:inline">Overview</span>
             </button>
             <button
               onClick={() => setActiveView('chart')}
-              className={`flex items-center space-x-1 sm:space-x-2 px-2 sm:px-4 py-2 rounded-lg transition-colors whitespace-nowrap btn-lightning ${
+              className={`flex items-center space-x-1 sm:space-x-2 px-2 sm:px-3 py-2 rounded-lg transition-colors whitespace-nowrap btn-lightning text-xs sm:text-sm ${
                 activeView === 'chart'
                   ? 'bg-crypto-dark border-2 border-f1c40f text-f1c40f'
                   : 'bg-crypto-dark border border-gray-600 text-gray-400 hover:text-f1c40f hover:border-f1c40f'
               }`}
             >
-              <BarChart className="w-4 h-4" />
-              <span className="text-xs sm:text-sm">Chart</span>
+              <BarChart className="w-3 h-3 sm:w-4 sm:h-4" />
+              <span className="hidden sm:inline">Chart</span>
             </button>
             <button
               onClick={() => setActiveView('portfolio')}
-              className={`flex items-center space-x-1 sm:space-x-2 px-2 sm:px-4 py-2 rounded-lg transition-colors whitespace-nowrap btn-lightning ${
+              className={`flex items-center space-x-1 sm:space-x-2 px-2 sm:px-3 py-2 rounded-lg transition-colors whitespace-nowrap btn-lightning text-xs sm:text-sm ${
                 activeView === 'portfolio'
                   ? 'bg-crypto-dark border-2 border-f1c40f text-f1c40f'
                   : 'bg-crypto-dark border border-gray-600 text-gray-400 hover:text-f1c40f hover:border-f1c40f'
               }`}
             >
-              <List className="w-4 h-4" />
-              <span className="text-xs sm:text-sm">Portfolio</span>
+              <List className="w-3 h-3 sm:w-4 sm:h-4" />
+              <span className="hidden sm:inline">Portfolio</span>
+            </button>
+            <button
+              onClick={() => setActiveView('holdings')}
+              className={`flex items-center space-x-1 sm:space-x-2 px-2 sm:px-3 py-2 rounded-lg transition-colors whitespace-nowrap btn-lightning text-xs sm:text-sm ${
+                activeView === 'holdings'
+                  ? 'bg-crypto-dark border-2 border-f1c40f text-f1c40f'
+                  : 'bg-crypto-dark border border-gray-600 text-gray-400 hover:text-f1c40f hover:border-f1c40f'
+              }`}
+            >
+              <TrendingUp className="w-3 h-3 sm:w-4 sm:h-4" />
+              <span className="hidden sm:inline">Holdings</span>
+            </button>
+            <button
+              onClick={() => setActiveView('transactions')}
+              className={`flex items-center space-x-1 sm:space-x-2 px-2 sm:px-3 py-2 rounded-lg transition-colors whitespace-nowrap btn-lightning text-xs sm:text-sm ${
+                activeView === 'transactions'
+                  ? 'bg-crypto-dark border-2 border-f1c40f text-f1c40f'
+                  : 'bg-crypto-dark border border-gray-600 text-gray-400 hover:text-f1c40f hover:border-f1c40f'
+              }`}
+            >
+              <Activity className="w-3 h-3 sm:w-4 sm:h-4" />
+              <span className="hidden sm:inline">Transactions</span>
+            </button>
+            <button
+              onClick={() => setActiveView('performance')}
+              className={`flex items-center space-x-1 sm:space-x-2 px-2 sm:px-3 py-2 rounded-lg transition-colors whitespace-nowrap btn-lightning text-xs sm:text-sm ${
+                activeView === 'performance'
+                  ? 'bg-crypto-dark border-2 border-f1c40f text-f1c40f'
+                  : 'bg-crypto-dark border border-gray-600 text-gray-400 hover:text-f1c40f hover:border-f1c40f'
+              }`}
+            >
+              <BarChart className="w-3 h-3 sm:w-4 sm:h-4" />
+              <span className="hidden sm:inline">Performance</span>
+            </button>
+            <button
+              onClick={() => setActiveView('export')}
+              className={`flex items-center space-x-1 sm:space-x-2 px-2 sm:px-3 py-2 rounded-lg transition-colors whitespace-nowrap btn-lightning text-xs sm:text-sm ${
+                activeView === 'export'
+                  ? 'bg-crypto-dark border-2 border-f1c40f text-f1c40f'
+                  : 'bg-crypto-dark border border-gray-600 text-gray-400 hover:text-f1c40f hover:border-f1c40f'
+              }`}
+            >
+              <Activity className="w-3 h-3 sm:w-4 sm:h-4" />
+              <span className="hidden sm:inline">Export</span>
             </button>
             <button
               onClick={() => setActiveView('news')}
-              className={`flex items-center space-x-1 sm:space-x-2 px-2 sm:px-4 py-2 rounded-lg transition-colors whitespace-nowrap btn-lightning ${
+              className={`flex items-center space-x-1 sm:space-x-2 px-2 sm:px-3 py-2 rounded-lg transition-colors whitespace-nowrap btn-lightning text-xs sm:text-sm ${
                 activeView === 'news'
                   ? 'bg-crypto-dark border-2 border-f1c40f text-f1c40f'
                   : 'bg-crypto-dark border border-gray-600 text-gray-400 hover:text-f1c40f hover:border-f1c40f'
               }`}
             >
-              <Newspaper className="w-4 h-4" />
-              <span className="text-xs sm:text-sm">News</span>
+              <Newspaper className="w-3 h-3 sm:w-4 sm:h-4" />
+              <span className="hidden sm:inline">News</span>
             </button>
           </div>
         </div>
@@ -451,18 +500,28 @@ function AppContent() {
           </div>
         )}
 
+        {activeView === 'holdings' && <PortfolioHoldings cryptoConfig={cryptoConfig} />}
+
+        {activeView === 'transactions' && <TransactionHistory cryptoConfig={cryptoConfig} />}
+
+        {activeView === 'performance' && <PerformanceVisualization cryptoConfig={cryptoConfig} />}
+
+        {activeView === 'export' && <DataExport cryptoConfig={cryptoConfig} />}
+
         {activeView === 'news' && <CryptoNewsCarousel />}
       </div>
     </div>
   );
 }
 
-// Wrap the app with our LocalizationProvider
+// Wrap the app with our LocalizationProvider and PortfolioProvider
 function App() {
   return (
     <LocalizationProvider>
-      <AppContent />
-      <SettingsPanel />
+      <PortfolioProvider>
+        <AppContent />
+        <SettingsPanel />
+      </PortfolioProvider>
     </LocalizationProvider>
   );
 }
