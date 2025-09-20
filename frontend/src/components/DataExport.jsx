@@ -33,10 +33,10 @@ const DataExport = ({ cryptoConfig }) => {
 
   const getFilteredTransactions = () => {
     if (dateRange === 'all') return transactions;
-    
+
     const now = new Date();
     const cutoffDate = new Date();
-    
+
     switch (dateRange) {
       case '30d':
         cutoffDate.setDate(now.getDate() - 30);
@@ -50,13 +50,13 @@ const DataExport = ({ cryptoConfig }) => {
       default:
         return transactions;
     }
-    
+
     return transactions.filter((transaction) => new Date(transaction.timestamp) >= cutoffDate);
   };
 
   const getPortfolioSummaryData = () => {
     const allocation = getPortfolioAllocation();
-    
+
     return [
       {
         'Report Type': 'Portfolio Summary',
@@ -73,7 +73,7 @@ const DataExport = ({ cryptoConfig }) => {
       ...Object.entries(allocation).map(([cryptoId, data]) => {
         const config = cryptoConfig[cryptoId];
         const performance = getHoldingPerformance(cryptoId);
-        
+
         return {
           Cryptocurrency: config?.name || cryptoId,
           Symbol: config?.symbol || cryptoId,
@@ -91,10 +91,10 @@ const DataExport = ({ cryptoConfig }) => {
 
   const getTransactionsData = () => {
     const filteredTransactions = getFilteredTransactions();
-    
+
     return filteredTransactions.map((transaction) => {
       const config = cryptoConfig[transaction.cryptoId];
-      
+
       return {
         Date: formatDate(transaction.timestamp),
         Cryptocurrency: config?.name || transaction.cryptoId,
@@ -112,7 +112,7 @@ const DataExport = ({ cryptoConfig }) => {
     return Object.entries(holdings).map(([cryptoId, holding]) => {
       const config = cryptoConfig[cryptoId];
       const performance = getHoldingPerformance(cryptoId);
-      
+
       return {
         Cryptocurrency: config?.name || cryptoId,
         Symbol: config?.symbol || cryptoId,
@@ -131,7 +131,7 @@ const DataExport = ({ cryptoConfig }) => {
   const exportToCSV = () => {
     let data = [];
     let filename = '';
-    
+
     switch (exportType) {
       case 'portfolio':
         data = getPortfolioSummaryData();
@@ -148,11 +148,11 @@ const DataExport = ({ cryptoConfig }) => {
       default:
         return;
     }
-    
+
     const csv = Papa.unparse(data);
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
-    
+
     if (link.download !== undefined) {
       const url = URL.createObjectURL(blob);
       link.setAttribute('href', url);
@@ -166,20 +166,20 @@ const DataExport = ({ cryptoConfig }) => {
 
   const exportToPDF = () => {
     const pdf = new jsPDF();
-    
+
     pdf.setFontSize(20);
     pdf.text('Crypto Portfolio Report', 20, 30);
-    
+
     pdf.setFontSize(12);
     pdf.text(`Generated on: ${formatDate(new Date())}`, 20, 45);
-    
+
     let yPosition = 60;
-    
+
     if (exportType === 'portfolio') {
       pdf.setFontSize(16);
       pdf.text('Portfolio Summary', 20, yPosition);
       yPosition += 20;
-      
+
       pdf.setFontSize(12);
       const summaryData = [
         ['Total Portfolio Value', formatCurrency(portfolioValue)],
@@ -187,13 +187,13 @@ const DataExport = ({ cryptoConfig }) => {
         ['Total P&L', formatCurrency(totalPnL)],
         ['Total P&L %', `${totalPnLPercentage.toFixed(2)}%`],
       ];
-      
+
       summaryData.forEach(([label, value]) => {
         pdf.text(`${label}: ${value}`, 20, yPosition);
         yPosition += 15;
       });
     }
-    
+
     const filename = `${exportType}_report_${formatDate(new Date()).replace(/\//g, '_')}.pdf`;
     pdf.save(filename);
   };
@@ -208,7 +208,7 @@ const DataExport = ({ cryptoConfig }) => {
 
   const getDataPreview = () => {
     let data = [];
-    
+
     switch (exportType) {
       case 'portfolio':
         data = getPortfolioSummaryData().slice(0, 5);
@@ -222,7 +222,7 @@ const DataExport = ({ cryptoConfig }) => {
       default:
         return [];
     }
-    
+
     return data;
   };
 
@@ -230,7 +230,7 @@ const DataExport = ({ cryptoConfig }) => {
     <div className="space-y-6">
       <div className="card p-6">
         <h2 className="text-2xl font-bold text-white mb-6">Export Portfolio Data</h2>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
           <div>
             <label className="block text-gray-400 text-sm mb-2">Export Type</label>
@@ -244,7 +244,7 @@ const DataExport = ({ cryptoConfig }) => {
               <option value="holdings">Current Holdings</option>
             </select>
           </div>
-          
+
           {exportType === 'transactions' && (
             <div>
               <label className="block text-gray-400 text-sm mb-2">Date Range</label>
@@ -260,7 +260,7 @@ const DataExport = ({ cryptoConfig }) => {
               </select>
             </div>
           )}
-          
+
           <div>
             <label className="block text-gray-400 text-sm mb-2">Format</label>
             <select
@@ -272,7 +272,7 @@ const DataExport = ({ cryptoConfig }) => {
               <option value="pdf">PDF Report</option>
             </select>
           </div>
-          
+
           <div className="flex items-end">
             <button
               onClick={handleExport}
@@ -294,7 +294,7 @@ const DataExport = ({ cryptoConfig }) => {
               </div>
             </div>
           </div>
-          
+
           <div className="card p-4 bg-crypto-darker">
             <div className="flex items-center space-x-3">
               <FileText className="w-8 h-8 text-crypto-blue" />
@@ -304,7 +304,7 @@ const DataExport = ({ cryptoConfig }) => {
               </div>
             </div>
           </div>
-          
+
           <div className="card p-4 bg-crypto-darker">
             <div className="flex items-center space-x-3">
               <Calendar className="w-8 h-8 text-crypto-gold" />
@@ -319,17 +319,14 @@ const DataExport = ({ cryptoConfig }) => {
 
       <div className="card p-6">
         <h3 className="text-xl font-bold text-white mb-4">Data Preview</h3>
-        
+
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-gray-700">
                 {getDataPreview()[0] &&
                   Object.keys(getDataPreview()[0]).map((key) => (
-                    <th
-                      key={key}
-                      className="text-left py-3 px-4 text-gray-400 font-medium"
-                    >
+                    <th key={key} className="text-left py-3 px-4 text-gray-400 font-medium">
                       {key}
                     </th>
                   ))}
@@ -348,15 +345,15 @@ const DataExport = ({ cryptoConfig }) => {
             </tbody>
           </table>
         </div>
-        
+
         <div className="mt-4 text-center">
           <p className="text-gray-400 text-sm">
             Showing first 5 rows. Full export will include all{' '}
             {exportType === 'portfolio'
               ? 'portfolio data'
               : exportType === 'transactions'
-              ? `${getFilteredTransactions().length} transactions`
-              : `${Object.keys(holdings).length} holdings`}
+                ? `${getFilteredTransactions().length} transactions`
+                : `${Object.keys(holdings).length} holdings`}
             .
           </p>
         </div>

@@ -3,12 +3,12 @@ import { RefreshCw, Wifi, WifiOff, Clock, Menu, X } from 'lucide-react';
 
 const Header = ({ isConnected, lastUpdate, onRefresh, loading = false }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  
+
   const formatTime = (date) => {
     if (!date) return 'Never';
     return date.toLocaleTimeString();
   };
-  
+
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
   };
@@ -27,8 +27,8 @@ const Header = ({ isConnected, lastUpdate, onRefresh, loading = false }) => {
           </div>
 
           {/* Mobile Menu Button */}
-          <button 
-            className="md:hidden p-1 rounded-md text-gray-400 hover:text-white focus:outline-none" 
+          <button
+            className="md:hidden p-1 rounded-md text-gray-400 hover:text-white focus:outline-none"
             onClick={toggleMobileMenu}
           >
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -56,7 +56,7 @@ const Header = ({ isConnected, lastUpdate, onRefresh, loading = false }) => {
               <Clock className="w-4 h-4" />
               <span>Updated: {formatTime(lastUpdate)}</span>
             </div>
-            
+
             {/* Refresh Button */}
             <button
               onClick={onRefresh}
@@ -68,7 +68,7 @@ const Header = ({ isConnected, lastUpdate, onRefresh, loading = false }) => {
             </button>
           </div>
         </div>
-        
+
         {/* Mobile Menu */}
         {mobileMenuOpen && (
           <div className="md:hidden mt-4 py-4 border-t border-gray-700/50 space-y-4 animate-fade-in slide-up">
@@ -89,13 +89,13 @@ const Header = ({ isConnected, lastUpdate, onRefresh, loading = false }) => {
                 )}
               </div>
             </div>
-            
+
             {/* Last Update */}
             <div className="flex items-center justify-between">
               <div className="text-sm text-gray-400">Last Updated:</div>
               <div className="text-sm text-white">{formatTime(lastUpdate)}</div>
             </div>
-            
+
             {/* Mobile Refresh Button */}
             <button
               onClick={onRefresh}

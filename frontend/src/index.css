@@ -54,11 +54,11 @@
     scrollbar-width: none; /* Firefox */
     -ms-overflow-style: none; /* IE and Edge */
   }
-  
+
   .no-scrollbar::-webkit-scrollbar {
     display: none; /* Chrome, Safari, Opera */
   }
-  
+
   /* Touch-friendly highlight for mobile */
   .touch-tap-highlight {
     -webkit-tap-highlight-color: rgba(59, 130, 246, 0.5);
@@ -68,57 +68,83 @@
   .fade-in {
     animation: fadeIn 0.6s ease-in;
   }
-  
+
   .slide-up {
     animation: slideUp 0.5s ease-out;
   }
-  
+
   .pulse {
     animation: pulse 2s infinite;
   }
-  
+
   .hover-float:hover {
     transform: translateY(-5px);
     transition: transform 0.3s ease;
   }
-  
+
   .hover-glow:hover {
     box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
     transition: box-shadow 0.3s ease;
   }
-  
+
   /* Lightning button effect */
   .btn-lightning {
-    background: #222; 
-    color: #f1c40f; 
+    background: #222;
+    color: #f1c40f;
     border: 2px solid #f1c40f;
   }
-  
+
   .btn-lightning:hover {
     animation: lightning 1.5s infinite;
   }
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes slideUp {
-  from { transform: translateY(20px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 @keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 @keyframes lightning {
-  0%, 50%, 100% { box-shadow: 0 0 5px #f1c40f; }
-  25% { box-shadow: 0 0 20px #f1c40f; }
-  75% { box-shadow: 0 0 30px #f1c40f, 0 0 50px #f1c40f; }
+  0%,
+  50%,
+  100% {
+    box-shadow: 0 0 5px #f1c40f;
+  }
+  25% {
+    box-shadow: 0 0 20px #f1c40f;
+  }
+  75% {
+    box-shadow:
+      0 0 30px #f1c40f,
+      0 0 50px #f1c40f;
+  }
 }
 
 /* Smooth transitions for all interactive elements */

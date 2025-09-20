@@ -37,7 +37,7 @@ const CryptoDetailPage = ({ cryptoId, onBack }) => {
     fetchDetailData();
     fetchHistoricalData();
   }, [cryptoId, timeRange]);
-  
+
   const fetchDetailData = async () => {
     try {
       setError(null);
@@ -46,10 +46,10 @@ const CryptoDetailPage = ({ cryptoId, onBack }) => {
       const response = await fetchWithRetry(
         `/api/crypto/${cryptoId}/details`,
         {},
-        10000,  // 10 second timeout
-        3       // 3 retries
+        10000, // 10 second timeout
+        3 // 3 retries
       );
-      
+
       const data = await response.json();
       console.log('Detail data received:', data);
       setDetailData(data);
@@ -73,14 +73,14 @@ const CryptoDetailPage = ({ cryptoId, onBack }) => {
   const fetchHistoricalData = async () => {
     try {
       setLoading(true);
-      
+
       const response = await fetchWithRetry(
         `/api/crypto/${cryptoId}/history?days=${timeRange}`,
         {},
         10000, // 10 second timeout
-        3      // 3 retries
+        3 // 3 retries
       );
-      
+
       const data = await response.json();
 
       // Transform the data for the chart

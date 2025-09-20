@@ -14,7 +14,18 @@ import TransactionHistory from './components/TransactionHistory';
 import PerformanceVisualization from './components/PerformanceVisualization';
 import DataExport from './components/DataExport';
 import { PortfolioProvider } from './context/PortfolioContext';
-import { TrendingUp, Activity, BarChart, Grid, List, Newspaper, Wallet, History, LineChart, Download } from 'lucide-react';
+import {
+  TrendingUp,
+  Activity,
+  BarChart,
+  Grid,
+  List,
+  Newspaper,
+  Wallet,
+  History,
+  LineChart,
+  Download,
+} from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { LocalizationProvider, useLocalization } from './context/LocalizationContext';
 import './i18n';
@@ -325,7 +336,10 @@ function AppContent() {
             </div>
           </div>
 
-          <div className="card p-3 sm:p-4 animate-fade-in hover-glow group" style={{animationDelay: '0.1s'}}>
+          <div
+            className="card p-3 sm:p-4 animate-fade-in hover-glow group"
+            style={{ animationDelay: '0.1s' }}
+          >
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-400 text-xs sm:text-sm">Portfolio</p>
@@ -338,18 +352,26 @@ function AppContent() {
             </div>
           </div>
 
-          <div className="card p-3 sm:p-4 animate-fade-in hover-glow group" style={{animationDelay: '0.2s'}}>
+          <div
+            className="card p-3 sm:p-4 animate-fade-in hover-glow group"
+            style={{ animationDelay: '0.2s' }}
+          >
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-400 text-xs sm:text-sm">Active</p>
-                <p className="text-lg sm:text-2xl font-bold text-white group-hover:text-crypto-gold transition-colors">{getActiveCryptos()}</p>
+                <p className="text-lg sm:text-2xl font-bold text-white group-hover:text-crypto-gold transition-colors">
+                  {getActiveCryptos()}
+                </p>
                 <p className="text-xs text-gray-500 hidden sm:block">Currently Trading</p>
               </div>
               <div className="w-3 h-3 bg-crypto-green group-hover:bg-crypto-gold rounded-full animate-pulse transition-colors"></div>
             </div>
           </div>
 
-          <div className="card p-3 sm:p-4 animate-fade-in hover-glow group" style={{animationDelay: '0.3s'}}>
+          <div
+            className="card p-3 sm:p-4 animate-fade-in hover-glow group"
+            style={{ animationDelay: '0.3s' }}
+          >
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-400 text-xs sm:text-sm">Top Performer</p>

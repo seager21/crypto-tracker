@@ -6,14 +6,8 @@ import { useLocalization } from '../context/LocalizationContext';
 const SettingsPanel = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { t } = useTranslation();
-  const { 
-    settings, 
-    updateSettings, 
-    LANGUAGES, 
-    CURRENCIES, 
-    NEWS_REGIONS, 
-    TIMEZONES 
-  } = useLocalization();
+  const { settings, updateSettings, LANGUAGES, CURRENCIES, NEWS_REGIONS, TIMEZONES } =
+    useLocalization();
 
   const togglePanel = () => {
     setIsOpen(!isOpen);
@@ -152,9 +146,7 @@ const SettingsPanel = () => {
               <div>
                 <div className="flex items-center mb-2">
                   <Calendar size={18} className="mr-2" />
-                  <label className="text-sm font-medium text-gray-300">
-                    {t('settings.theme')}
-                  </label>
+                  <label className="text-sm font-medium text-gray-300">{t('settings.theme')}</label>
                 </div>
                 <div className="flex space-x-4">
                   <label className="inline-flex items-center">

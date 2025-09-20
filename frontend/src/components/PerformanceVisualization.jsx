@@ -16,15 +16,37 @@ import {
   BarChart,
   Bar,
 } from 'recharts';
-import { TrendingUp, TrendingDown, PieChart as PieChartIcon, BarChart3, Calendar } from 'lucide-react';
+import {
+  TrendingUp,
+  TrendingDown,
+  PieChart as PieChartIcon,
+  BarChart3,
+  Calendar,
+} from 'lucide-react';
 
 const PerformanceVisualization = ({ cryptoConfig }) => {
-  const { transactions, holdings, getPortfolioAllocation, portfolioValue, totalInvested, totalPnL } = usePortfolio();
+  const {
+    transactions,
+    holdings,
+    getPortfolioAllocation,
+    portfolioValue,
+    totalInvested,
+    totalPnL,
+  } = usePortfolio();
   const [activeChart, setActiveChart] = useState('performance'); // performance, allocation, timeline
   const [timeRange, setTimeRange] = useState('all'); // 7d, 30d, 90d, all
 
   // Generate colors for pie chart
-  const COLORS = ['#00D4AA', '#FF6B6B', '#F59E0B', '#3B82F6', '#8B5CF6', '#EF4444', '#10B981', '#F97316'];
+  const COLORS = [
+    '#00D4AA',
+    '#FF6B6B',
+    '#F59E0B',
+    '#3B82F6',
+    '#8B5CF6',
+    '#EF4444',
+    '#10B981',
+    '#F97316',
+  ];
 
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('en-US', {
@@ -36,38 +58,44 @@ const PerformanceVisualization = ({ cryptoConfig }) => {
   // Calculate portfolio performance over time
   const portfolioPerformanceData = useMemo(() => {
     const data = [];
-    const sortedTransactions = [...transactions].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
-    
+    const sortedTransactions = [...transactions].sort(
+      (a, b) => new Date(a.timestamp) - new Date(b.timestamp)
+    );
+
     let runningValue = 0;
     let runningInvested = 0;
     const holdingsOverTime = {};
 
     sortedTransactions.forEach((transaction) => {
       const date = new Date(transaction.timestamp).toLocaleDateString();
-      
+
       // Update holdings
       if (!holdingsOverTime[transaction.cryptoId]) {
         holdingsOverTime[transaction.cryptoId] = { quantity: 0, totalInvested: 0 };
       }
-      
+
       if (transaction.type === 'buy') {
         holdingsOverTime[transaction.cryptoId].quantity += transaction.quantity;
-        holdingsOverTime[transaction.cryptoId].totalInvested += transaction.quantity * transaction.price;
+        holdingsOverTime[transaction.cryptoId].totalInvested +=
+          transaction.quantity * transaction.price;
         runningInvested += transaction.quantity * transaction.price;
       } else {
         holdingsOverTime[transaction.cryptoId].quantity -= transaction.quantity;
-        holdingsOverTime[transaction.cryptoId].totalInvested -= transaction.quantity * (holdingsOverTime[transaction.cryptoId].totalInvested / (holdingsOverTime[transaction.cryptoId].quantity + transaction.quantity));
+        holdingsOverTime[transaction.cryptoId].totalInvested -=
+          transaction.quantity *
+          (holdingsOverTime[transaction.cryptoId].totalInvested /
+            (holdingsOverTime[transaction.cryptoId].quantity + transaction.quantity));
         runningInvested -= transaction.quantity * transaction.price;
       }
-      
+
       // For simplicity, use transaction price as current value (in real app, you'd use market data)
       runningValue = Object.values(holdingsOverTime).reduce((sum, holding) => {
-        return sum + (holding.quantity * transaction.price); // This is simplified
+        return sum + holding.quantity * transaction.price; // This is simplified
       }, 0);
-      
+
       const pnl = runningValue - runningInvested;
       const pnlPercentage = runningInvested > 0 ? (pnl / runningInvested) * 100 : 0;
-      
+
       data.push({
         date,
         value: runningValue,
@@ -77,7 +105,7 @@ const PerformanceVisualization = ({ cryptoConfig }) => {
         transaction: `${transaction.type} ${transaction.quantity} ${cryptoConfig[transaction.cryptoId]?.symbol}`,
       });
     });
-    
+
     return data;
   }, [transactions, cryptoConfig]);
 
@@ -96,19 +124,22 @@ const PerformanceVisualization = ({ cryptoConfig }) => {
   // Monthly transaction volume data
   const monthlyVolumeData = useMemo(() => {
     const monthlyData = {};
-    
+
     transactions.forEach((transaction) => {
-      const month = new Date(transaction.timestamp).toLocaleDateString('en-US', { year: 'numeric', month: 'short' });
+      const month = new Date(transaction.timestamp).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+      });
       const amount = transaction.quantity * transaction.price;
-      
+
       if (!monthlyData[month]) {
         monthlyData[month] = { month, buy: 0, sell: 0, total: 0 };
       }
-      
+
       monthlyData[month][transaction.type] += amount;
       monthlyData[month].total += amount;
     });
-    
+
     return Object.values(monthlyData).sort((a, b) => new Date(a.month) - new Date(b.month));
   }, [transactions]);
 
@@ -120,7 +151,9 @@ const PerformanceVisualization = ({ cryptoConfig }) => {
           {payload.map((entry, index) => (
             <p key={index} className="text-white">
               <span style={{ color: entry.color }}>{entry.name}: </span>
-              {entry.name.includes('Percentage') ? `${entry.value.toFixed(2)}%` : formatCurrency(entry.value)}
+              {entry.name.includes('Percentage')
+                ? `${entry.value.toFixed(2)}%`
+                : formatCurrency(entry.value)}
             </p>
           ))}
         </div>
@@ -134,7 +167,9 @@ const PerformanceVisualization = ({ cryptoConfig }) => {
       const data = payload[0].payload;
       return (
         <div className="bg-crypto-dark border border-gray-600 rounded-lg p-3 shadow-lg">
-          <p className="text-white font-semibold">{data.name} ({data.symbol})</p>
+          <p className="text-white font-semibold">
+            {data.name} ({data.symbol})
+          </p>
           <p className="text-crypto-gold">{formatCurrency(data.value)}</p>
           <p className="text-gray-400">{data.percentage.toFixed(2)}% of portfolio</p>
           <p className="text-gray-400">Quantity: {data.quantity.toFixed(8)}</p>
@@ -160,11 +195,16 @@ const PerformanceVisualization = ({ cryptoConfig }) => {
           </div>
         </div>
 
-        <div className="card p-4 animate-fade-in hover-glow group" style={{animationDelay: '0.1s'}}>
+        <div
+          className="card p-4 animate-fade-in hover-glow group"
+          style={{ animationDelay: '0.1s' }}
+        >
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-400 text-sm">Total P&L</p>
-              <p className={`text-2xl font-bold ${totalPnL >= 0 ? 'text-crypto-green' : 'text-crypto-red'} group-hover:text-crypto-gold transition-colors`}>
+              <p
+                className={`text-2xl font-bold ${totalPnL >= 0 ? 'text-crypto-green' : 'text-crypto-red'} group-hover:text-crypto-gold transition-colors`}
+              >
                 {formatCurrency(totalPnL)}
               </p>
               <p className={`text-sm ${totalPnL >= 0 ? 'text-crypto-green' : 'text-crypto-red'}`}>
@@ -179,7 +219,10 @@ const PerformanceVisualization = ({ cryptoConfig }) => {
           </div>
         </div>
 
-        <div className="card p-4 animate-fade-in hover-glow group" style={{animationDelay: '0.2s'}}>
+        <div
+          className="card p-4 animate-fade-in hover-glow group"
+          style={{ animationDelay: '0.2s' }}
+        >
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-400 text-sm">Active Assets</p>
@@ -251,7 +294,11 @@ const PerformanceVisualization = ({ cryptoConfig }) => {
                 <AreaChart data={portfolioPerformanceData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                   <XAxis dataKey="date" stroke="#9CA3AF" fontSize={12} />
-                  <YAxis stroke="#9CA3AF" fontSize={12} tickFormatter={(value) => formatCurrency(value)} />
+                  <YAxis
+                    stroke="#9CA3AF"
+                    fontSize={12}
+                    tickFormatter={(value) => formatCurrency(value)}
+                  />
                   <Tooltip content={<CustomTooltip />} />
                   <Legend />
                   <Area
@@ -270,13 +317,7 @@ const PerformanceVisualization = ({ cryptoConfig }) => {
                     fillOpacity={0.3}
                     name="Total Invested"
                   />
-                  <Line
-                    type="monotone"
-                    dataKey="pnl"
-                    stroke="#FF6B6B"
-                    strokeWidth={2}
-                    name="P&L"
-                  />
+                  <Line type="monotone" dataKey="pnl" stroke="#FF6B6B" strokeWidth={2} name="P&L" />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
@@ -308,11 +349,14 @@ const PerformanceVisualization = ({ cryptoConfig }) => {
                   </PieChart>
                 </ResponsiveContainer>
               </div>
-              
+
               <div className="space-y-3">
                 <h4 className="text-lg font-semibold text-white">Holdings Breakdown</h4>
                 {allocationData.map((item, index) => (
-                  <div key={item.name} className="flex items-center justify-between p-3 bg-crypto-darker rounded-lg">
+                  <div
+                    key={item.name}
+                    className="flex items-center justify-between p-3 bg-crypto-darker rounded-lg"
+                  >
                     <div className="flex items-center space-x-3">
                       <div
                         className="w-4 h-4 rounded-full"
@@ -342,7 +386,11 @@ const PerformanceVisualization = ({ cryptoConfig }) => {
                 <BarChart data={monthlyVolumeData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                   <XAxis dataKey="month" stroke="#9CA3AF" fontSize={12} />
-                  <YAxis stroke="#9CA3AF" fontSize={12} tickFormatter={(value) => formatCurrency(value)} />
+                  <YAxis
+                    stroke="#9CA3AF"
+                    fontSize={12}
+                    tickFormatter={(value) => formatCurrency(value)}
+                  />
                   <Tooltip content={<CustomTooltip />} />
                   <Legend />
                   <Bar dataKey="buy" stackId="a" fill="#00D4AA" name="Buy Volume" />

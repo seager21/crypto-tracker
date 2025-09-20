@@ -12,36 +12,36 @@ import {
 
 const PriceChart = ({ data }) => {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-  
+
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth < 768);
     };
-    
+
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
-  
+
   // Format margin and display properties based on screen size
-  const margin = isMobile 
-    ? { top: 5, right: 10, left: 0, bottom: 5 } 
+  const margin = isMobile
+    ? { top: 5, right: 10, left: 0, bottom: 5 }
     : { top: 5, right: 30, left: 20, bottom: 5 };
-    
+
   // Reduce the number of X-axis ticks on mobile
   const getTickCount = () => {
     return isMobile ? 4 : undefined;
   };
-  
+
   return (
     <div className="w-full h-64 sm:h-80">
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={data} margin={margin}>
           <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-          <XAxis 
-            dataKey="time" 
-            stroke="#9CA3AF" 
-            fontSize={isMobile ? 10 : 12} 
-            tickLine={false} 
+          <XAxis
+            dataKey="time"
+            stroke="#9CA3AF"
+            fontSize={isMobile ? 10 : 12}
+            tickLine={false}
             tick={isMobile}
             interval={isMobile ? 'preserveStartEnd' : 0}
             tickCount={getTickCount()}
@@ -50,7 +50,7 @@ const PriceChart = ({ data }) => {
             stroke="#9CA3AF"
             fontSize={isMobile ? 10 : 12}
             tickLine={false}
-            tickFormatter={(value) => isMobile ? `$${value}` : `$${value.toLocaleString()}`}
+            tickFormatter={(value) => (isMobile ? `$${value}` : `$${value.toLocaleString()}`)}
             width={isMobile ? 40 : 60}
           />
           <Tooltip
@@ -60,7 +60,7 @@ const PriceChart = ({ data }) => {
               borderRadius: '8px',
               color: '#F9FAFB',
               padding: isMobile ? '4px 8px' : '8px 12px',
-              fontSize: isMobile ? '12px' : '14px'
+              fontSize: isMobile ? '12px' : '14px',
             }}
             formatter={(value, name) => [
               `$${value.toLocaleString()}`,
@@ -68,7 +68,7 @@ const PriceChart = ({ data }) => {
             ]}
             labelStyle={{ color: '#9CA3AF', fontSize: isMobile ? '10px' : '12px' }}
           />
-          <Legend 
+          <Legend
             wrapperStyle={{ color: '#9CA3AF', fontSize: isMobile ? '10px' : '12px' }}
             iconSize={isMobile ? 8 : 10}
           />

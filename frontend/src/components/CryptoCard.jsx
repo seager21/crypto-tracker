@@ -50,7 +50,7 @@ const CryptoCard = ({
       <div className="absolute top-2 sm:top-4 right-2 sm:right-4 opacity-0 group-hover:opacity-100 transition-opacity hidden sm:block">
         <ExternalLink className="w-5 h-5 text-gray-400 hover:text-f1c40f" />
       </div>
-      
+
       {/* Add subtle coin animation */}
       <div className="absolute -z-10 w-40 h-40 rounded-full bg-f1c40f/5 blur-3xl top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 group-hover:bg-f1c40f/10 transition-all duration-700"></div>
 
@@ -58,7 +58,9 @@ const CryptoCard = ({
         <div className="flex items-center space-x-2 sm:space-x-3">
           <div className="text-2xl sm:text-3xl">{icon}</div>
           <div>
-            <h3 className="text-lg sm:text-xl font-bold truncate max-w-[100px] sm:max-w-none">{name}</h3>
+            <h3 className="text-lg sm:text-xl font-bold truncate max-w-[100px] sm:max-w-none">
+              {name}
+            </h3>
             <p className="text-gray-400 text-xs sm:text-sm">{symbol}</p>
           </div>
         </div>
@@ -67,7 +69,11 @@ const CryptoCard = ({
             isPositive ? 'bg-crypto-green/20 text-crypto-green' : 'bg-crypto-red/20 text-crypto-red'
           }`}
         >
-          {isPositive ? <TrendingUp className="w-3 h-3 sm:w-4 sm:h-4" /> : <TrendingDown className="w-3 h-3 sm:w-4 sm:h-4" />}
+          {isPositive ? (
+            <TrendingUp className="w-3 h-3 sm:w-4 sm:h-4" />
+          ) : (
+            <TrendingDown className="w-3 h-3 sm:w-4 sm:h-4" />
+          )}
           <span className="text-xs sm:text-sm font-medium">
             {isPositive ? '+' : ''}
             {change24h?.toFixed(2) || '0.00'}%

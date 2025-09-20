@@ -45,7 +45,10 @@ const PortfolioHoldings = ({ cryptoConfig }) => {
           </div>
         </div>
 
-        <div className="card p-4 animate-fade-in hover-glow group" style={{animationDelay: '0.1s'}}>
+        <div
+          className="card p-4 animate-fade-in hover-glow group"
+          style={{ animationDelay: '0.1s' }}
+        >
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-400 text-sm">Total Invested</p>
@@ -57,15 +60,21 @@ const PortfolioHoldings = ({ cryptoConfig }) => {
           </div>
         </div>
 
-        <div className="card p-4 animate-fade-in hover-glow group" style={{animationDelay: '0.2s'}}>
+        <div
+          className="card p-4 animate-fade-in hover-glow group"
+          style={{ animationDelay: '0.2s' }}
+        >
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-400 text-sm">Total P&L</p>
-              <p className={`text-2xl font-bold ${totalPnL >= 0 ? 'text-crypto-green' : 'text-crypto-red'} group-hover:text-crypto-gold transition-colors`}>
+              <p
+                className={`text-2xl font-bold ${totalPnL >= 0 ? 'text-crypto-green' : 'text-crypto-red'} group-hover:text-crypto-gold transition-colors`}
+              >
                 {formatCurrency(totalPnL)}
               </p>
               <p className={`text-sm ${totalPnL >= 0 ? 'text-crypto-green' : 'text-crypto-red'}`}>
-                {totalPnLPercentage >= 0 ? '+' : ''}{totalPnLPercentage.toFixed(2)}%
+                {totalPnLPercentage >= 0 ? '+' : ''}
+                {totalPnLPercentage.toFixed(2)}%
               </p>
             </div>
             {totalPnL >= 0 ? (
@@ -94,13 +103,15 @@ const PortfolioHoldings = ({ cryptoConfig }) => {
         {Object.keys(holdings).length === 0 ? (
           <div className="card p-8 text-center">
             <p className="text-gray-400 text-lg mb-4">No holdings yet</p>
-            <p className="text-gray-500 text-sm">Add your first transaction to start tracking your portfolio</p>
+            <p className="text-gray-500 text-sm">
+              Add your first transaction to start tracking your portfolio
+            </p>
           </div>
         ) : (
           Object.entries(holdings).map(([cryptoId]) => {
             const config = cryptoConfig[cryptoId];
             const performance = getHoldingPerformance(cryptoId);
-            
+
             if (!config || !performance) return null;
 
             return (
@@ -115,30 +126,43 @@ const PortfolioHoldings = ({ cryptoConfig }) => {
                   </div>
                   <div className="text-right">
                     <p className="text-sm text-gray-400">Quantity</p>
-                    <p className="text-lg font-semibold text-white">{formatNumber(performance.quantity)}</p>
+                    <p className="text-lg font-semibold text-white">
+                      {formatNumber(performance.quantity)}
+                    </p>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
                   <div>
                     <p className="text-xs text-gray-400">Avg. Price</p>
-                    <p className="text-sm font-semibold text-white">{formatCurrency(performance.averagePrice)}</p>
+                    <p className="text-sm font-semibold text-white">
+                      {formatCurrency(performance.averagePrice)}
+                    </p>
                   </div>
                   <div>
                     <p className="text-xs text-gray-400">Current Price</p>
-                    <p className="text-sm font-semibold text-white">{formatCurrency(performance.currentPrice)}</p>
+                    <p className="text-sm font-semibold text-white">
+                      {formatCurrency(performance.currentPrice)}
+                    </p>
                   </div>
                   <div>
                     <p className="text-xs text-gray-400">Current Value</p>
-                    <p className="text-sm font-semibold text-white">{formatCurrency(performance.currentValue)}</p>
+                    <p className="text-sm font-semibold text-white">
+                      {formatCurrency(performance.currentValue)}
+                    </p>
                   </div>
                   <div>
                     <p className="text-xs text-gray-400">P&L</p>
-                    <p className={`text-sm font-semibold ${performance.pnl >= 0 ? 'text-crypto-green' : 'text-crypto-red'}`}>
+                    <p
+                      className={`text-sm font-semibold ${performance.pnl >= 0 ? 'text-crypto-green' : 'text-crypto-red'}`}
+                    >
                       {formatCurrency(performance.pnl)}
                     </p>
-                    <p className={`text-xs ${performance.pnl >= 0 ? 'text-crypto-green' : 'text-crypto-red'}`}>
-                      {performance.pnlPercentage >= 0 ? '+' : ''}{performance.pnlPercentage.toFixed(2)}%
+                    <p
+                      className={`text-xs ${performance.pnl >= 0 ? 'text-crypto-green' : 'text-crypto-red'}`}
+                    >
+                      {performance.pnlPercentage >= 0 ? '+' : ''}
+                      {performance.pnlPercentage.toFixed(2)}%
                     </p>
                   </div>
                 </div>
@@ -149,8 +173,8 @@ const PortfolioHoldings = ({ cryptoConfig }) => {
                     className={`h-2 rounded-full transition-all duration-1000 ${
                       performance.pnl >= 0 ? 'bg-crypto-green' : 'bg-crypto-red'
                     }`}
-                    style={{ 
-                      width: `${Math.min(Math.abs(performance.pnlPercentage), 100)}%` 
+                    style={{
+                      width: `${Math.min(Math.abs(performance.pnlPercentage), 100)}%`,
                     }}
                   ></div>
                 </div>
@@ -158,7 +182,8 @@ const PortfolioHoldings = ({ cryptoConfig }) => {
                 {/* Transaction count */}
                 <div className="text-center">
                   <p className="text-xs text-gray-500">
-                    {performance.transactions.length} transaction{performance.transactions.length !== 1 ? 's' : ''}
+                    {performance.transactions.length} transaction
+                    {performance.transactions.length !== 1 ? 's' : ''}
                   </p>
                 </div>
               </div>
@@ -192,7 +217,7 @@ const AddTransactionModal = ({ onClose, onSave, cryptoConfig }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
+
     if (!formData.cryptoId || !formData.quantity || !formData.price) {
       alert('Please fill in all required fields');
       return;
@@ -212,7 +237,7 @@ const AddTransactionModal = ({ onClose, onSave, cryptoConfig }) => {
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="bg-crypto-dark rounded-lg p-6 w-full max-w-md animate-fade-in">
         <h3 className="text-xl font-bold text-white mb-4">Add Transaction</h3>
-        
+
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-gray-400 text-sm mb-2">Cryptocurrency *</label>
@@ -299,10 +324,7 @@ const AddTransactionModal = ({ onClose, onSave, cryptoConfig }) => {
             >
               Cancel
             </button>
-            <button
-              type="submit"
-              className="flex-1 btn-lightning px-4 py-2 rounded-lg"
-            >
+            <button type="submit" className="flex-1 btn-lightning px-4 py-2 rounded-lg">
               Add Transaction
             </button>
           </div>

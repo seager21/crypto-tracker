@@ -38,16 +38,16 @@ const CryptoNewsCarousel = () => {
   // Import localization hook
   const { settings } = useLocalization();
   const { t } = useTranslation();
-  
+
   const fetchNews = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
-      
+
       // Use language and region from settings
       const language = settings.language;
       const region = settings.newsRegion;
-      
+
       const response = await fetch(
         `http://localhost:4000/api/news?limit=10&language=${language}&region=${region}`
       );
@@ -121,23 +121,26 @@ const CryptoNewsCarousel = () => {
   }, [modalOpen, handlePrevSlide, handleNextSlide, closeModal]);
 
   // Format dates consistently with timezone support
-  const formatDate = useCallback((dateString) => {
-    if (!dateString) return '';
+  const formatDate = useCallback(
+    (dateString) => {
+      if (!dateString) return '';
 
-    // Handle both string dates and UNIX timestamps
-    const date =
-      typeof dateString === 'number'
-        ? new Date(dateString * 1000) // Convert UNIX timestamp (seconds) to milliseconds
-        : new Date(dateString);
+      // Handle both string dates and UNIX timestamps
+      const date =
+        typeof dateString === 'number'
+          ? new Date(dateString * 1000) // Convert UNIX timestamp (seconds) to milliseconds
+          : new Date(dateString);
 
-    // Use the user's preferred timezone and language
-    return new Intl.DateTimeFormat(settings.language, {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      timeZone: settings.timezone
-    }).format(date);
-  }, [settings.language, settings.timezone]);
+      // Use the user's preferred timezone and language
+      return new Intl.DateTimeFormat(settings.language, {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        timeZone: settings.timezone,
+      }).format(date);
+    },
+    [settings.language, settings.timezone]
+  );
 
   // Calculate visible news items
   const visibleNews = news.slice(
@@ -256,7 +259,7 @@ const CryptoNewsCarousel = () => {
                   </div>
                 ) : (
                   <div className="w-full h-40 bg-crypto-darker flex items-center justify-center">
-                                        <span className="text-xs text-gray-400">{t('news.noImageAvailable')}</span>
+                    <span className="text-xs text-gray-400">{t('news.noImageAvailable')}</span>
                   </div>
                 )}
 

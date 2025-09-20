@@ -10,16 +10,16 @@ const FallingCoins = ({ count = 15 }) => {
 
     // Animation loop
     const interval = setInterval(() => {
-      setCoins(prevCoins => {
-        return prevCoins.map(coin => {
+      setCoins((prevCoins) => {
+        return prevCoins.map((coin) => {
           // Move coin down
           let newY = coin.y + coin.speed;
-          
+
           // If coin is out of view, reset it at the top with new random properties
           if (newY > window.innerHeight + 50) {
             return createRandomCoin();
           }
-          
+
           // Otherwise, update its position
           return { ...coin, y: newY };
         });
@@ -47,7 +47,7 @@ const FallingCoins = ({ count = 15 }) => {
 
   return (
     <div className="fixed top-0 left-0 w-full h-full -z-10 overflow-hidden pointer-events-none">
-      {coins.map(coin => (
+      {coins.map((coin) => (
         <div
           key={coin.id}
           className="absolute"
@@ -63,9 +63,10 @@ const FallingCoins = ({ count = 15 }) => {
             filter: `blur(${coin.blur}px)`,
             boxShadow: '0 0 10px rgba(241, 196, 15, 0.5)',
             border: coin.type === 'hexagon' ? '2px solid #f1c40f' : 'none',
-            clipPath: coin.type === 'hexagon' 
-              ? 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)' 
-              : 'none',
+            clipPath:
+              coin.type === 'hexagon'
+                ? 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)'
+                : 'none',
           }}
         />
       ))}

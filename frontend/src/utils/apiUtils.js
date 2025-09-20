@@ -10,7 +10,7 @@ export async function fetchWithRetry(url, options = {}, timeout = 8000, retries 
   // Create an AbortController to handle the timeout
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), timeout);
-  
+
   // Add the signal to the options
   const fetchOptions = {
     ...options,
@@ -20,41 +20,41 @@ export async function fetchWithRetry(url, options = {}, timeout = 8000, retries 
       'Cache-Control': 'no-cache',
     },
   };
-  
+
   let lastError;
-  
+
   // Try the fetch with exponential backoff
   for (let i = 0; i < retries; i++) {
     try {
       const response = await fetch(url, fetchOptions);
       clearTimeout(timeoutId);
-      
+
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
-      
+
       return response;
     } catch (error) {
       lastError = error;
-      
+
       // Don't retry if it was a user abort
       if (error.name === 'AbortError') {
         console.warn(`Request to ${url} timed out after ${timeout}ms`);
         if (i === retries - 1) break;
       }
-      
+
       // Calculate exponential backoff delay (with jitter)
       const delay = Math.min(1000 * Math.pow(2, i) + Math.random() * 1000, 10000);
       console.warn(`Fetch attempt ${i + 1} failed for ${url}. Retrying in ${delay}ms...`);
-      
+
       // Wait before retrying
-      await new Promise(resolve => setTimeout(resolve, delay));
+      await new Promise((resolve) => setTimeout(resolve, delay));
     }
   }
-  
+
   // Clean up the timeout if we exit the loop
   clearTimeout(timeoutId);
-  
+
   // All retries failed
   console.error(`All ${retries} fetch attempts failed for ${url}`, lastError);
   throw lastError;

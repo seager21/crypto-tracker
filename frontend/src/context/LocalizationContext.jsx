@@ -52,13 +52,13 @@ const LocalizationContext = createContext();
 export const LocalizationProvider = ({ children }) => {
   const { i18n } = useTranslation();
   const [settings, setSettings] = useState(initialSettings);
-  
+
   // Update language when settings change
   useEffect(() => {
     i18n.changeLanguage(settings.language);
     localStorage.setItem('i18nextLng', settings.language);
   }, [settings.language, i18n]);
-  
+
   // Save other settings to localStorage
   useEffect(() => {
     localStorage.setItem('currency', settings.currency);
@@ -66,28 +66,28 @@ export const LocalizationProvider = ({ children }) => {
     localStorage.setItem('timezone', settings.timezone);
     localStorage.setItem('theme', settings.theme);
   }, [settings]);
-  
+
   // Update settings
   const updateSettings = (newSettings) => {
-    setSettings(prev => ({ ...prev, ...newSettings }));
+    setSettings((prev) => ({ ...prev, ...newSettings }));
   };
-  
+
   // Format currency based on current settings
   const formatCurrency = (amount, targetCurrency = settings.currency) => {
     const currencyObj = CURRENCIES[targetCurrency];
-    
+
     if (!currencyObj) return `$${amount.toFixed(2)}`; // Default to USD if invalid
-    
+
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: currencyObj.code,
     }).format(amount);
   };
-  
+
   // Format date based on current timezone
   const formatDate = (dateInput, options = {}) => {
     const date = new Date(dateInput);
-    
+
     return new Intl.DateTimeFormat(settings.language, {
       timeZone: settings.timezone,
       dateStyle: 'medium',
@@ -95,7 +95,7 @@ export const LocalizationProvider = ({ children }) => {
       ...options,
     }).format(date);
   };
-  
+
   // Context value
   const value = {
     settings,
@@ -107,12 +107,8 @@ export const LocalizationProvider = ({ children }) => {
     NEWS_REGIONS,
     TIMEZONES,
   };
-  
-  return (
-    <LocalizationContext.Provider value={value}>
-      {children}
-    </LocalizationContext.Provider>
-  );
+
+  return <LocalizationContext.Provider value={value}>{children}</LocalizationContext.Provider>;
 };
 
 // Custom hook to use the localization context

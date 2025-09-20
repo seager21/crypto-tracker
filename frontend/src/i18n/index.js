@@ -24,11 +24,11 @@ i18n
     fallbackLng: 'en',
     debug: import.meta.env.MODE === 'development',
     supportedLngs: Object.keys(LANGUAGES),
-    
+
     interpolation: {
       escapeValue: false, // not needed for React
     },
-    
+
     // Default detection options
     detection: {
       order: ['localStorage', 'navigator'],

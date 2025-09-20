@@ -33,22 +33,25 @@ const TransactionHistory = ({ cryptoConfig }) => {
     .filter((transaction) => {
       const matchesType = filterType === 'all' || transaction.type === filterType;
       const matchesCrypto = filterCrypto === 'all' || transaction.cryptoId === filterCrypto;
-      const matchesSearch = !searchTerm || 
+      const matchesSearch =
+        !searchTerm ||
         cryptoConfig[transaction.cryptoId]?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        cryptoConfig[transaction.cryptoId]?.symbol.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        cryptoConfig[transaction.cryptoId]?.symbol
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase()) ||
         transaction.notes?.toLowerCase().includes(searchTerm.toLowerCase());
-      
+
       return matchesType && matchesCrypto && matchesSearch;
     })
     .sort((a, b) => {
       let comparison = 0;
-      
+
       switch (sortBy) {
         case 'date':
           comparison = new Date(a.timestamp) - new Date(b.timestamp);
           break;
         case 'amount':
-          comparison = (a.quantity * a.price) - (b.quantity * b.price);
+          comparison = a.quantity * a.price - b.quantity * b.price;
           break;
         case 'type':
           comparison = a.type.localeCompare(b.type);
@@ -56,7 +59,7 @@ const TransactionHistory = ({ cryptoConfig }) => {
         default:
           comparison = 0;
       }
-      
+
       return sortOrder === 'asc' ? comparison : -comparison;
     });
 
@@ -101,7 +104,10 @@ const TransactionHistory = ({ cryptoConfig }) => {
           </div>
         </div>
 
-        <div className="card p-4 animate-fade-in hover-glow group" style={{animationDelay: '0.1s'}}>
+        <div
+          className="card p-4 animate-fade-in hover-glow group"
+          style={{ animationDelay: '0.1s' }}
+        >
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-400 text-sm">Total Bought</p>
@@ -113,7 +119,10 @@ const TransactionHistory = ({ cryptoConfig }) => {
           </div>
         </div>
 
-        <div className="card p-4 animate-fade-in hover-glow group" style={{animationDelay: '0.2s'}}>
+        <div
+          className="card p-4 animate-fade-in hover-glow group"
+          style={{ animationDelay: '0.2s' }}
+        >
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-400 text-sm">Total Sold</p>
@@ -133,7 +142,7 @@ const TransactionHistory = ({ cryptoConfig }) => {
             <Filter className="w-5 h-5 text-gray-400" />
             <span className="text-gray-400 text-sm">Filters:</span>
           </div>
-          
+
           <div className="flex flex-wrap gap-2 flex-1">
             <select
               value={filterType}
@@ -194,8 +203,8 @@ const TransactionHistory = ({ cryptoConfig }) => {
           <div className="card p-8 text-center">
             <p className="text-gray-400 text-lg mb-2">No transactions found</p>
             <p className="text-gray-500 text-sm">
-              {transactions.length === 0 
-                ? 'Add your first transaction to start tracking your portfolio' 
+              {transactions.length === 0
+                ? 'Add your first transaction to start tracking your portfolio'
                 : 'Try adjusting your filters'}
             </p>
           </div>
@@ -212,11 +221,13 @@ const TransactionHistory = ({ cryptoConfig }) => {
                     <div>
                       <div className="flex items-center space-x-2">
                         <h3 className="text-lg font-bold text-white">{config.name}</h3>
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                          transaction.type === 'buy' 
-                            ? 'bg-crypto-green/20 text-crypto-green' 
-                            : 'bg-crypto-red/20 text-crypto-red'
-                        }`}>
+                        <span
+                          className={`px-2 py-1 rounded-full text-xs font-medium ${
+                            transaction.type === 'buy'
+                              ? 'bg-crypto-green/20 text-crypto-green'
+                              : 'bg-crypto-red/20 text-crypto-red'
+                          }`}
+                        >
                           {transaction.type.toUpperCase()}
                         </span>
                       </div>
@@ -233,7 +244,9 @@ const TransactionHistory = ({ cryptoConfig }) => {
                       </div>
                       <div>
                         <p className="text-xs text-gray-400">Price</p>
-                        <p className="text-sm font-semibold text-white">{formatCurrency(transaction.price)}</p>
+                        <p className="text-sm font-semibold text-white">
+                          {formatCurrency(transaction.price)}
+                        </p>
                       </div>
                     </div>
                     <div className="mb-2">
@@ -292,7 +305,7 @@ const EditTransactionModal = ({ transaction, onClose, onSave, cryptoConfig }) =>
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
+
     if (!formData.cryptoId || !formData.quantity || !formData.price) {
       alert('Please fill in all required fields');
       return;
@@ -310,7 +323,7 @@ const EditTransactionModal = ({ transaction, onClose, onSave, cryptoConfig }) =>
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="bg-crypto-dark rounded-lg p-6 w-full max-w-md animate-fade-in">
         <h3 className="text-xl font-bold text-white mb-4">Edit Transaction</h3>
-        
+
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-gray-400 text-sm mb-2">Cryptocurrency *</label>
@@ -393,10 +406,7 @@ const EditTransactionModal = ({ transaction, onClose, onSave, cryptoConfig }) =>
             >
               Cancel
             </button>
-            <button
-              type="submit"
-              className="flex-1 btn-lightning px-4 py-2 rounded-lg"
-            >
+            <button type="submit" className="flex-1 btn-lightning px-4 py-2 rounded-lg">
               Save Changes
             </button>
           </div>
