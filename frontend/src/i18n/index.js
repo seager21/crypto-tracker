@@ -5,11 +5,16 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 
 // Supported languages
 export const LANGUAGES = {
-  en: { nativeName: 'English' },
-  es: { nativeName: 'Español' },
-  fr: { nativeName: 'Français' },
-  de: { nativeName: 'Deutsch' },
-  ja: { nativeName: '日本語' },
+  en: { nativeName: 'English', flag: '🇺🇸' },
+  es: { nativeName: 'Español', flag: '🇪🇸' },
+  fr: { nativeName: 'Français', flag: '🇫🇷' },
+  de: { nativeName: 'Deutsch', flag: '🇩🇪' },
+  ja: { nativeName: '日本語', flag: '🇯🇵' },
+  zh: { nativeName: '中文', flag: '🇨🇳' },
+  pt: { nativeName: 'Português', flag: '🇵🇹' },
+  ru: { nativeName: 'Русский', flag: '🇷🇺' },
+  ko: { nativeName: '한국어', flag: '🇰🇷' },
+  it: { nativeName: 'Italiano', flag: '🇮🇹' },
 };
 
 i18n

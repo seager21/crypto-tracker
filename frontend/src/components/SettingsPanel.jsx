@@ -113,9 +113,9 @@ const SettingsPanel = () => {
                   onChange={handleNewsRegionChange}
                   className="w-full p-2 bg-gray-700 rounded text-white border border-gray-600 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 >
-                  {Object.entries(NEWS_REGIONS).map(([code, name]) => (
+                  {Object.entries(NEWS_REGIONS).map(([code, region]) => (
                     <option key={code} value={code}>
-                      {name}
+                      {typeof region === 'string' ? region : region.name}
                     </option>
                   ))}
                 </select>
@@ -134,9 +134,9 @@ const SettingsPanel = () => {
                   onChange={handleTimezoneChange}
                   className="w-full p-2 bg-gray-700 rounded text-white border border-gray-600 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 >
-                  {TIMEZONES.map((timezone) => (
-                    <option key={timezone} value={timezone}>
-                      {timezone.replace('_', ' ')}
+                  {TIMEZONES.map((tz) => (
+                    <option key={typeof tz === 'string' ? tz : tz.value} value={typeof tz === 'string' ? tz : tz.value}>
+                      {typeof tz === 'string' ? tz.replace('_', ' ') : tz.label}
                     </option>
                   ))}
                 </select>

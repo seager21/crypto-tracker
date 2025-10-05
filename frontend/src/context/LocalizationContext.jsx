@@ -1,40 +1,46 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { LANGUAGES } from '../i18n';
+import { 
+  convertCurrency, 
+  formatCurrencyAmount, 
+  CURRENCY_INFO,
+  getCurrencySymbol 
+} from '../utils/currencyConverter';
 
 // Define supported currencies
-export const CURRENCIES = {
-  USD: { symbol: '$', name: 'US Dollar', code: 'USD' },
-  EUR: { symbol: '€', name: 'Euro', code: 'EUR' },
-  GBP: { symbol: '£', name: 'British Pound', code: 'GBP' },
-  JPY: { symbol: '¥', name: 'Japanese Yen', code: 'JPY' },
-  CNY: { symbol: '¥', name: 'Chinese Yuan', code: 'CNY' },
-  INR: { symbol: '₹', name: 'Indian Rupee', code: 'INR' },
-};
+export const CURRENCIES = CURRENCY_INFO;
 
 // Define news regions
 export const NEWS_REGIONS = {
-  global: 'Global',
-  us: 'United States',
-  uk: 'United Kingdom',
-  eu: 'Europe',
-  asia: 'Asia',
+  global: { name: 'Global', languages: ['en', 'es', 'fr', 'de', 'ja', 'zh'] },
+  us: { name: 'United States', languages: ['en'], primaryLang: 'en' },
+  uk: { name: 'United Kingdom', languages: ['en'], primaryLang: 'en' },
+  eu: { name: 'Europe', languages: ['en', 'de', 'fr', 'es'], primaryLang: 'en' },
+  asia: { name: 'Asia', languages: ['en', 'ja', 'zh'], primaryLang: 'en' },
+  latam: { name: 'Latin America', languages: ['es', 'pt'], primaryLang: 'es' },
 };
 
 // Default timezone is user's local timezone
 const defaultTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
 // Get common timezones
-const TIMEZONES = [
-  'UTC',
-  'America/New_York',
-  'America/Los_Angeles',
-  'Europe/London',
-  'Europe/Paris',
-  'Asia/Tokyo',
-  'Asia/Shanghai',
-  'Asia/Kolkata',
-  'Australia/Sydney',
+export const TIMEZONES = [
+  { value: 'UTC', label: 'UTC (Coordinated Universal Time)' },
+  { value: 'America/New_York', label: 'New York (EST/EDT)' },
+  { value: 'America/Los_Angeles', label: 'Los Angeles (PST/PDT)' },
+  { value: 'America/Chicago', label: 'Chicago (CST/CDT)' },
+  { value: 'America/Denver', label: 'Denver (MST/MDT)' },
+  { value: 'Europe/London', label: 'London (GMT/BST)' },
+  { value: 'Europe/Paris', label: 'Paris (CET/CEST)' },
+  { value: 'Europe/Berlin', label: 'Berlin (CET/CEST)' },
+  { value: 'Asia/Tokyo', label: 'Tokyo (JST)' },
+  { value: 'Asia/Shanghai', label: 'Shanghai (CST)' },
+  { value: 'Asia/Hong_Kong', label: 'Hong Kong (HKT)' },
+  { value: 'Asia/Singapore', label: 'Singapore (SGT)' },
+  { value: 'Asia/Kolkata', label: 'India (IST)' },
+  { value: 'Australia/Sydney', label: 'Sydney (AEDT/AEST)' },
+  { value: 'Pacific/Auckland', label: 'Auckland (NZDT/NZST)' },
 ];
 
 // Initial state
@@ -72,28 +78,103 @@ export const LocalizationProvider = ({ children }) => {
     setSettings((prev) => ({ ...prev, ...newSettings }));
   };
 
-  // Format currency based on current settings
-  const formatCurrency = (amount, targetCurrency = settings.currency) => {
-    const currencyObj = CURRENCIES[targetCurrency];
+  // Format currency based on current settings with conversion
+  const formatCurrency = (amountInUSD, options = {}) => {
+    const {
+      targetCurrency = settings.currency,
+      fromCurrency = 'USD',
+      showSymbol = true,
+    } = options;
 
-    if (!currencyObj) return `$${amount.toFixed(2)}`; // Default to USD if invalid
+    if (!amountInUSD && amountInUSD !== 0) return `${getCurrencySymbol(targetCurrency)}0.00`;
 
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: currencyObj.code,
-    }).format(amount);
+    // Convert currency if needed
+    const convertedAmount = fromCurrency === targetCurrency 
+      ? amountInUSD 
+      : convertCurrency(amountInUSD, fromCurrency, targetCurrency);
+
+    // Format based on locale and currency
+    const currencyInfo = CURRENCIES[targetCurrency];
+    const locale = currencyInfo?.locale || settings.language;
+
+    try {
+      if (showSymbol) {
+        return new Intl.NumberFormat(locale, {
+          style: 'currency',
+          currency: targetCurrency,
+          minimumFractionDigits: targetCurrency === 'JPY' || targetCurrency === 'KRW' ? 0 : 2,
+          maximumFractionDigits: targetCurrency === 'JPY' || targetCurrency === 'KRW' ? 0 : 2,
+        }).format(convertedAmount);
+      } else {
+        return new Intl.NumberFormat(locale, {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        }).format(convertedAmount);
+      }
+    } catch (error) {
+      // Fallback formatting
+      const symbol = getCurrencySymbol(targetCurrency);
+      return `${symbol}${convertedAmount.toFixed(2)}`;
+    }
   };
 
-  // Format date based on current timezone
+  // Format date based on current timezone and locale
   const formatDate = (dateInput, options = {}) => {
-    const date = new Date(dateInput);
+    const date = typeof dateInput === 'string' || typeof dateInput === 'number' 
+      ? new Date(dateInput) 
+      : dateInput;
 
-    return new Intl.DateTimeFormat(settings.language, {
-      timeZone: settings.timezone,
-      dateStyle: 'medium',
-      timeStyle: 'short',
-      ...options,
-    }).format(date);
+    const {
+      timezone = settings.timezone,
+      dateStyle = 'medium',
+      timeStyle = 'short',
+      showTime = true,
+    } = options;
+
+    try {
+      const formatOptions = {
+        timeZone: timezone,
+        ...options,
+      };
+
+      if (dateStyle && !options.year) {
+        formatOptions.dateStyle = dateStyle;
+      }
+
+      if (timeStyle && showTime && !options.hour) {
+        formatOptions.timeStyle = timeStyle;
+      }
+
+      return new Intl.DateTimeFormat(settings.language, formatOptions).format(date);
+    } catch (error) {
+      // Fallback to simple formatting
+      return date.toLocaleString(settings.language);
+    }
+  };
+
+  // Format time only
+  const formatTime = (dateInput) => {
+    return formatDate(dateInput, { 
+      dateStyle: undefined, 
+      timeStyle: 'medium',
+      showTime: true 
+    });
+  };
+
+  // Get timezone offset display
+  const getTimezoneOffset = (timezone = settings.timezone) => {
+    try {
+      const now = new Date();
+      const formatter = new Intl.DateTimeFormat('en-US', {
+        timeZone: timezone,
+        timeZoneName: 'short',
+      });
+      const parts = formatter.formatToParts(now);
+      const timeZonePart = parts.find((part) => part.type === 'timeZoneName');
+      return timeZonePart ? timeZonePart.value : '';
+    } catch (error) {
+      return '';
+    }
   };
 
   // Context value
@@ -102,6 +183,10 @@ export const LocalizationProvider = ({ children }) => {
     updateSettings,
     formatCurrency,
     formatDate,
+    formatTime,
+    getTimezoneOffset,
+    convertCurrency: (amount, from, to) => convertCurrency(amount, from, to),
+    getCurrencySymbol: (currency) => getCurrencySymbol(currency),
     LANGUAGES,
     CURRENCIES,
     NEWS_REGIONS,
