@@ -3,34 +3,121 @@
     "title": "Crypto Tracker Pro",
     "loadingText": "Wird geladen...",
     "lastUpdated": "Zuletzt aktualisiert",
+    "refresh": "Aktualisieren",
     "connectionStatus": {
       "connected": "Verbunden",
-      "disconnected": "Getrennt"
+      "disconnected": "Getrennt",
+      "connecting": "Wird verbunden..."
     }
   },
   "navigation": {
     "overview": "Überblick",
     "chart": "Diagramme",
     "portfolio": "Portfolio",
+    "holdings": "Bestände",
+    "transactions": "Transaktionen",
+    "performance": "Leistung",
+    "export": "Exportieren",
     "news": "Nachrichten"
   },
   "crypto": {
     "price": "Preis",
+    "currentPrice": "Aktueller Preis",
     "change24h": "24h Änderung",
     "marketCap": "Marktkapitalisierung",
-    "volume": "Volumen"
+    "volume": "Volumen",
+    "high24h": "24h Hoch",
+    "low24h": "24h Tief",
+    "supply": "Versorgung",
+    "rank": "Rang"
+  },
+  "portfolio": {
+    "title": "Mein Portfolio",
+    "totalValue": "Gesamtwert",
+    "totalInvested": "Gesamtinvestition",
+    "holdings": "Bestände",
+    "profitLoss": "Gewinn/Verlust",
+    "addTransaction": "Transaktion Hinzufügen",
+    "editTransaction": "Transaktion Bearbeiten",
+    "deleteTransaction": "Transaktion Löschen",
+    "confirmDelete": "Möchten Sie diese Transaktion wirklich löschen?",
+    "noHoldings": "Noch keine Bestände",
+    "startAdding": "Beginnen Sie mit dem Hinzufügen von Transaktionen, um Ihr Portfolio zu verfolgen",
+    "bestPerformer": "Bestes Ergebnis",
+    "worstPerformer": "Schlechtestes Ergebnis",
+    "quantity": "Menge",
+    "averagePrice": "Durchschnittspreis",
+    "currentValue": "Aktueller Wert",
+    "return": "Rendite"
+  },
+  "transactions": {
+    "title": "Transaktionsverlauf",
+    "type": "Typ",
+    "buy": "Kauf",
+    "sell": "Verkauf",
+    "date": "Datum",
+    "cryptocurrency": "Kryptowährung",
+    "amount": "Betrag",
+    "price": "Preis",
+    "total": "Gesamt",
+    "notes": "Notizen",
+    "filter": "Filter",
+    "all": "Alle",
+    "buys": "Käufe",
+    "sells": "Verkäufe",
+    "sortBy": "Sortieren nach",
+    "newest": "Neueste zuerst",
+    "oldest": "Älteste zuerst",
+    "highestValue": "Höchster Wert",
+    "lowestValue": "Niedrigster Wert",
+    "edit": "Bearbeiten",
+    "delete": "Löschen",
+    "noTransactions": "Noch keine Transaktionen",
+    "totalTransactions": "Gesamttransaktionen",
+    "totalBuys": "Gesamtkäufe",
+    "totalSells": "Gesamtverkäufe"
+  },
+  "performance": {
+    "title": "Leistungsanalyse",
+    "portfolioValue": "Portfoliowert über Zeit",
+    "allocation": "Vermögensallokation",
+    "monthlyVolume": "Monatliches Transaktionsvolumen",
+    "topGainers": "Top Gewinner",
+    "topLosers": "Top Verlierer",
+    "diversification": "Diversifizierungsscore"
+  },
+  "export": {
+    "title": "Portfoliodaten Exportieren",
+    "exportType": "Exporttyp",
+    "portfolioSummary": "Portfolio Zusammenfassung",
+    "transactionHistory": "Transaktionsverlauf",
+    "currentHoldings": "Aktuelle Bestände",
+    "dateRange": "Datumsbereich",
+    "last30Days": "Letzte 30 Tage",
+    "last90Days": "Letzte 90 Tage",
+    "lastYear": "Letztes Jahr",
+    "allTime": "Aller Zeiten",
+    "format": "Format",
+    "csv": "CSV (Excel)",
+    "pdf": "PDF Bericht",
+    "download": "Download",
+    "preview": "Datenvorschau",
+    "showingRows": "Zeige erste 5 Zeilen"
   },
   "news": {
     "latestNews": "Aktuelle Krypto-Nachrichten",
     "readMore": "Weiterlesen",
     "source": "Quelle",
     "publishedOn": "Veröffentlicht am",
-    "noNewsAvailable": "Keine Nachrichten verfügbar"
-  },
-  "portfolio": {
-    "totalValue": "Gesamtwert",
-    "holdings": "Bestände",
-    "profitLoss": "Gewinn/Verlust"
+    "noNewsAvailable": "Keine Nachrichten verfügbar",
+    "regions": {
+      "global": "Global",
+      "us": "Vereinigte Staaten",
+      "uk": "Vereinigtes Königreich",
+      "eu": "Europa",
+      "africa": "Afrika",
+      "asia": "Asien"
+    }
   },
   "settings": {
     "title": "Einstellungen",
@@ -38,9 +125,13 @@
     "currency": "Währung",
     "timezone": "Zeitzone",
     "newsRegion": "Nachrichtenregion",
-    "theme": "Thema",
+    "theme": "Design",
     "dark": "Dunkel",
-    "light": "Hell"
+    "light": "Hell",
+    "preferences": "Voreinstellungen",
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "reset": "Auf Standard Zurücksetzen"
   },
   "currencies": {
     "usd": "USD ($)",
@@ -48,6 +139,37 @@
     "gbp": "GBP (£)",
     "jpy": "JPY (¥)",
     "cny": "CNY (¥)",
+    "inr": "INR (₹)",
+    "aud": "AUD ($)",
+    "cad": "CAD ($)",
+    "chf": "CHF (Fr)",
+    "krw": "KRW (₩)"
+  },
+  "common": {
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "delete": "Löschen",
+    "edit": "Bearbeiten",
+    "add": "Hinzufügen",
+    "search": "Suchen",
+    "filter": "Filter",
+    "sort": "Sortieren",
+    "close": "Schließen",
+    "confirm": "Bestätigen",
+    "yes": "Ja",
+    "no": "Nein",
+    "loading": "Wird geladen...",
+    "error": "Fehler",
+    "success": "Erfolg"
+  },
+  "errors": {
+    "loadingFailed": "Datenladevorgang fehlgeschlagen",
+    "connectionLost": "Verbindung verloren",
+    "tryAgain": "Erneut versuchen",
+    "invalidInput": "Ungültige Eingabe",
+    "required": "Dieses Feld ist erforderlich"
+  }
+}
     "inr": "INR (₹)"
   }
 }

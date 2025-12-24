@@ -3,34 +3,121 @@
     "title": "クリプトトラッカープロ",
     "loadingText": "読み込み中...",
     "lastUpdated": "最終更新",
+    "refresh": "更新",
     "connectionStatus": {
       "connected": "接続済み",
-      "disconnected": "切断済み"
+      "disconnected": "切断済み",
+      "connecting": "接続中..."
     }
   },
   "navigation": {
     "overview": "概要",
     "chart": "チャート",
     "portfolio": "ポートフォリオ",
+    "holdings": "保有資産",
+    "transactions": "取引",
+    "performance": "パフォーマンス",
+    "export": "エクスポート",
     "news": "ニュース"
   },
   "crypto": {
     "price": "価格",
-    "change24h": "24時間変動",
+    "currentPrice": "現在の価格",
+    "change24h": "24時間の変動",
     "marketCap": "時価総額",
-    "volume": "取引量"
+    "volume": "取引高",
+    "high24h": "24時間高値",
+    "low24h": "24時間安値",
+    "supply": "供給",
+    "rank": "ランク"
+  },
+  "portfolio": {
+    "title": "マイポートフォリオ",
+    "totalValue": "総資産額",
+    "totalInvested": "投資額合計",
+    "holdings": "保有資産",
+    "profitLoss": "損益",
+    "addTransaction": "取引を追加",
+    "editTransaction": "取引を編集",
+    "deleteTransaction": "取引を削除",
+    "confirmDelete": "この取引を削除してもよろしいですか？",
+    "noHoldings": "まだ保有資産がありません",
+    "startAdding": "ポートフォリオを追跡するために取引の追加を開始してください",
+    "bestPerformer": "最高のパフォーマー",
+    "worstPerformer": "最悪のパフォーマー",
+    "quantity": "数量",
+    "averagePrice": "平均価格",
+    "currentValue": "現在価値",
+    "return": "リターン"
+  },
+  "transactions": {
+    "title": "取引履歴",
+    "type": "タイプ",
+    "buy": "買い",
+    "sell": "売り",
+    "date": "日付",
+    "cryptocurrency": "暗号資産",
+    "amount": "金額",
+    "price": "価格",
+    "total": "合計",
+    "notes": "メモ",
+    "filter": "フィルター",
+    "all": "すべて",
+    "buys": "買い",
+    "sells": "売り",
+    "sortBy": "並び順",
+    "newest": "最新順",
+    "oldest": "最古順",
+    "highestValue": "最高値順",
+    "lowestValue": "最低値順",
+    "edit": "編集",
+    "delete": "削除",
+    "noTransactions": "取引がまだありません",
+    "totalTransactions": "取引合計数",
+    "totalBuys": "買い合計",
+    "totalSells": "売り合計"
+  },
+  "performance": {
+    "title": "パフォーマンス分析",
+    "portfolioValue": "時間経過に伴うポートフォリオ価値",
+    "allocation": "資産配分",
+    "monthlyVolume": "月間取引高",
+    "topGainers": "トップゲイナー",
+    "topLosers": "トップルーザー",
+    "diversification": "多様化スコア"
+  },
+  "export": {
+    "title": "ポートフォリオデータをエクスポート",
+    "exportType": "エクスポートタイプ",
+    "portfolioSummary": "ポートフォリオの概要",
+    "transactionHistory": "取引履歴",
+    "currentHoldings": "現在の保有資産",
+    "dateRange": "日付範囲",
+    "last30Days": "過去30日間",
+    "last90Days": "過去90日間",
+    "lastYear": "過去1年",
+    "allTime": "すべての期間",
+    "format": "形式",
+    "csv": "CSV（Excel）",
+    "pdf": "PDFレポート",
+    "download": "ダウンロード",
+    "preview": "データプレビュー",
+    "showingRows": "最初の5行を表示"
   },
   "news": {
-    "latestNews": "暗号資産の最新ニュース",
+    "latestNews": "最新の暗号資産ニュース",
     "readMore": "続きを読む",
     "source": "情報源",
     "publishedOn": "公開日",
-    "noNewsAvailable": "利用可能なニュースはありません"
-  },
-  "portfolio": {
-    "totalValue": "合計価値",
-    "holdings": "保有高",
-    "profitLoss": "損益"
+    "noNewsAvailable": "利用可能なニュースはありません",
+    "regions": {
+      "global": "グローバル",
+      "us": "アメリカ合衆国",
+      "uk": "イギリス",
+      "eu": "ヨーロッパ",
+      "africa": "アフリカ",
+      "asia": "アジア"
+    }
   },
   "settings": {
     "title": "設定",
@@ -40,7 +127,11 @@
     "newsRegion": "ニュース地域",
     "theme": "テーマ",
     "dark": "ダーク",
-    "light": "ライト"
+    "light": "ライト",
+    "preferences": "環境設定",
+    "save": "保存",
+    "cancel": "キャンセル",
+    "reset": "デフォルトにリセット"
   },
   "currencies": {
     "usd": "USD ($)",
@@ -48,6 +139,37 @@
     "gbp": "GBP (£)",
     "jpy": "JPY (¥)",
     "cny": "CNY (¥)",
+    "inr": "INR (₹)",
+    "aud": "AUD ($)",
+    "cad": "CAD ($)",
+    "chf": "CHF (Fr)",
+    "krw": "KRW (₩)"
+  },
+  "common": {
+    "save": "保存",
+    "cancel": "キャンセル",
+    "delete": "削除",
+    "edit": "編集",
+    "add": "追加",
+    "search": "検索",
+    "filter": "フィルター",
+    "sort": "並べ替え",
+    "close": "閉じる",
+    "confirm": "確認",
+    "yes": "はい",
+    "no": "いいえ",
+    "loading": "読み込み中...",
+    "error": "エラー",
+    "success": "成功"
+  },
+  "errors": {
+    "loadingFailed": "データの読み込みに失敗しました",
+    "connectionLost": "接続が失われました",
+    "tryAgain": "もう一度やり直す",
+    "invalidInput": "無効な入力",
+    "required": "このフィールドは必須です"
+  }
+}
     "inr": "INR (₹)"
   }
 }
