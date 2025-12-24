@@ -11,12 +11,16 @@ import {
 // Define supported currencies
 export const CURRENCIES = CURRENCY_INFO;
 
+// Export LANGUAGES from i18n config
+export { LANGUAGES };
+
 // Define news regions
 export const NEWS_REGIONS = {
   global: { name: 'Global', languages: ['en', 'es', 'fr', 'de', 'ja', 'zh'] },
   us: { name: 'United States', languages: ['en'], primaryLang: 'en' },
   uk: { name: 'United Kingdom', languages: ['en'], primaryLang: 'en' },
   eu: { name: 'Europe', languages: ['en', 'de', 'fr', 'es'], primaryLang: 'en' },
+  africa: { name: 'Africa', languages: ['en', 'pt'], primaryLang: 'en' },
   asia: { name: 'Asia', languages: ['en', 'ja', 'zh'], primaryLang: 'en' },
   latam: { name: 'Latin America', languages: ['es', 'pt'], primaryLang: 'es' },
 };
@@ -27,18 +31,26 @@ const defaultTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 // Get common timezones
 export const TIMEZONES = [
   { value: 'UTC', label: 'UTC (Coordinated Universal Time)' },
+  // Americas
   { value: 'America/New_York', label: 'New York (EST/EDT)' },
   { value: 'America/Los_Angeles', label: 'Los Angeles (PST/PDT)' },
   { value: 'America/Chicago', label: 'Chicago (CST/CDT)' },
   { value: 'America/Denver', label: 'Denver (MST/MDT)' },
+  // Europe
   { value: 'Europe/London', label: 'London (GMT/BST)' },
   { value: 'Europe/Paris', label: 'Paris (CET/CEST)' },
   { value: 'Europe/Berlin', label: 'Berlin (CET/CEST)' },
+  { value: 'Europe/Lisbon', label: 'Lisbon (WET/WEST)' },
+  // Africa
+  { value: 'Africa/Luanda', label: 'Luanda (WAT)' },
+  { value: 'Africa/Johannesburg', label: 'Johannesburg (SAST)' },
+  // Asia
   { value: 'Asia/Tokyo', label: 'Tokyo (JST)' },
   { value: 'Asia/Shanghai', label: 'Shanghai (CST)' },
   { value: 'Asia/Hong_Kong', label: 'Hong Kong (HKT)' },
   { value: 'Asia/Singapore', label: 'Singapore (SGT)' },
   { value: 'Asia/Kolkata', label: 'India (IST)' },
+  // Pacific
   { value: 'Australia/Sydney', label: 'Sydney (AEDT/AEST)' },
   { value: 'Pacific/Auckland', label: 'Auckland (NZDT/NZST)' },
 ];

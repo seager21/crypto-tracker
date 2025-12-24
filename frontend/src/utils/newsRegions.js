@@ -22,6 +22,11 @@ export const NEWS_SOURCES_BY_REGION = {
     { id: 'journalducoin', name: 'Journal du Coin', language: 'fr', url: 'https://journalducoin.com' },
     { id: 'cryptonews-eu', name: 'Cryptonews EU', language: 'en', url: 'https://cryptonews.com' },
   ],
+  africa: [
+    { id: 'cointelegraph-pt', name: 'Cointelegraph PT', language: 'pt', url: 'https://pt.cointelegraph.com' },
+    { id: 'livecoins-pt', name: 'LiveCoins Africa', language: 'pt', url: 'https://livecoins.com.br' },
+    { id: 'bitcoin-africa', name: 'Bitcoin Africa', language: 'en', url: 'https://bitcoinafrica.io' },
+  ],
   asia: [
     { id: 'coinpost', name: 'CoinPost', language: 'ja', url: 'https://coinpost.jp' },
     { id: 'jinse', name: 'Jinse', language: 'zh', url: 'https://www.jinse.com' },
@@ -65,7 +70,7 @@ export const LANGUAGE_TO_REGION = {
   ja: 'asia',
   zh: 'asia',
   ko: 'asia',
-  pt: 'latam',
+  pt: 'africa',
   ru: 'eu',
   it: 'eu',
 };
