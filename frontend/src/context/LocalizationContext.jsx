@@ -1,11 +1,11 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { LANGUAGES } from '../i18n';
-import { 
-  convertCurrency, 
-  formatCurrencyAmount, 
+import {
+  convertCurrency,
+  formatCurrencyAmount,
   CURRENCY_INFO,
-  getCurrencySymbol 
+  getCurrencySymbol,
 } from '../utils/currencyConverter';
 
 // Define supported currencies
@@ -92,18 +92,15 @@ export const LocalizationProvider = ({ children }) => {
 
   // Format currency based on current settings with conversion
   const formatCurrency = (amountInUSD, options = {}) => {
-    const {
-      targetCurrency = settings.currency,
-      fromCurrency = 'USD',
-      showSymbol = true,
-    } = options;
+    const { targetCurrency = settings.currency, fromCurrency = 'USD', showSymbol = true } = options;
 
     if (!amountInUSD && amountInUSD !== 0) return `${getCurrencySymbol(targetCurrency)}0.00`;
 
     // Convert currency if needed
-    const convertedAmount = fromCurrency === targetCurrency 
-      ? amountInUSD 
-      : convertCurrency(amountInUSD, fromCurrency, targetCurrency);
+    const convertedAmount =
+      fromCurrency === targetCurrency
+        ? amountInUSD
+        : convertCurrency(amountInUSD, fromCurrency, targetCurrency);
 
     // Format based on locale and currency
     const currencyInfo = CURRENCIES[targetCurrency];
@@ -132,9 +129,10 @@ export const LocalizationProvider = ({ children }) => {
 
   // Format date based on current timezone and locale
   const formatDate = (dateInput, options = {}) => {
-    const date = typeof dateInput === 'string' || typeof dateInput === 'number' 
-      ? new Date(dateInput) 
-      : dateInput;
+    const date =
+      typeof dateInput === 'string' || typeof dateInput === 'number'
+        ? new Date(dateInput)
+        : dateInput;
 
     const {
       timezone = settings.timezone,
@@ -166,10 +164,10 @@ export const LocalizationProvider = ({ children }) => {
 
   // Format time only
   const formatTime = (dateInput) => {
-    return formatDate(dateInput, { 
-      dateStyle: undefined, 
+    return formatDate(dateInput, {
+      dateStyle: undefined,
       timeStyle: 'medium',
-      showTime: true 
+      showTime: true,
     });
   };
 
