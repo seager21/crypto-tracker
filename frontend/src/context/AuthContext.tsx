@@ -9,7 +9,7 @@ import {
   UserCredential,
   User as FirebaseUser,
   updateProfile,
-  AuthError,
+
 } from 'firebase/auth';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { auth, db } from '@/firebase/firebase';
@@ -20,10 +20,24 @@ const DEFAULT_USER_DATA: UserData = {
   watchlist: [],
   portfolio: [],
   favoriteCoins: [],
+  transactions: [],
   settings: {
     theme: 'dark',
     currency: 'usd',
+    timezone: 'UTC',
+    newsRegion: 'global',
     notifications: true,
+  },
+  profile: {
+    bio: '',
+    location: '',
+    website: '',
+  },
+  stats: {
+    totalInvested: 0,
+    currentValue: 0,
+    totalGain: 0,
+    totalGainPercent: 0,
   },
 };
 

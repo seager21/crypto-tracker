@@ -184,7 +184,7 @@ FIREBASE_PROJECT_ID=your_firebase_project_id
 npm run dev
 ```
 
-The application will be available at `http://localhost:5173` with hot reloading enabled.
+The application will be available at `http://localhost:5432` with hot reloading enabled.
 
 ## API Usage
 

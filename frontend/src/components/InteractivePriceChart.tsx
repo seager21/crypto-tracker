@@ -9,7 +9,7 @@ import {
   ResponsiveContainer,
   Legend,
 } from 'recharts';
-import { Eye, EyeOff, BarChart3, Filter, Settings } from 'lucide-react';
+import { Eye, EyeOff, Filter } from 'lucide-react';
 import { PriceHistoryPoint, CryptoConfig } from '../types';
 
 interface InteractivePriceChartProps {

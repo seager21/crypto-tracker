@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Line,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -14,13 +13,9 @@ import {
   TrendingUp,
   TrendingDown,
   Globe,
-  Calendar,
-  DollarSign,
-  BarChart3,
   Activity,
   Users,
   AlertCircle,
-  RefreshCw,
 } from 'lucide-react';
 import LoadingSpinner from './LoadingSpinner';
 import { CryptoDetailData, MarketHistoryData } from '../types';

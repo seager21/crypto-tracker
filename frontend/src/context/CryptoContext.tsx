@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { CryptoData, CryptoConfig } from '../types';
+import { CryptoData } from '../types';
 
 // Define the context state shape
 interface CryptoContextState {

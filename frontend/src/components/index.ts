@@ -1,4 +1,6 @@
-// Create a file that re-exports all components
-import App from './App';
+// Component exports
+export { default as LoadingSpinner } from './LoadingSpinner';
+export { default as Header } from './Header';
+export { default as CryptoCard } from './CryptoCard';
+export { default as SettingsPanel } from './SettingsPanel';
 
-export default App;

@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
 import {
   Search,
-  Filter,
   SortAsc,
   SortDesc,
   Grid,
   List,
-  Star,
   TrendingUp,
   TrendingDown,
 } from 'lucide-react';
